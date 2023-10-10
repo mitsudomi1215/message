@@ -121,31 +121,72 @@
     //ユーザー情報を格納する
     let userCodes = [];
 
-    if(event.action.value === '処理開始'){
+    if(event.nextStatus.value === '未処理'){
+      
+      if(event.action.value == '完了'){
+        //コールセンターのコードを変数に代入
+        let call_center = rec.コールセンター.value;
+        userCodes.push(call_center[0]['code']);
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //コールセンター上長のコードを変数に代入
+        let call_center_chief = rec.コールセンター上長.value;
+        userCodes.push(call_center_chief[0]['code']);
+
+        //店長を変数に代入
+        let store_manager = rec.店長.value;
+        userCodes.push(store_manager[0]['code']);
+
+        //AMを変数に代入
+        let am = rec.AM.value;
+        userCodes.push(am[0]['code']);
+
+        //部長を変数に代入
+        let manager = rec.部長.value;
+        userCodes.push(manager[0]['code']);
+
+        //本部長を変数に代入
+        let chief = rec.本部長.value;
+        userCodes.push(chief[0]['code']);
+
+        const content ="【kintone】"+"フローが全て完了しました。";
+
+        for (const code of userCodes) {
+          await performCommonAction('完了', code , content , URL);
+        }
+
+      } else if(event.action.value == '差戻し'){
+
+        //コールセンターのコードを変数に代入
+        let call_center = rec.コールセンター.value;
+        userCodes.push(call_center[0]['code']);
+
+        const content ="【kintone】"+"アンケートアプリのコールセンター上長から差戻しされました。";
+
+        for (const code of userCodes) {
+          await performCommonAction('申請', code , content , URL);
+        }
+      } 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
     } else if (event.nextStatus.value == '【申請中】コールセンター') {
-      console.warn('【申請中】コールセンター');
-      console.warn(event.action.value);
-      console.warn(event.nextStatus.value);
+
       //ユーザー選択のコードを変数に代入
       let top_userfield = rec.コールセンター上長.value;
       userCodes.push(top_userfield[0]['code']);
 
       if(event.action.value == '申請'){
-        const content ="【kintone】"+"アンケートアプリの申請が届いています";
+          const content ="【kintone】"+"アンケートアプリの申請が届いています";
+          for (const code of userCodes) {
+            await performCommonAction('申請', code , content , URL);
+          }
       }else if(event.action.value == '差戻し'){
-        const content ="【kintone】"+"アンケートアプリの申請が届いています";
+          const content ="【kintone】"+"アンケートアプリの申請が拒否されました";
+          for (const code of userCodes) {
+            await performCommonAction('申請', code , content , URL);
+          }
       }
 
-      for (const code of userCodes) {
-        await performCommonAction('申請', code , content , URL);
-      }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
     } else if (event.nextStatus.value === '【確認済み】コールセンター上長') {
-      console.warn('【確認済み】コールセンター上長');
-      console.warn(event.action.value);
-      console.warn(event.nextStatus.value);
 
       //店長のコードを変数に代入
       let store_manager = rec.店長.value;
@@ -199,39 +240,7 @@
         await performCommonAction('完了', code , content , URL);
       }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    } else if(event.nextStatus.value === '未処理'){
-
-        // //コールセンターのコードを変数に代入
-        // let call_center = rec.コールセンター.value;
-        // userCodes.push(call_center[0]['code']);
-
-        // //コールセンター上長のコードを変数に代入
-        // let call_center_chief = rec.コールセンター上長.value;
-        // userCodes.push(call_center_chief[0]['code']);
-
-        // //店長を変数に代入
-        // let store_manager = rec.店長.value;
-        // userCodes.push(store_manager[0]['code']);
-
-        // //AMを変数に代入
-        // let am = rec.AM.value;
-        // userCodes.push(am[0]['code']);
-
-        // //部長を変数に代入
-        // let manager = rec.部長.value;
-        // userCodes.push(manager[0]['code']);
-
-        // //本部長を変数に代入
-        // let chief = rec.本部長.value;
-        // userCodes.push(chief[0]['code']);
-
-        // const content ="【kintone】"+"フローが全て完了しました。";
-
-        // for (const code of userCodes) {
-        //   await performCommonAction('完了', code , content , URL);
-        // }
-
-    }
+    } 
   });
 
    //kintoneユーザーコードからGaroonのユーザー情報を取得
