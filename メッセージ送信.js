@@ -83,7 +83,7 @@
       let msgAddParam = MSG_ADD_TEMPLATE;
       msgAddParam = msgAddParam.replace('${REQUEST_TOKEN}', escapeHtml(requestToken));
       msgAddParam = msgAddParam.replace('${TITTLE}', content);
-      msgAddParam = msgAddParam.replace('${USER_ID}', targetUser.id); // targetUserのidを使用
+      msgAddParam = msgAddParam.replace('${USER_ID}', targetUser.id); // targetUserのidを使用,targetUser.id
       msgAddParam = msgAddParam.replace('${MAIN_TEXT}', URL); 
   
       let msgAddRequest = SOAP_TEMPLATE;
@@ -95,7 +95,7 @@
       // メッセージ登録の実行
       await $.ajax({
         type: 'post',
-        url: 'https://isyw9crl6hfx.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+        url: 'https://n3z37rsib3yg.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
         cache: false,
         async: false,
         data: msgAddRequest,
@@ -113,7 +113,7 @@
     let rec = event.record;
 
     //お試し版URL【変更】
-    const kntAppURL = 'https://isyw9crl6hfx.cybozu.com/k/8/';
+    const kntAppURL = 'https://n3z37rsib3yg.cybozu.com/k/22/';
 
     //本文(bodyはフィールドコード)
     let URL =  kntAppURL + 'show#record=' + rec.$id.value;
@@ -184,7 +184,6 @@
             await performCommonAction('申請', code , content , URL);
           }
       }
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
     } else if (event.nextStatus.value === '【確認済み】コールセンター上長') {
 
@@ -255,7 +254,77 @@
       const body = await response.json();
       const targetUser =  body.users.filter((user) => user.code === code)[0];
     return targetUser;
-
     };
+    
+    
+    //編集画面を開いた際に、ルックアップのフィールドを編集可能
+    kintone.events.on(['app.record.create.show', 'app.record.edit.show'], (event) => {
+
+      var record = event.record;
+      record.店番.disabled = false;
+ 
+      return event;
+    });
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+ //新規作成画面
+ kintone.events.on("app.record.create.show", event => {
+  const record = event.record;
+    if(record.お客様への返答.value == "1回目"){
+      //ボタンを置きたいスペースフィールドを取ってくる
+      const sp = kintone.app.record.getSpaceElement('answer_1');
+      //ボタンを作る
+      const text = document.createElement('b');
+      //ボタンに表示したいテキスト
+      text.textContent='1回目';
+      //スペースフィールドにボタンを追加する
+      sp.appendChild(text);
+
+      //2回目を隠す
+      kintone.app.record.setFieldShown('お客様の連絡内容_コールセンター記入_2',false);
+      kintone.app.record.setFieldShown('お客様への返答内容_担当者記入_2',false);
+      //3回目を隠す
+      kintone.app.record.setFieldShown('お客様の連絡内容_コールセンター記入_3',false);
+      kintone.app.record.setFieldShown('お客様への返答内容_担当者記入_3',false);
+    }
+
+  });
+
+ //編集画面
+ kintone.events.on("app.record.edit.show", event => {
+  const record = event.record;
+  if(record.お客様への返答.value == "1回目"){
+
+    //3回目を隠す
+    kintone.app.record.setFieldShown('お客様の連絡内容_コールセンター記入_3',false);
+    kintone.app.record.setFieldShown('お客様への返答内容_担当者記入_3',false);
+  }
+
+  
+  });
+  
+  //詳細画面
+   kintone.events.on("app.record.detail.show", event => {
+    const record = event.record;
+  
+    if(record.お客様への返答.value == "1回目"){
+      //2回目を隠す
+      kintone.app.record.setFieldShown('お客様の連絡内容_コールセンター記入_2',false);
+      kintone.app.record.setFieldShown('お客様への返答内容_担当者記入_2',false);
+      //3回目を隠す
+      kintone.app.record.setFieldShown('お客様の連絡内容_コールセンター記入_3',false);
+      kintone.app.record.setFieldShown('お客様への返答内容_担当者記入_3',false);
+    }
+
+    if(record.お客様への返答.value == "2回目"){
+
+      //3回目を隠す
+      kintone.app.record.setFieldShown('お客様の連絡内容_コールセンター記入_3',false);
+      kintone.app.record.setFieldShown('お客様への返答内容_担当者記入_3',false);
+    }
+  
+  });	app.record.create.show
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+    
 
 })(jQuery.noConflict(true));
