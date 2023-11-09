@@ -5,8 +5,8 @@
     //falseが非表示
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//★メモ
-//・お客様とのご連絡詳細は・フローの最後の人が承認したら表示でもいいかも
+//メモ
+//
 //
 //以下、新規画面//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //(新規作成画面)表示したとき
@@ -21,15 +21,15 @@
     kintone.events.on("app.record.create.change.受付方法", event => {
         const record = event.record;
         if(record.受付方法.value == "電話"){
-            kintone.app.record.setFieldShown('メール・口コミサイトの場合', false);
+            kintone.app.record.setFieldShown('メール・口コミサイト受付', false);
             kintone.app.record.setFieldShown('電話受付', true);
             
         }else if(record.受付方法.value == "メール・口コミサイト"){
-            kintone.app.record.setFieldShown('メール・口コミサイトの場合', true);
+            kintone.app.record.setFieldShown('メール・口コミサイト受付', true);
             kintone.app.record.setFieldShown('電話受付', false);
 
         }else{
-            kintone.app.record.setFieldShown('メール・口コミサイトの場合', true);
+            kintone.app.record.setFieldShown('メール・口コミサイト受付', true);
             kintone.app.record.setFieldShown('電話受付', true);
         }
     });
@@ -85,15 +85,15 @@
     kintone.events.on("app.record.edit.change.受付方法", event => {
         const record = event.record;
         if(record.受付方法.value == "電話"){
-            kintone.app.record.setFieldShown('メール・口コミサイトの場合', false);
+            kintone.app.record.setFieldShown('メール・口コミサイト受付', false);
             kintone.app.record.setFieldShown('電話受付', true);
             
         }else if(record.受付方法.value == "メール・口コミサイト"){
-            kintone.app.record.setFieldShown('メール・口コミサイトの場合', true);
+            kintone.app.record.setFieldShown('メール・口コミサイト受付', true);
             kintone.app.record.setFieldShown('電話受付', false);
 
         }else{
-            kintone.app.record.setFieldShown('メール・口コミサイトの場合', true);
+            kintone.app.record.setFieldShown('メール・口コミサイト受付', true);
             kintone.app.record.setFieldShown('電話受付', true);
         }
     });
