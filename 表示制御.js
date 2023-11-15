@@ -29,27 +29,36 @@
         kintone.app.record.setFieldShown('お客様とのご連絡詳細_3回目_',false);
     });
 
-    //(編集画面)(グループ)
+    //(新規画面)(グループ)
     kintone.events.on("app.record.create.change.受付方法", event => {
         const record = event.record;
         if(record.受付方法.value == "電話"){
             kintone.app.record.setFieldShown('メール・口コミサイト受付', false);
             kintone.app.record.setFieldShown('電話受付', true);
-            kintone.app.record.setFieldShown('お客様とのご連絡詳細_2回目以降_', true);
         }else if(record.受付方法.value == "メール"){
             kintone.app.record.setFieldShown('メール・口コミサイト受付', true);
             kintone.app.record.setFieldShown('電話受付', false);
-            kintone.app.record.setFieldShown('お客様とのご連絡詳細_2回目以降_', true);
         }else if(record.受付方法.value == "口コミサイト"){
             kintone.app.record.setFieldShown('メール・口コミサイト受付', true);
             kintone.app.record.setFieldShown('電話受付', false);
-            kintone.app.record.setFieldShown('お客様とのご連絡詳細_2回目以降_', true);
         }else {
             kintone.app.record.setFieldShown('メール・口コミサイト受付', false);
             kintone.app.record.setFieldShown('電話受付', false);
-            kintone.app.record.setFieldShown('お客様とのご連絡詳細_2回目以降_', false);
         }
     });
+
+    //(新規画面)(アンケート報告書)
+    kintone.events.on("app.record.create.change.アンケート報告書", event => {
+        const record = event.record;
+
+        //アンケート報告書
+        if(record.アンケート報告書.value == "表示"){
+            kintone.app.record.setFieldShown('アンケート報告書_グループ',true);
+        }else{
+            kintone.app.record.setFieldShown('アンケート報告書_グループ',false);
+        }
+    });
+    
 
 
 

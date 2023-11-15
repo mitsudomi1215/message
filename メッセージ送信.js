@@ -73,12 +73,12 @@
     return defer.promise();
   };
 
-  //メッセージ実行の共通処理
+  //メッセージ実行の共通処理(ユーザーフィールド)
   const performCommonAction = async (action, code, content , URL ) => {
     try {
       let targetUser = await fetchGaroonUserByCode(code);
       let requestToken = await getRequestToken();
-  
+  console.warn("り");
       // 送信するメッセージパラメータを作成
       let msgAddParam = MSG_ADD_TEMPLATE;
       msgAddParam = msgAddParam.replace('${REQUEST_TOKEN}', escapeHtml(requestToken));
@@ -95,7 +95,7 @@
       // メッセージ登録の実行
       await $.ajax({
         type: 'post',
-        url: 'https://n3z37rsib3yg.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+        url: 'https://5vai8j2bikxt.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
         cache: false,
         async: false,
         data: msgAddRequest,
@@ -106,6 +106,39 @@
       console.error("エラーが発生しました:", error);
     }
   };
+
+    //メッセージ実行の共通処理(特約店ユーザー)
+    const performCommonAction_fc = async (action, code, content , URL ) => {
+      try {
+        let requestToken = await getRequestToken();
+    
+        // 送信するメッセージパラメータを作成
+        let msgAddParam = MSG_ADD_TEMPLATE;
+        msgAddParam = msgAddParam.replace('${REQUEST_TOKEN}', escapeHtml(requestToken));
+        msgAddParam = msgAddParam.replace('${TITTLE}', content);
+        msgAddParam = msgAddParam.replace('${USER_ID}', code); // targetUserのidを使用,targetUser.id
+        msgAddParam = msgAddParam.replace('${MAIN_TEXT}', URL); 
+    
+        let msgAddRequest = SOAP_TEMPLATE;
+        // SOAPパラメータを完成させる
+        msgAddRequest = msgAddRequest.replace('${PARAMETERS}', msgAddParam);
+        // 実行処理を指定
+        msgAddRequest = msgAddRequest.split('${ACTION}').join('MessageCreateThreads');
+  
+        // メッセージ登録の実行
+        await $.ajax({
+          type: 'post',
+          url: 'https://5vai8j2bikxt.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          cache: false,
+          async: false,
+          data: msgAddRequest,
+        }).then(function(responseData) {
+          console.log(responseData); // レスポンスデータをコンソールに表示
+        });
+      } catch (error) {
+        console.error("エラーが発生しました:", error);
+      }
+    };
   
   //実行の条件分岐
   kintone.events.on(['app.record.detail.process.proceed'], async (event) => {
@@ -113,7 +146,7 @@
     let rec = event.record;
 
     //お試し版URL【変更】
-    const kntAppURL = 'https://n3z37rsib3yg.cybozu.com/k/22/';
+    const kntAppURL = 'https://5vai8j2bikxt.cybozu.com/k/18/';
 
     //本文(bodyはフィールドコード)
     let URL =  kntAppURL + 'show#record=' + rec.$id.value;
@@ -121,32 +154,14 @@
     //ユーザー情報を格納する
     let userCodes = [];
 
+    let userCodes_fc = [];
+
     if(event.nextStatus.value === '未処理'){
       
       if(event.action.value == '完了'){
         //コールセンターのコードを変数に代入
         let call_center = rec.コールセンター.value;
         userCodes.push(call_center[0]['code']);
-
-        //コールセンター上長のコードを変数に代入
-        let call_center_chief = rec.コールセンター上長.value;
-        userCodes.push(call_center_chief[0]['code']);
-
-        //店長を変数に代入
-        let store_manager = rec.店長.value;
-        userCodes.push(store_manager[0]['code']);
-
-        //AMを変数に代入
-        let am = rec.AM.value;
-        userCodes.push(am[0]['code']);
-
-        //部長を変数に代入
-        let manager = rec.部長.value;
-        userCodes.push(manager[0]['code']);
-
-        //本部長を変数に代入
-        let chief = rec.本部長.value;
-        userCodes.push(chief[0]['code']);
 
         const content ="【kintone】"+"フローが全て完了しました。";
 
@@ -167,17 +182,44 @@
         }
       } 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-    } else if (event.nextStatus.value == '【申請中】コールセンター') {
-
+    } else if (event.nextStatus.value == '【申請】コールセンター') {
+console.warn("起動");
       //ユーザー選択のコードを変数に代入
       let top_userfield = rec.コールセンター上長.value;
       userCodes.push(top_userfield[0]['code']);
 
+      //特約店ユーザー1
+      let user_1 = rec.特約店ユーザーID1.value;
+      userCodes_fc.push(user_1);
+
+      //特約店ユーザー2
+      let user_2 = rec.特約店ユーザーID2.value;
+      userCodes_fc.push(user_2);
+
+      //特約店ユーザー3
+      let user_3 = rec.特約店ユーザーID3.value;
+      userCodes_fc.push(user_3);
+
+      //特約店ユーザー4
+      let user_4 = rec.特約店ユーザーID4.value;
+      userCodes_fc.push(user_4);
+
+
+      //特約店ユーザー4
+      let user_5 = rec.特約店ユーザーID5.value;
+      userCodes_fc.push(user_5);
+      
       if(event.action.value == '申請'){
+        console.warn("申請");
           const content ="【kintone】"+"アンケートアプリの申請が届いています";
           for (const code of userCodes) {
             await performCommonAction('申請', code , content , URL);
           }
+
+          for (const code of userCodes_fc) {
+            await performCommonAction_fc('申請', code , content , URL);
+          }
+
       }else if(event.action.value == '差戻し'){
           const content ="【kintone】"+"アンケートアプリの申請が拒否されました";
           for (const code of userCodes) {
@@ -256,4 +298,4 @@
     return targetUser;
     };
 
-})();
+})(jQuery.noConflict(true));
