@@ -32,12 +32,19 @@
           '<request_token>${REQUEST_TOKEN}</request_token>' +
           '<create_thread> '+
             '<thread id="dummy" version="dummy" subject="${TITTLE}" confirm="false"> '+
-              '<addressee user_id="${USER_ID}" name="dummy" deleted="false"></addressee> '+
+              '${ADDRESSEE}' +
               '<content body="${MAIN_TEXT}"></content> '+
             ' <folder user_id="dammy"></folder> '+
           ' </thread> '+
         ' </create_thread> '+
         '</parameters>';
+
+  /**
+   * メッセージ送信先パラメータテンプレート
+   * ${XXXX}の箇所は入力値等で置換して使用
+   */
+  const ADDRESSEE_TEMPLATE =
+  '<addressee user_id="${USER_ID}" name="dummy" deleted="false"></addressee>';
 
   // 文字列をHTMLエスケープ
   const escapeHtml = function(str) {
@@ -76,14 +83,28 @@
   //メッセージ実行の共通処理(ユーザーフィールド)
   const performCommonAction = async (action, code, content , URL ) => {
     try {
-      let targetUser = await fetchGaroonUserByCode(code);
+
+      //空の配列を作成
+      let test = [];
+      for(let iz =0;iz <code.length; iz++){
+        test.push( await fetchGaroonUserByCode(code[iz]));
+      }
+
+      // 複数人への送信内容をまとめる配列
+      const userParams = [];
+      for (let i = 0; i < test.length; i++) {
+        userParams.push(ADDRESSEE_TEMPLATE.replace('${USER_ID}', test[i].id));
+      }
+      
+      // let targetUser = await fetchGaroonUserByCode(code);
       let requestToken = await getRequestToken();
-  console.warn("り");
+
       // 送信するメッセージパラメータを作成
       let msgAddParam = MSG_ADD_TEMPLATE;
       msgAddParam = msgAddParam.replace('${REQUEST_TOKEN}', escapeHtml(requestToken));
       msgAddParam = msgAddParam.replace('${TITTLE}', content);
-      msgAddParam = msgAddParam.replace('${USER_ID}', targetUser.id); // targetUserのidを使用,targetUser.id
+      // msgAddParam = msgAddParam.replace('${USER_ID}', targetUser.id); // targetUserのidを使用,targetUser.id
+      msgAddParam = msgAddParam.replace('${ADDRESSEE}', userParams.join(''));
       msgAddParam = msgAddParam.replace('${MAIN_TEXT}', URL); 
   
       let msgAddRequest = SOAP_TEMPLATE;
@@ -163,7 +184,7 @@
         let call_center = rec.コールセンター.value;
         userCodes.push(call_center[0]['code']);
 
-        const content ="【kintone】"+"フローが全て完了しました。";
+        const content ="【kintone】"+"1フロー完了しました。";
 
         for (const code of userCodes) {
           await performCommonAction('完了', code , content , URL);
@@ -181,44 +202,46 @@
           await performCommonAction('申請', code , content , URL);
         }
       } 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
+
     } else if (event.nextStatus.value == '【申請】コールセンター') {
-console.warn("起動");
-      //ユーザー選択のコードを変数に代入
-      let top_userfield = rec.コールセンター上長.value;
-      userCodes.push(top_userfield[0]['code']);
 
-      //特約店ユーザー1
-      let user_1 = rec.特約店ユーザーID1.value;
-      userCodes_fc.push(user_1);
+       console.warn("recの中身を見たい",rec);
+       if(rec.店舗区分.value == '直営'){
+            // ユーザー選択のコードを変数に代入
+            let top_userfield = rec.コールセンター上長.value;
+            userCodes.push(top_userfield[0]['code']);
+            
+            let userfield = rec.AM.value;
+            userCodes.push(userfield[0]['code']);
 
-      //特約店ユーザー2
-      let user_2 = rec.特約店ユーザーID2.value;
-      userCodes_fc.push(user_2);
+            let userfield1 = rec.部長.value;
+            userCodes.push(userfield1[0]['code']);
 
-      //特約店ユーザー3
-      let user_3 = rec.特約店ユーザーID3.value;
-      userCodes_fc.push(user_3);
+            let userfield2 = rec.本部長.value;
+            userCodes.push(userfield2[0]['code']);
+       }else if(rec.店舗区分.value == 'FC'){
+            // ユーザー選択のコードを変数に代入
+            let top_userfield = rec.コールセンター上長.value;
+            userCodes.push(top_userfield[0]['code']);
+            
+            let userfield = rec.FCオーナー.value;
+            userCodes.push(userfield[0]['code']);
 
-      //特約店ユーザー4
-      let user_4 = rec.特約店ユーザーID4.value;
-      userCodes_fc.push(user_4);
+            let userfield1 = rec.部長.value;
+            userCodes.push(userfield1[0]['code']);
 
+            let userfield2 = rec.本部長.value;
+            userCodes.push(userfield2[0]['code']);
+       }
 
-      //特約店ユーザー4
-      let user_5 = rec.特約店ユーザーID5.value;
-      userCodes_fc.push(user_5);
-      
       if(event.action.value == '申請'){
         console.warn("申請");
           const content ="【kintone】"+"アンケートアプリの申請が届いています";
-          for (const code of userCodes) {
-            await performCommonAction('申請', code , content , URL);
-          }
+            await performCommonAction('申請', userCodes , content , URL);
 
-          for (const code of userCodes_fc) {
-            await performCommonAction_fc('申請', code , content , URL);
-          }
+          // for (const code of userCodes_fc) {
+          //   await performCommonAction_fc('申請', code , content , URL);
+          // }
 
       }else if(event.action.value == '差戻し'){
           const content ="【kintone】"+"アンケートアプリの申請が拒否されました";
@@ -229,12 +252,15 @@ console.warn("起動");
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
     } else if (event.nextStatus.value === '【確認済み】コールセンター上長') {
 
-      //店長のコードを変数に代入
-      let store_manager = rec.店長.value;
-      userCodes.push(store_manager[0]['code']);
-      //AMのコードを変数に代入
-      let am = rec.AM.value;
-      userCodes.push(am[0]['code']);
+      if(rec.店舗区分.value == '直営'){
+        //AMのコードを変数に代入
+        let am = rec.AM.value;
+        userCodes.push(am[0]['code']);
+      }else{
+        //AMのコードを変数に代入
+        let am = rec.FCオーナー.value;
+        userCodes.push(am[0]['code']);
+      }
 
       const content ="【kintone】"+"アンケートアプリ";
 
@@ -244,12 +270,13 @@ console.warn("起動");
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
     } else if(event.nextStatus.value === '【申請中】店長'){
 
+      if(rec.店舗区分.value == '直営'){
       //部長のコードを変数に代入
       let manager = rec.部長.value;
       userCodes.push(manager[0]['code']);
-      //本部長のコードを変数に代入
-      let chief = rec.本部長.value;
-      userCodes.push(chief[0]['code']);
+      }else{
+  
+      }
 
       const content ="【kintone】"+"アンケートアプリの申請が届いています";
 
