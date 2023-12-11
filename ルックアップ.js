@@ -1,34 +1,34 @@
 (function() {
     'use strict';
 
-    //javascriptルックアップ
-        'use strict';
-        // ルックアップによる制御
-        kintone.events.on(['app.record.edit.submit'], function(event) {
+    // //javascriptルックアップ
+    //     'use strict';
+    //     // ルックアップによる制御
+    //     kintone.events.on(['app.record.edit.submit'], function(event) {
     
-            const record = event.record;
+    //         const record = event.record;
         
-            // アプリのIDに書き換えてください
-            const APP_ID = 29;
-            const store_id = record.店番.value;
+    //         // アプリのIDに書き換えてください
+    //         const APP_ID = 11;
+    //         const store_id = record.店番.value;
         
-            // const params = {
-            //     'app': APP_ID,
-            //     'query': `店番 = "${store_id}" and 日付="${date}"`
-            // };
+    //         // const params = {
+    //         //     'app': APP_ID,
+    //         //     'query': `店番 = "${store_id}" and 日付="${date}"`
+    //         // };
     
-            const params = {
-                'app': APP_ID,
-                'query': `店番 = "${store_id}"`
-            };
+    //         const params = {
+    //             'app': APP_ID,
+    //             'query': `店番 = "${store_id}"`
+    //         };
         
-            return kintone.api(kintone.api.url('/k/v1/records', true), 'GET', params).then((resp) => {
-                const records = resp.records;
-                console.warn(records);
-                record.GaroonのユーザーID1.value = records[0].GaroonのユーザーID1.value;
-                return event;
-            });
-        });
+    //         return kintone.api(kintone.api.url('/k/v1/records', true), 'GET', params).then((resp) => {
+    //             const records = resp.records;
+    //             console.warn(records);
+    //             record.特約店ユーザーID1.value = records[0].特約店ユーザーID1.value;
+    //             return event;
+    //         });
+    //     });
     
     
     

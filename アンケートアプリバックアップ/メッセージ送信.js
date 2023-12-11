@@ -95,7 +95,7 @@
       for (let i = 0; i < test.length; i++) {
         userParams.push(ADDRESSEE_TEMPLATE.replace('${USER_ID}', test[i].id));
       }
-
+      
       // let targetUser = await fetchGaroonUserByCode(code);
       let requestToken = await getRequestToken();
 
@@ -110,14 +110,13 @@
       let msgAddRequest = SOAP_TEMPLATE;
       // SOAPパラメータを完成させる
       msgAddRequest = msgAddRequest.replace('${PARAMETERS}', msgAddParam);
-
       // 実行処理を指定
       msgAddRequest = msgAddRequest.split('${ACTION}').join('MessageCreateThreads');
 
       // メッセージ登録の実行
       await $.ajax({
         type: 'post',
-        url: 'https://io8f1l5axfqn.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+        url: 'https://5vai8j2bikxt.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
         cache: false,
         async: false,
         data: msgAddRequest,
@@ -150,7 +149,7 @@
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://io8f1l5axfqn.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://5vai8j2bikxt.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           async: false,
           data: msgAddRequest,
@@ -168,7 +167,7 @@
     let rec = event.record;
 
     //お試し版URL【変更】
-    const kntAppURL = 'https://io8f1l5axfqn.cybozu.com/k/8/';
+    const kntAppURL = 'https://5vai8j2bikxt.cybozu.com/k/18/';
 
     //本文(bodyはフィールドコード)
     let URL =  kntAppURL + 'show#record=' + rec.$id.value;
@@ -206,10 +205,12 @@
 
     } else if (event.nextStatus.value == '【申請】コールセンター') {
 
+       console.warn("recの中身を見たい",rec);
+
       // ユーザー選択のコードを変数に代入
       let top_userfield = rec.コールセンター上長.value;
       userCodes.push(top_userfield[0]['code']);
-
+      
       let userfield = rec.AM.value;
       userCodes.push(userfield[0]['code']);
 
@@ -220,7 +221,7 @@
       userCodes.push(userfield2[0]['code']);
 
       if(event.action.value == '申請'){
-        
+        console.warn("申請");
           const content ="【kintone】"+"アンケートアプリの申請が届いています";
             await performCommonAction('申請', userCodes , content , URL);
 
@@ -237,7 +238,9 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
     } else if (event.nextStatus.value === '【確認済み】コールセンター上長') {
 
-
+      //店長のコードを変数に代入
+      let store_manager = rec.店長.value;
+      userCodes.push(store_manager[0]['code']);
       //AMのコードを変数に代入
       let am = rec.AM.value;
       userCodes.push(am[0]['code']);
