@@ -105,7 +105,8 @@
       msgAddParam = msgAddParam.replace('${TITTLE}', content);
       // msgAddParam = msgAddParam.replace('${USER_ID}', targetUser.id); // targetUserのidを使用,targetUser.id
       msgAddParam = msgAddParam.replace('${ADDRESSEE}', userParams.join(''));
-      msgAddParam = msgAddParam.replace('${MAIN_TEXT}', URL); 
+      const body = URL.replace(/\n/g, '&#10;');
+      msgAddParam = msgAddParam.replace('${MAIN_TEXT}', body); 
   
       let msgAddRequest = SOAP_TEMPLATE;
       // SOAPパラメータを完成させる
@@ -221,8 +222,12 @@
 
       if(event.action.value == '申請'){
         
-          const content ="【kintone】"+"アンケートアプリの申請が届いています";
-            await performCommonAction('申請', userCodes , content , URL);
+        //URLの文章を変更
+        let body = URL+'\n\n'+ rec.Garoon貼付用.value;
+
+        // IDの場合は右のように指定、rec.$id.value
+          const content =rec.店名.value + "【kintone】" + rec.$id.value;
+            await performCommonAction('申請', userCodes , content , body);
 
           // for (const code of userCodes_fc) {
           //   await performCommonAction_fc('申請', code , content , URL);
@@ -235,18 +240,29 @@
           }
       }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    } else if (event.nextStatus.value === '【確認済み】コールセンター上長') {
+    } else if (event.nextStatus.value === '【確認】コールセンター上長_直営店') {
 
 
-      //AMのコードを変数に代入
-      let am = rec.AM.value;
-      userCodes.push(am[0]['code']);
+      // ユーザー選択のコードを変数に代入
+      let top_userfield = rec.コールセンター上長.value;
+      userCodes.push(top_userfield[0]['code']);
 
-      const content ="【kintone】"+"アンケートアプリ";
+      let userfield = rec.AM.value;
+      userCodes.push(userfield[0]['code']);
 
-      for (const code of userCodes) {
-        await performCommonAction('完了', code , content , URL);
-      }
+      let userfield1 = rec.部長.value;
+      userCodes.push(userfield1[0]['code']);
+
+      let userfield2 = rec.本部長.value;
+      userCodes.push(userfield2[0]['code']);
+
+      //URLの文章を変更
+      let body = rec.コメント.value + "【コールセンター】";
+
+        // IDの場合は右のように指定、rec.$id.value
+        const content =rec.店名.value + "【kintone】" + rec.$id.value;
+
+        await performCommonAction('完了', userCodes , content , body);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
     } else if(event.nextStatus.value === '【申請中】店長'){
 
