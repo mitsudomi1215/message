@@ -6,8 +6,8 @@
     // ルックアップ取得先のデータを保持したリスト。
     // これが空の場合はapi経由で全量取得し、値がある場合はここから検索する。
     const fullRecords = [];
-    // ルックアップ先のアプリID
-    let lookupAppId = 11;
+    // ルックアップ先のアプリID【環境毎に編集が必要】
+    let lookupAppId = 14;
     // コンストラクタ定義
     let LookUpSample = (function(fieldSettings){
       function LookUpSample(fieldSettings) {

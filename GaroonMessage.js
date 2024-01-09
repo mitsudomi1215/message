@@ -29,7 +29,7 @@
   * ${XXXX}の箇所は入力値等で置換して使用
   */
   const MSG_SEARCH_TEMPLATE =
-    '<parameters text="kintone" start="2010-07-01T00:00:00Z" end="2023-12-31T00:00:00Z" search_sub_folders="true" title_search="true" body_search="false" from_search="false" addressee_search="false" follow_search="false">' +
+    '<parameters text="kintone" start="2010-07-01T00:00:00Z" end="2037-12-31T00:00:00Z" search_sub_folders="true" title_search="true" body_search="false" from_search="false" addressee_search="false" follow_search="false">' +
     '<request_token>${REQUEST_TOKEN}</request_token>' +
     '<create_thread>' +
     '</create_thread>' + 
@@ -80,13 +80,13 @@
           // メッセージ検索の実行
           await $.ajax({
             type: 'post',
-            url: 'https://io8f1l5axfqn.cybozu.com/g/cbpapi/message/api.csp',
+            url: 'https://lg6o0hese56a.cybozu.com/g/cbpapi/message/api.csp',
             cache: false,
             data: msgSearchRequest,
           }).then(function(responseData) {
                 // 検索結果をXMLからテキストに変換
               let responseText = new XMLSerializer().serializeToString(responseData);
-                  // console.warn("検索結果です。" + responseText); // レスポンスデータをコンソールに表示
+                  console.warn("検索結果です。" + responseText); // レスポンスデータをコンソールに表示
 
               // XML文字列をXMLドキュメントに変換
               const parser = new DOMParser();
@@ -161,9 +161,6 @@
                     // XML文字列を解析してDocumentオブジェクトを得る
                     const XMLparser = new DOMParser();
                     const xmlDocResult = XMLparser.parseFromString(targetThread.outerHTML, "application/xml");
-                    console.warn("一個づつね",xmlDocResult);
-
-                    //
 
                     // th:content要素を取得
                     let contentElement = xmlDocResult.querySelector('content');
@@ -214,7 +211,7 @@
   //---------------------------------------------------------------------------------------------------------------------------------
   //更新処理
   //---------------------------------------------------------------------------------------------------------------------------------
-      /**
+   /**
    * 共通SOAPコンテンツ
    * ${XXXX}の箇所は実施処理等に合わせて置換して使用
    */
@@ -288,12 +285,12 @@
       // メッセージ登録の実行
       await $.ajax({
         type: 'post',
-        url: 'https://io8f1l5axfqn.cybozu.com/g/cbpapi/message/api.csp',
+        url: 'https://lg6o0hese56a.cybozu.com/g/cbpapi/message/api.csp',
         cache: false,
         async: false,
         data: msgUpdateRequest
       }).then(function(responseData) {
-        console.warn("更新に成功したよ",responseData); // レスポンスデータをコンソールに表示
+        console.warn("更新に成功",responseData); // レスポンスデータをコンソールに表示
       });
 
     } catch (error) {
@@ -315,8 +312,8 @@
         '<Action>${ACTION}</Action>' + // この行を修正
         '<Security>' +
         '<UsernameToken>' +
-        '<Username>コールセンター上長</Username>' +
-        '<Password>kkmm9988</Password>' +
+        '<Username>光富</Username>' +
+        '<Password>km081215</Password>' +
         '</UsernameToken>' +
         '</Security>' +
         '<Timestamp>' +
@@ -328,7 +325,7 @@
         '<soap:Body>' +
         '<MessageRemoveThreads>' +
         '<parameters delete_all_inbox="true">' +
-        '<param xmlns="" folder_id="23" thread_id="${DELETE_ID}"></param>' +
+        '<param xmlns="" folder_id="2" thread_id="${DELETE_ID}"></param>' +
         '</parameters>' +
         '</MessageRemoveThreads>' +
         '</soap:Body>' +
@@ -337,9 +334,6 @@
     //メッセージ実行の共通処理(ユーザーフィールド)
     const MessageDelete = async (delete_id) => {
       try {
-  
-        //削除するIDを置換
-        
         //リクエストのテンプレート
         let msgDeleteRequest = SOAP_DELETE_TEMPLATE;
         //削除するIDを置換
@@ -347,29 +341,20 @@
   
         // 実行処理を指定
         msgDeleteRequest = msgDeleteRequest.split('${ACTION}').join('MessageRemoveThreads');
-
-        console.warn("以下送信するためのリクエストです。",msgDeleteRequest);
   
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://io8f1l5axfqn.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://lg6o0hese56a.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {
-          console.warn("メッセージの削除に成功しました(始)");
           console.warn(responseData); // レスポンスデータをコンソールに表示
-          console.warn("メッセージの削除に成功しました(終)");
         });
       } catch (error) {
         console.error("エラーが発生しました:", error);
       }
     };
-
-
-  //---------------------------------------------------------------------------------------------------------------------------------
-  //処理まとめ
-  //---------------------------------------------------------------------------------------------------------------------------------
 
   //メッセージ検索に関する処理
   performCommonAction();

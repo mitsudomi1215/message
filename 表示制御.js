@@ -15,6 +15,7 @@
 
         //フィールド編集不可
         record.お客様とのご連絡回数.disabled = true;
+        record.Garoonリンク.disabled = true;
 
         kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', false);
         kintone.app.record.setFieldShown('電話受付', false);
@@ -153,6 +154,10 @@
     //(編集画面)表示したとき
     kintone.events.on("app.record.edit.show", event => {
         const record = event.record;
+        
+        //Garoonリンクフィールドを編集不可
+        record.Garoonリンク.disabled = true;
+        
         if(record.受付方法.value == "電話"){
             kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', false);
             kintone.app.record.setFieldShown('電話受付', true);
@@ -217,6 +222,8 @@
 
         //システム管理者用を非表示にする
         kintone.app.record.setFieldShown('システム管理者用',false);
+        
+        return event;
     });
 
     //(編集画面)(グループ)
