@@ -1,13 +1,6 @@
 (function() {
     'use strict';
 
-    //trueが表示
-    //falseが非表示
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//メモ
-//
-//
 //以下、新規画面//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //(新規作成画面)表示したとき
     kintone.events.on("app.record.create.show", event => {
@@ -65,7 +58,7 @@
         const record = event.record;
 
         //アンケート報告書
-        if(record.アンケート報告書.value == "表示"){
+        if(record.アンケート報告書.value == "要"){
             kintone.app.record.setFieldShown('アンケート報告書_グループ',true);
             kintone.app.record.setGroupFieldOpen('アンケート報告書_グループ', true);
         }else{
@@ -137,7 +130,7 @@
             kintone.app.record.setFieldShown('お客様とのご連絡詳細_3回目_',false);
         }
         //アンケート報告書
-        if(record.アンケート報告書.value == "表示"){
+        if(record.アンケート報告書.value == "要"){
             kintone.app.record.setFieldShown('アンケート報告書_グループ',true);
             kintone.app.record.setGroupFieldOpen('アンケート報告書_グループ', true);
         }else{
@@ -213,7 +206,7 @@
             kintone.app.record.setFieldShown('お客様とのご連絡詳細_3回目_',false);
         }
         //アンケート報告書
-        if(record.アンケート報告書.value == "表示"){
+        if(record.アンケート報告書.value == "要"){
             kintone.app.record.setFieldShown('アンケート報告書_グループ',true);
             kintone.app.record.setGroupFieldOpen('アンケート報告書_グループ', true);
         }else{
@@ -310,7 +303,7 @@
         const record = event.record;
 
         //アンケート報告書
-        if(record.アンケート報告書.value == "表示"){
+        if(record.アンケート報告書.value == "要"){
             kintone.app.record.setFieldShown('アンケート報告書_グループ',true);
         }else{
             kintone.app.record.setFieldShown('アンケート報告書_グループ',false);

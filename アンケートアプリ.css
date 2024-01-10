@@ -1,0 +1,74 @@
+#my_index_button {
+  /* ボタンの背景色 */
+  background-color: #4CAF50;
+  /* ボタンのテキスト色 */
+  color: white;
+  /* ボーダーのスタイル */
+  border: 1px solid #4CAF50;
+  /* ボーダーの角丸 */
+  border-radius: 5px;
+  /* パディング（内部の余白） */
+  padding: 5px 10px;
+  /* マウスホバー時のスタイル */
+  cursor: pointer;
+  /* マージン(外部の余白) */
+  margin-top:5px;
+}
+
+/* ボタンがマウスホバーされたときのスタイル */
+#my_index_button:hover {
+  background-color: #45a049;
+  border: 1px solid #45a049;
+}
+
+/* 店舗の情報を取得フィールドのCSS */
+.lookUpModal{
+    display: none;
+    position: fixed;
+    background: rgba(0,0,0,.3);
+    top: 0;
+    left: 0;
+    width: 100vw;
+    /*height: 100vh;*/
+    height: 100%;
+    z-index: 1200;
+    overflow: scroll;
+    padding: 4px;
+  }
+  .lookUpModal.on{
+    display: block;
+  }
+  .lookUpModalHeader{
+    /*position: fixed;*/
+    background: #fff;
+    /*top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);*/
+    margin: 8px 8px 0px 8px;
+  }
+  .lookUpModalTable{
+    /*position: fixed;*/
+    background: #fff;
+    /*top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);*/
+    margin: 0px 8px 8px 8px;
+    width: 97%
+  }
+  .lookUpModalTable th,
+  .lookUpModalTable td{
+    border: 1px solid #000;
+    padding: 10px;
+  }
+  .lookUpButton{
+    padding: 5px;
+  }
+
+  .lookUpButtonSpace{
+    position: absolute;
+    bottom: 0;
+  }
+
+  .margin3{
+    margin: 3px;
+  }

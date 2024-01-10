@@ -63,7 +63,7 @@
   };
 
   //メッセージ実行の共通処理(ユーザーフィールド)
-  const performCommonAction = async () => {
+  const GaroonMessageUpdateDelete = async () => {
     try {
           let requestToken = await getRequestToken();
 
@@ -357,6 +357,6 @@
     };
 
   //メッセージ検索に関する処理
-  performCommonAction();
-    
+  GaroonMessageUpdateDelete();
+
 })(jQuery.noConflict(true));
