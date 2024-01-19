@@ -130,7 +130,7 @@
       }
     };
 
-      //メッセージ実行の共通処理(特約店ユーザー)
+      // メッセージ実行の共通処理(特約店ユーザー)
       const performCommonAction_fc = async (action, code, content , URL ) => {
         try {
           let requestToken = await getRequestToken();
@@ -391,9 +391,6 @@
                             for (var key in subjectThreadIds) {
                                 var subject = subjectThreadIds[key];
 
-                                
-                                console.warn("key", key, "subject", subject);
-
                                 // 同じメッセージが1つ以上見つかった時
                                 if (subject.length >= 1) {
                                     // 1通目のメッセージIDを取得
@@ -411,15 +408,12 @@
                                     const threadElementGet = FirstXMLparserxmlDoc.getElementsByTagName('thread');
                                     const subjectGet = Array.from(threadElementGet).map(thread => thread.getAttribute('id'));
 
-                                    console.warn("ここまでは来て言うr","key", key, "subject", subject, "レコードID", record.$id.value, "subjectGetのげ", subjectGet);
-
                                     if (key == record.$id.value) {
                                         record.コメント.value = "コメント";
-                                        console.warn("入ってる？");
+                                        
                                         // record.Garoonリンク.value = "https://io8f1l5axfqn.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";
                                         let GaroonLink = "https://lg6o0hese56a.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";
-                                        console.warn("入ってるよ", "https://lg6o0hese56a.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1");
-
+                                       
                                             // レコード更新のパラメータ設定
                                         let body = {
                                             app: kintone.app.getId(),
@@ -430,7 +424,7 @@
                                                 },
                                             },
                                         };
-                                        console.warn("recです", record);
+                                        
                                         // フィールドの値を更新する
                                         return kintone.api(
                                             kintone.api.url("/k/v1/record.json", true), "PUT", body, (resp) => {
@@ -458,21 +452,20 @@
         
           GaroonCreateLink(record);
         }
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//メッセージ送信処理
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //ログインユーザーの情報を取得
         var login_user = kintone.getLoginUser();
-      console.warn(1);
         if(login_user['id'] == 1 ){
-          console.warn(2);
           var myIndexButton = document.getElementById('my_index_button');
           if(!myIndexButton){
-            console.warn(3);
             // メニューの上側の空白部分にボタンを設置
             const myIndexButton = document.createElement('button');
             myIndexButton.id = 'my_index_button';
-            myIndexButton.innerText = 'Garoonメッセージ送信ボタン';
+            myIndexButton.innerText = 'Garoonにメッセージ送信';
             myIndexButton.onclick = () => {
-              window.alert('Garoonにメッセージを送信しました。')
+              window.alert('Garoonにメッセージ送信')
                   let rec = event.record;
                   //お試し版URL【変更】
                   const kntAppURL = 'https://lg6o0hese56a.cybozu.com/k/8/';
@@ -484,32 +477,85 @@
                   let userCodes_fc = [];
                   //宛先まとめる処理-----------------------------------
                   // ユーザー選択のコードを変数に代入
-                  if(rec.コールセンター上長.value.length !== 0){
+                  if(rec.コールセンター上長.value.length != 0 ){
                     let top_userfield = rec.コールセンター上長.value;
                     userCodes.push(top_userfield[0]['code']);
                   }
-                  if(rec.AM.valuelength !== 0){
+                  if(rec.AM.value.length != 0 ){
                     let userfield = rec.AM.value;
                     userCodes.push(userfield[0]['code']);
                   }
-                  if(rec.部長.value.$length !== 0){
+                  if(rec.部長.value.length != 0 ){
                     let userfield1 = rec.部長.value;
                     userCodes.push(userfield1[0]['code']);
                   }
-                  if(rec.本部長.value.length !== 0){
+                  if(rec.本部長.value.length != 0 ){
                     let userfield2 = rec.本部長.value;
                     userCodes.push(userfield2[0]['code']);
                   }
                   // IDの場合は右のように指定、rec.$id.value
                     const content =rec.店名.value + "【kintone】" + rec.$id.value;
-                      performCommonAction('申請', userCodes , content , rec.コメント.value);
+                      performCommonAction('申請', userCodes , content , rec.コメント.value)
+                      .then(function(){
+                        GaroonMessageUpdateDelete();
+                      })
+
             };
             kintone.app.record.getHeaderMenuSpaceElement().appendChild(myIndexButton);
           }
+
+          // var mycommentButton = document.getElementById('my_comment_button');
+          // if(!mycommentButton){
+          //   // メニューの上側の空白部分にボタンを設置
+          //   const mycommentButton = document.createElement('button');
+          //   mycommentButton.id = 'my_comment_button';
+          //   mycommentButton.innerText = 'コメント送信';
+          //   mycommentButton.onclick = () => {
+          //     window.alert('Garoonにコメントを送信しました。')
+          //         let rec = event.record;
+          //         //お試し版URL【変更】
+          //         const kntAppURL = 'https://lg6o0hese56a.cybozu.com/k/8/';
+          //         //URLを作成
+          //         let URL =  kntAppURL + 'show#record=' + rec.$id.value;
+          //         //ユーザー情報を格納する変数
+          //         let userCodes = [];
+          //         //FCのユーザー情報を編集する変数
+          //         let userCodes_fc = [];
+          //         //宛先まとめる処理-----------------------------------
+          //         // ユーザー選択のコードを変数に代入
+          //         if(rec.コールセンター上長.value.length != 0 ){
+          //           let top_userfield = rec.コールセンター上長.value;
+          //           userCodes.push(top_userfield[0]['code']);
+          //         }
+          //         if(rec.AM.value.length != 0 ){
+          //           let userfield = rec.AM.value;
+          //           userCodes.push(userfield[0]['code']);
+          //         }
+          //         if(rec.部長.value.length != 0 ){
+          //           let userfield1 = rec.部長.value;
+          //           userCodes.push(userfield1[0]['code']);
+          //         }
+          //         if(rec.本部長.value.length != 0 ){
+          //           let userfield2 = rec.本部長.value;
+          //           userCodes.push(userfield2[0]['code']);
+          //         }
+          //         // IDの場合は右のように指定、rec.$id.value
+          //           const content =rec.店名.value + "【kintone】" + rec.$id.value;
+          //             performCommonAction('申請', userCodes , content , rec.コメント.value)
+          //             .then(function(){
+          //               GaroonMessageUpdateDelete();
+          //             })
+
+          //   };
+          //   kintone.app.record.getHeaderMenuSpaceElement().appendChild(mycommentButton);
+          // }
+
+
         }
   });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Garoonのメッセージを検索➝更新➝削除する処理
   /**
   * メッセージ登録パラメータテンプレート
   * ${XXXX}の箇所は入力値等で置換して使用
@@ -522,7 +568,7 @@
     '</parameters>';
 
     
-  //メッセージ実行の共通処理(ユーザーフィールド)
+  //Garoonメッセージを更新削除する処理
   const GaroonMessageUpdateDelete = async () => {
     try {
           let requestToken = await getRequestToken();
@@ -546,7 +592,7 @@
           }).then(function(responseData) {
                 // 検索結果をXMLからテキストに変換
               let responseText = new XMLSerializer().serializeToString(responseData);
-                  console.warn("検索結果です。" + responseText); // レスポンスデータをコンソールに表示
+                  // console.warn("検索結果です。" + responseText); // レスポンスデータをコンソールに表示
 
               // XML文字列をXMLドキュメントに変換
               const parser = new DOMParser();
@@ -588,11 +634,12 @@
               let threadsArray = Array.from(threads);
               //空の配列を作成
               let newArray = [];
-
+// console.warn("中身を見たい",subjectThreadIds);
               //繰り返し
               Object.keys(subjectThreadIds).forEach(subject => {
                 //同じメッセージが2つ以上見つかった時
                 if (subjectThreadIds[subject].length >= 2) {
+// console.warn("IDを見たい",subjectThreadIds[subject]);
                   //1通目のメッセージIDを取得
                   let firstID = subjectThreadIds[subject][0];
 
@@ -603,18 +650,33 @@
                   //1通目のDocumentオブジェクトを得る
                   const FirstXMLparser = new DOMParser();
                   const FirstXMLparserxmlDoc = FirstXMLparser.parseFromString(FirstTargetThread.outerHTML, "application/xml");
+//変更前---------------------------------------------------------------------------------------------------------------------------------
+                  // // 名前空間を指定してaddresseeタグのユーザーIDを抜き取る
+                  // const addresseeElements = FirstXMLparserxmlDoc.getElementsByTagName('th:addressee');
+                  // const addresseeUserIds = Array.from(addresseeElements).map(addressee => addressee.getAttribute('user_id'));
+//変更前---------------------------------------------------------------------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//変更後-------------------------------------------------------------------------------------------------------------------------------------
+                  //最新メッセージのID
+                  let finalArray = subjectThreadIds[subject][subjectThreadIds[subject].length - 1];
+// console.warn("最終インデックス番号",finalArray); //成功
+                  //最終メッセージの情報を取得
+                  let FinalTargetThread = threadsArray.find(thread => thread.getAttribute('id') == finalArray);
 
+                  //1通目のDocumentオブジェクトを得る
+                  const FinalXMLparser = new DOMParser();
+                  const FinalXMLparserxmlDoc = FinalXMLparser.parseFromString(FinalTargetThread.outerHTML, "application/xml");
+                  //------------------------------------------------------------------------------------------------------------------------------
                   // 名前空間を指定してaddresseeタグのユーザーIDを抜き取る
-                  const addresseeElements = FirstXMLparserxmlDoc.getElementsByTagName('th:addressee');
+                  const addresseeElements = FinalXMLparserxmlDoc.getElementsByTagName('th:addressee');
                   const addresseeUserIds = Array.from(addresseeElements).map(addressee => addressee.getAttribute('user_id'));
-
-
-                  // 名前空間を指定してaddresseeタグのユーザーIDを抜き取る
+//変更後-------------------------------------------------------------------------------------------------------------------------------------
+                  // subjectタグ情報を抜き取る
                   const threadElementGet= FirstXMLparserxmlDoc.getElementsByTagName('thread');
                   const subjectGet = Array.from(threadElementGet).map(thread => thread.getAttribute('subject'));
-                    //タイトルごとに繰り返し
-                    subjectThreadIds[subject].forEach(id => {
 
+                    // タイトルごとに繰り返し
+                    subjectThreadIds[subject].forEach(id => {
                     // IDが一致するスレッドを取得
                     let targetThread = threadsArray.find(thread => thread.getAttribute('id') == id);
 
@@ -809,7 +871,7 @@
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {
-          console.warn(responseData); // レスポンスデータをコンソールに表示
+          console.warn("削除に成功"); // レスポンスデータをコンソールに表示
         });
       } catch (error) {
         console.error("エラーが発生しました:", error);

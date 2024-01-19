@@ -65,8 +65,6 @@
             kintone.app.record.setFieldShown('アンケート報告書_グループ',false);
         }
     });
-    
-
 
 
 //以下、詳細画面//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -308,6 +306,28 @@
         }else{
             kintone.app.record.setFieldShown('アンケート報告書_グループ',false);
         }
+    });
+
+    //メール・口コミ、ネットアンケートの総合評価が利用したくないの時
+    kintone.events.on([ 'app.record.edit.change.総合評価_メール'], event => {
+        const rec = event.record;
+        if (rec.総合評価_メール.value == '利用したくない') {
+          rec.アンケート報告書_メール.value = '要';
+        }else{
+          rec.アンケート報告書_メール.value = '否';
+        }
+        return event;
+    });
+
+    //電話の総合評価が利用したくないの時
+    kintone.events.on([ 'app.record.edit.change.総合評価_電話'], event => {
+        const rec = event.record;
+        if (rec.総合評価_電話.value == '利用したくない') {
+            rec.アンケート報告書_電話.value = '要';
+        }else{
+            rec.アンケート報告書_電話.value = '否';
+        }
+        return event;
     });
 
 

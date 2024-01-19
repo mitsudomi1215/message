@@ -1,3 +1,28 @@
+#my_comment_button {
+  /* ボタンの背景色 */
+  background-color: #41bbc6;
+  /* ボタンのテキスト色 */
+  color: white;
+  /* ボーダーのスタイル */
+  border: 1px solid #41bbc6;
+  /* ボーダーの角丸 */
+  border-radius: 5px;
+  /* パディング（内部の余白） */
+  padding: 5px 10px;
+  /* マウスホバー時のスタイル */
+  cursor: pointer;
+  /* マージン(外部の余白) */
+  margin-top:5px;
+  /* マージン(外部の余白) */
+  margin-left:10px;
+}
+
+/* ボタンがマウスホバーされたときのスタイル */
+#my_comment_button:hover {
+  background-color: #53cfdb;
+  border: 1px solid #53cfdb;
+}
+
 #my_index_button {
   /* ボタンの背景色 */
   background-color: #4CAF50;
@@ -13,6 +38,7 @@
   cursor: pointer;
   /* マージン(外部の余白) */
   margin-top:5px;
+  margin-left:10px;
 }
 
 /* ボタンがマウスホバーされたときのスタイル */
@@ -20,6 +46,8 @@
   background-color: #45a049;
   border: 1px solid #45a049;
 }
+
+
 
 /* 店舗の情報を取得フィールドのCSS */
 .lookUpModal{
@@ -72,3 +100,4 @@
   .margin3{
     margin: 3px;
   }
+
