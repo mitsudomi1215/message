@@ -101,3 +101,9 @@
     margin: 3px;
   }
 
+  /* 編集画面でメッセージ送信時に表示されるモーダルの文字を左揃えにする */
+  .sweet-alert p {
+    font-weight:bold;
+    margin-left:42px;
+    text-align: left;
+  }
