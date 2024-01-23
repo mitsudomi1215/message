@@ -409,7 +409,6 @@
                         
                         subjectThreadIds[subject].push(threadId);
                         } else {
-                        console.warn("subjectがnullまたはundefinedです");
                         }
                     });
 
@@ -566,13 +565,21 @@
     }        
   });
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//新規画面で保存ボタンを押したとき、メッセージを送信する処理
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+kintone.events.on(['app.record.edit.submit.success'], async (event) => {
+  let record = event.record;
+  console.warn("新規追加保存後のデータ",record);
+
+});
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //編集画面で保存ボタンを押したとき、メッセージを送信する処理
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 kintone.events.on(['app.record.edit.submit.success'], async (event) => {
   let record = event.record;
-
-  console.warn("イベントの内容",event);
+  // record.コメント.value = "コメントを変更できました。";
 
   // 文字を作成
   // 改行で文字列を分割し、配列に変換
@@ -591,9 +598,14 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     
 
   if (record.Garoonメッセージ送信制御.value == '送信する') {
-    console.warn("レコードの内容を確認",record.コメント.value);
+
+    //お試し版URL【変更】
+    const kntAppURL = 'https://lg6o0hese56a.cybozu.com/k/8/';
+    //URLを作成
+    let URL =  kntAppURL + 'show#record=' + record.$id.value;
+    
     // メッセージの送信内容をまとめる
-    const messageContent = `送信内容:\n${record.Garoon送信メッセージ内容.value}\n\n\n${adjacentText}`;
+    const messageContent = `〇送信内容\n${record.Garoon送信メッセージ内容.value}\n\n${adjacentText}`;
     // メッセージの送信内容をまとめる
       const swalResult = await window.swal({
         title: 'メッセージを送信しますか？',
@@ -603,16 +615,30 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         confirmButtonColor: '#DD6B55',
         confirmButtonText: '送信する',
         cancelButtonText: '送信しない',
-        allowOutsideClick: false, // モーダル外をクリックしても閉じないように設定
-      });
+        closeOnConfirm: false},
+        () => {
+          const params = {
+            app: event.appId,		// アプリID
+            id: event.recordId,			// レコードID
+            record: {		// レコード情報
+              コメント: { 
+                value: 'コメントの変更ができたよ'
+              },
+              区分2: {
+                value: 'A報請求済中'
+              }
+            }
+          };
+          kintone.api(kintone.api.url('/k/v1/record.json', true), 'PUT', params).then((resp) => {
+            // PUT成功
+            return event;
+          })
+          location.reload();
+        }
+      );
 
-      if (swalResult && swalResult.isConfirmed) {
-        console.warn('メッセージを送信する処理');
-        // ここに送信処理を追加
-        // 例えば非同期処理があれば `await` を使って完了するまで待つ
-        // record.Garoonメッセージ送信制御.value = '送信しない';
-        // ...
-      }
+  
+      
   }
 
   return event;
@@ -622,17 +648,21 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 kintone.events.on([
   'app.record.edit.change.店番',
   'app.record.edit.change.店名',
-  'app.record.edit.change.コメント'
-], function(event) {
-  var record = event.record;
-  var changes = event.changes;
+], event => {
+  const record = event.record;
 
-  console.warn("record" + record , "changes" , changes);
-
-  record.Garoonメッセージ内容.value = '店番:' + record.店番.value + '\n' +'店名:' + record.店名.value + '\n' + 'コメント:' + record.コメント.value;
+  console.warn("発生日時",record.発生日時.value);
+  record.Garoon送信メッセージ内容.value = '店番:' + record.店番.value + '\n' +'店名:' + record.店名.value + '\n' + 'コメント:' + record.コメント.value;
 
   return event;
 });
+
+// 処理が終わった後に画面遷移する処理
+function redirectToNewPage(URL) {
+  // 画面遷移（例: Googleのトップページにリダイレクト）
+  window.location.href = URL;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //Garoonのメッセージを検索➝更新➝削除する処理
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -696,8 +726,6 @@ kintone.events.on([
                   }
                 
                   subjectThreadIds[subject].push(threadId);
-                } else {
-                  console.warn("subjectがnullまたはundefinedです");
                 }
               });
 
@@ -884,11 +912,11 @@ kintone.events.on([
         async: false,
         data: msgUpdateRequest
       }).then(function(responseData) {
-        console.warn("更新に成功",responseData); // レスポンスデータをコンソールに表示
+        // console.warn("更新に成功",responseData); // レスポンスデータをコンソールに表示
       });
 
     } catch (error) {
-      console.error("エラーが発生しました:", error);
+      // console.error("エラーが発生しました:", error);
     }
   };
 
@@ -943,14 +971,10 @@ kintone.events.on([
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {
-          console.warn("削除に成功"); // レスポンスデータをコンソールに表示
+          // console.warn("削除に成功"); // レスポンスデータをコンソールに表示
         });
       } catch (error) {
         console.error("エラーが発生しました:", error);
       }
     };
-
-  
-
-
 })(jQuery.noConflict(true));

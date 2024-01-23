@@ -107,3 +107,51 @@
     margin-left:42px;
     text-align: left;
   }
+
+  
+/* 追加のCSSスタイル */
+.lookUpModalTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.lookUpModalTable th, .lookUpModalTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.lookUpModalTable th {
+  background-color: #3498db; /* ヘッダーの背景色 */
+  color: #fff; /* ヘッダーのテキスト色 */
+}
+
+.lookUpModalTable tbody tr:nth-child(odd) {
+  background-color: #ecf0f1; /* テーブルの奇数行の背景色（水色） */
+}
+
+.lookUpModalTable tbody tr:nth-child(even) {
+  background-color: #fff; /* テーブルの偶数行の背景色（白色） */
+}
+
+/* 売上速報ルックアップボタン */
+.saleslookUpButton {
+  display: inline-block;
+  padding: 5px 10px;
+  margin-left:5px;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  background-color: #4CAF50; /* 緑色の背景色 */
+  color: white; /* 文字色を白に設定 */
+  border: none;
+  border-radius: 5px; /* 角を丸める */
+  cursor: pointer;
+}
+
+.saleslookUpButton:hover {
+  background-color: #45a049; /* ホバー時の背景色 */
+}
+
+  

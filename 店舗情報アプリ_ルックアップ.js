@@ -295,6 +295,7 @@
     //コピー先のフィールドを追加したい場合は以下に追加していく
     otherCopyFields: [ //ほかのフィールドのコピー
     {to: '店番', from: '店番'},
+    {to: '店名', from: '店名'},
     {to: '本部', from: '本部'},//変更
     {to: '部', from: '部'},//変更
     {to: 'エリア', from: 'エリア'},//変更
@@ -303,9 +304,8 @@
     {to: 'FCオーナー', from: 'FCオーナー'},
     {to: '部長', from: '部長'},
     {to: '本部長', from: '本部長'},
-    {to: '店名', from: '店名'},
     ],
-    viewFields: ['店番', '店名', 'レコード番号'], //modalに表示するフィールド
+    viewFields: ['店番', '店名'], //modalに表示するフィールド
     companyNameFieldName : '店番',
     tantouNameFieldName : '店名',
     resultTableID : 'table1',

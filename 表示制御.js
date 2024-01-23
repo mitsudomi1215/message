@@ -330,6 +330,21 @@
         return event;
     });
 
+    //発生日時を日付フィールドに変換
+    kintone.events.on([
+        'app.record.edit.change.発生日時',
+      ], event => {
+        const record = event.record;
+console.warn(2);
+        // 文字列からDateオブジェクトを作成
+        const dateTimeObject = new Date(record.発生日時.value);
+
+        // 日付部分のみを取得
+        record.日付_発生日時.value = dateTimeObject.toISOString().split('T')[0];
+      
+        return event;
+      });
+      
 
 
 })();

@@ -7,7 +7,7 @@
     // これが空の場合はapi経由で全量取得し、値がある場合はここから検索する。
     const fullRecords = [];
     // ルックアップ先のアプリID【環境毎に編集が必要】
-    let lookupAppId = 14;
+    let lookupAppId = 19;
     // コンストラクタ定義
     let LookUpSample = (function(fieldSettings){
       function LookUpSample(fieldSettings) {
@@ -68,77 +68,79 @@
           this.modal.classList.add('on');
   
           // modal上にいくつか機能を追加
-  
-          // 検索結果件数の表示
-          this.header.innerHTML = ('件数：' + _this.records.length);
+//ヘッダー------------------------------------------------------------------------------
+          // // 検索結果件数の表示
+          // this.header.innerHTML = ('件数：' + _this.records.length);
           
-          // 絞込み条件フィールドを追加
-          let companyCodeName = _this.fieldSettings.companyCodeID;
-          let tantouName = _this.fieldSettings.tantouNameID;
-          // 店番
-          const companyCode = document.createElement("input");
-          companyCode.setAttribute("type", "text");
-          companyCode.setAttribute("id", companyCodeName);
-          companyCode.setAttribute("placeholder", "店番");
-          companyCode.classList.add('margin3');
-          this.header.appendChild(companyCode);
-          // 店名
-          const tantou = document.createElement("input");
-          tantou.setAttribute("type", "text");
-          tantou.setAttribute("id", tantouName);
-          tantou.setAttribute("placeholder", "店名");
-          tantou.classList.add('margin3');
-          this.header.appendChild(tantou);        
+          // // 絞込み条件フィールドを追加
+          // let companyCodeName = _this.fieldSettings.companyCodeID;
+          // let tantouName = _this.fieldSettings.tantouNameID;
+          // // 店番
+          // const companyCode = document.createElement("input");
+          // companyCode.setAttribute("type", "text");
+          // companyCode.setAttribute("id", companyCodeName);
+          // companyCode.setAttribute("placeholder", "店番");
+          // companyCode.classList.add('margin3');
+          // this.header.appendChild(companyCode);
+          // // 店名
+          // const tantou = document.createElement("input");
+          // tantou.setAttribute("type", "text");
+          // tantou.setAttribute("id", tantouName);
+          // tantou.setAttribute("placeholder", "店名");
+          // tantou.classList.add('margin3');
+          // this.header.appendChild(tantou);        
   
-          // 検索結果の絞込みボタン処理
-          const filterButton = document.createElement('input');
-          filterButton.setAttribute("id", _this.fieldSettings.fileterButtonID);
-          filterButton.type = 'button';
-          filterButton.value = '絞込み';
-          filterButton.classList.add('margin3');
-          filterButton.addEventListener('click', function(e){
-            let companyName, tantou, re, re2;
-            companyName = $("#" + companyCodeName).val();
-            tantou = $("#" + tantouName).val();
-            re = new RegExp(companyName);
-            re2 = new RegExp(tantou);
+          // // 検索結果の絞込みボタン処理
+          // const filterButton = document.createElement('input');
+          // filterButton.setAttribute("id", _this.fieldSettings.fileterButtonID);
+          // filterButton.type = 'button';
+          // filterButton.value = '絞込み';
+          // filterButton.classList.add('margin3');
+          // filterButton.addEventListener('click', function(e){
+          //   let companyName, tantou, re, re2;
+          //   companyName = $("#" + companyCodeName).val();
+          //   tantou = $("#" + tantouName).val();
+          //   re = new RegExp(companyName);
+          //   re2 = new RegExp(tantou);
           
-            $("#" + _this.fieldSettings.resultTableID + " tr").show(); //初期化
-            $("#" + _this.fieldSettings.resultTableID + " tbody tr").each(function(){
-              let isShow1= true;
-              let isShow2= true;
-              if (companyName) {
-                let companyVal = $(this).find("td:eq(0)").text(); //1列目
-                if(companyVal.match(re) == null){
-                  isShow1 = false;
-                }
-              }
+          //   $("#" + _this.fieldSettings.resultTableID + " tr").show(); //初期化
+          //   $("#" + _this.fieldSettings.resultTableID + " tbody tr").each(function(){
+          //     let isShow1= true;
+          //     let isShow2= true;
+          //     if (companyName) {
+          //       let companyVal = $(this).find("td:eq(0)").text(); //1列目
+          //       if(companyVal.match(re) == null){
+          //         isShow1 = false;
+          //       }
+          //     }
   
-              if (tantou) {
-                let tantouVal = $(this).find("td:eq(1)").text(); //2列目
-                if(tantouVal.match(re2) == null){
-                  isShow2 = false;
-                }
-              }
+          //     if (tantou) {
+          //       let tantouVal = $(this).find("td:eq(1)").text(); //2列目
+          //       if(tantouVal.match(re2) == null){
+          //         isShow2 = false;
+          //       }
+          //     }
   
-              if (!isShow1 || !isShow2) {
-                $(this).hide();
-              }
-            });
-          });
-          this.header.appendChild(filterButton);
+          //     if (!isShow1 || !isShow2) {
+          //       $(this).hide();
+          //     }
+          //   });
+          // });
+          // this.header.appendChild(filterButton);
   
-          // 全て表示ボタン
-          const showAllButton = document.createElement('input');
-          showAllButton.setAttribute("id", _this.fieldSettings.showAllButtoneID);
-          showAllButton.type = 'button';
-          showAllButton.value = '全て表示';
-          showAllButton.classList.add('margin3');
-          showAllButton.addEventListener('click', function(e){
-            $("#" + _this.fieldSettings.resultTableID + " tr").show();
-          });
-          this.header.appendChild(showAllButton);
+          // // 全て表示ボタン
+          // const showAllButton = document.createElement('input');
+          // showAllButton.setAttribute("id", _this.fieldSettings.showAllButtoneID);
+          // showAllButton.type = 'button';
+          // showAllButton.value = '全て表示';
+          // showAllButton.classList.add('margin3');
+          // showAllButton.addEventListener('click', function(e){
+          //   $("#" + _this.fieldSettings.resultTableID + " tr").show();
+          // });
+          ////ヘッダーを追加
+          // this.header.appendChild(showAllButton);
         },
+// ヘッダーここまで-------------------------------------------------------------------------
         // modal消す処理
         removeModal: function(){
           this.modal.classList.remove('on');
@@ -147,8 +149,8 @@
         createGetButton: function(){
           let _this = this;
           this.getButton = document.createElement('a');
-          this.getButton.innerHTML = '取得';
-          this.getButton.classList.add('lookUpButton');
+          this.getButton.innerHTML = '売上速報からデータを取得';
+          this.getButton.classList.add('saleslookUpButton');
           this.getButton.addEventListener('click', function(){
   
             // fullRecords取得済みであればそのリストから検索、なければ取得先から取得する
@@ -186,10 +188,10 @@
                 }
             } else {
                 showSpinner(); // スピナー表示
-                fetchAllRecords(0, [], companyName, tantouName)
+                fetchAllRecords(0, [], companyName, tantouName,_this.event)
                 .then(function(response){
                     if (!response.length) {
-                        alert('データがありません。');
+                        alert('データがありません。これか');
                     } else {
                         _this.records = response;
                         _this.showModal(response);
@@ -204,7 +206,7 @@
         createClearButton: function(){
           let _this = this;
           this.clearButton = document.createElement('a');
-          this.clearButton.classList.add('lookUpButton');
+          this.clearButton.classList.add('saleslookUpButton');
           this.clearButton.innerHTML = 'クリア';
           this.clearButton.addEventListener('click', function(){
             _this.clearDatas();
@@ -285,48 +287,62 @@
     // ここから要編集(フィールド設定)
     let lookUpParams = {
       //appSelectField: '顧客会社名', 
-      buttonSpace: 'lookUpButton', //ボタン設置用のスペースフィールド
-      recordIdField: 'テスト', //ルックアップ先のレコード番号保存用のフィールド
+      buttonSpace: 'EarningsLookUp', //ボタン設置用のスペースフィールド
+      recordIdField: '売上速報ルックアップ', //ルックアップ先のレコード番号保存用のフィールド
       app: lookupAppId,
       copyField: {
-        to: 'テスト', //自作のルックアップフィールド
+        to: '売上速報ルックアップ', //自作のルックアップフィールド
         from: '店名' //コピー元のフィールド
       },
       //コピー先のフィールドを追加したい場合は以下に追加していく
       otherCopyFields: [ //ほかのフィールドのコピー
-      {to: '店番', from: '店番'},
-      {to: '本部', from: '本部'},//変更
-      {to: '部', from: '部'},//変更
-      {to: 'エリア', from: 'エリア'},//変更
-      {to: '区分', from: '区分'},//変更
-      {to: 'AM', from: 'AM'},
-      {to: 'FCオーナー', from: 'FCオーナー'},
-      {to: '部長', from: '部長'},
-      {to: '本部長', from: '本部長'},
-      {to: '店名', from: '店名'},
+      {to: '売上_計画', from: '売上計画'},//変更
+      {to: '売上_週マネ', from: '売上実績_週マネ'},//変更
+      {to: '売上_実績', from: '売上実績'},//変更
+      {to: '売上_達成率', from: '売上達成率'},//変更
+ 
+
       ],
-      viewFields: ['店番', '店名', 'レコード番号'], //modalに表示するフィールド
+      viewFields: ['店番', '店名','日付', '売上計画','売上実績_週マネ','売上実績','売上達成率'], //modalに表示するフィールド
       companyNameFieldName : '店番',
       tantouNameFieldName : '店名',
-      resultTableID : 'table1',
-      companyCodeID: 'companyCode1',
-      tantouNameID: 'hinban1',
-      fileterButtonID: 'filterButton1',
-      showAllButtoneID: 'showAllButton1',
+      resultTableID : 'table2',
+      companyCodeID: 'companyCode2',
+      tantouNameID: 'hinban2',
+      fileterButtonID: 'filterButton2',
+      showAllButtoneID: 'showAllButton2',
     };
-  
-    async function fetchAllRecords(maxRecordNumber, records, companyName, tantouName){
+    //他のアプリからデータを取得するためのコード
+    async function fetchAllRecords(maxRecordNumber, records, companyName, tantouName,event){
         //maxRecordNumberは、取得したデータの最大レコード番号
         maxRecordNumber = maxRecordNumber || 0;
         let showRecords = records || []; //検索キーワードにヒットしたレコードのリスト
+        let rec = event.record;
     
         //kintone.apiでレコード取得するためのパラメータ
         let searchLimit = 500;
+
+        console.warn("recだよ",rec);
         let params = {
-            'app': lookupAppId, //ルックアップのデータ取得先アプリID
-            'query' : ' レコード番号 > ' + maxRecordNumber + ' order by レコード番号 asc limit ' + searchLimit + ' ', // 全量取得するためにレコード番号でソートした上で絞り込んでいく
-            'totalCount' : true
-        };
+          'app': lookupAppId, // ルックアップのデータ取得先アプリID
+          'query': '店番="' + event.record.店番.value + '" and 日付 > "' + getThreeDaysBefore(event.record.日付_発生日時.value) + '" and 日付 < "' + getThreeDaysAfter(event.record.日付_発生日時.value) + '" order by レコード番号 asc limit ' + searchLimit,
+          'totalCount': true
+      };
+      
+      // 3日前の日付を取得する関数
+      function getThreeDaysBefore(dateString) {
+          const currentDate = new Date(dateString);
+          currentDate.setDate(currentDate.getDate() - 3);
+          return currentDate.toISOString();
+      }
+      
+      // 3日後の日付を取得する関数
+      function getThreeDaysAfter(dateString) {
+          const currentDate = new Date(dateString);
+          currentDate.setDate(currentDate.getDate() + 3);
+          return currentDate.toISOString();
+      }
+      
     
         return await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', params).then(function(response){
             if (response.records.length > 0) {
@@ -370,9 +386,11 @@
       // return lookUP.createLinks(event); //割愛
       return event;
     });
+    //詳細画面ルックアップのリンクを作成
     kintone.events.on(['app.record.detail.show'], function(event){
       return lookUP.createLink(event);
     });
+    //新規画面と編集画面で処理を行う
     kintone.events.on(['app.record.create.show','app.record.edit.show'], function(event){
       lookUP.event = event;
       lookUP.showButtons().disableOtherCopyFields(event);
