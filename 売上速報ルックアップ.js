@@ -187,11 +187,13 @@
                     _this.showModal(target);
                 }
             } else {
+              //もし「日付_発生日時にデータがあれば」
+                console.warn("売上速報ルックアップ",_this.event);
                 showSpinner(); // スピナー表示
                 fetchAllRecords(0, [], companyName, tantouName,_this.event)
                 .then(function(response){
                     if (!response.length) {
-                        alert('データがありません。これか');
+                        alert('データがありません。');
                     } else {
                         _this.records = response;
                         _this.showModal(response);
@@ -300,8 +302,6 @@
       {to: '売上_週マネ', from: '売上実績_週マネ'},//変更
       {to: '売上_実績', from: '売上実績'},//変更
       {to: '売上_達成率', from: '売上達成率'},//変更
- 
-
       ],
       viewFields: ['店番', '店名','日付', '売上計画','売上実績_週マネ','売上実績','売上達成率'], //modalに表示するフィールド
       companyNameFieldName : '店番',
@@ -322,7 +322,7 @@
         //kintone.apiでレコード取得するためのパラメータ
         let searchLimit = 500;
 
-        console.warn("recだよ",rec);
+        
         let params = {
           'app': lookupAppId, // ルックアップのデータ取得先アプリID
           'query': '店番="' + event.record.店番.value + '" and 日付 > "' + getThreeDaysBefore(event.record.日付_発生日時.value) + '" and 日付 < "' + getThreeDaysAfter(event.record.日付_発生日時.value) + '" order by レコード番号 asc limit ' + searchLimit,
@@ -343,7 +343,7 @@
           return currentDate.toISOString();
       }
       
-    
+      if(rec.日付_発生日時.value != undefined){
         return await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', params).then(function(response){
             if (response.records.length > 0) {
                 for (let i = 0; i < response.records.length; i++) {
@@ -379,6 +379,7 @@
                 return showRecords;
             }
         });
+      }
     }
   
     let lookUP = new LookUpSample(lookUpParams).createGetButton().createModal();

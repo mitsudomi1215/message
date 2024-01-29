@@ -1,7 +1,9 @@
 (function() {
     'use strict';
 
-//以下、新規画面//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//以下、新規画面
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //(新規作成画面)表示したとき
     kintone.events.on("app.record.create.show", event => {
         const record = event.record;
@@ -66,8 +68,9 @@
         }
     });
 
-
-//以下、詳細画面//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//以下、詳細画面
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //(詳細画面)表示したとき
     kintone.events.on("app.record.detail.show", event => {
@@ -139,8 +142,9 @@
         kintone.app.record.setFieldShown('システム管理者用',false);
     });
           
-
-//以下、編集画面/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//以下、編集画面
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //(編集画面)表示したとき
     kintone.events.on("app.record.edit.show", event => {
@@ -173,7 +177,6 @@
             //グループの表示
             kintone.app.record.setFieldShown('お客様とのご連絡詳細_2回目_',false);
             kintone.app.record.setFieldShown('お客様とのご連絡詳細_3回目_',false);
-
         }else if(record.お客様とのご連絡回数.value == "2回目"){
             //グループの開閉
             kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
@@ -184,7 +187,6 @@
             //グループの表示
             kintone.app.record.setFieldShown('お客様とのご連絡詳細_2回目_',true);
             kintone.app.record.setFieldShown('お客様とのご連絡詳細_3回目_',false);
-
         }else if(record.お客様とのご連絡回数.value == "3回目"){
 
             //グループの開閉
@@ -213,7 +215,23 @@
 
         //システム管理者用を非表示にする
         kintone.app.record.setFieldShown('システム管理者用',false);
-        
+
+        //アンケート報告書のST開始時間、入力不可設定
+        record._2.disabled = true;
+        record._3.disabled = true;
+        record._4.disabled = true;
+        record._5.disabled = true;
+        record._6.disabled = true;
+        record._7.disabled = true;
+        record._8.disabled = true;
+        record._9.disabled = true;
+        record._10.disabled = true;
+        record._11.disabled = true;
+        record._12.disabled = true;
+        record._13.disabled = true;
+        record._14.disabled = true;
+        record._15.disabled = true;
+
         return event;
     });
 
@@ -297,7 +315,7 @@
     });
 
     //(編集画面)(グループ)
-    kintone.events.on("app.record.edit.change.アンケート報告書", event => {
+    kintone.events.on(['app.record.edit.change.アンケート報告書','app.record.create.change.アンケート報告書'], event => {
         const record = event.record;
 
         //アンケート報告書
@@ -309,7 +327,7 @@
     });
 
     //メール・口コミ、ネットアンケートの総合評価が利用したくないの時
-    kintone.events.on([ 'app.record.edit.change.総合評価_メール'], event => {
+    kintone.events.on([ 'app.record.edit.change.総合評価_メール', 'app.record.create.change.総合評価_メール'], event => {
         const rec = event.record;
         if (rec.総合評価_メール.value == '利用したくない') {
           rec.アンケート報告書_メール.value = '要';
@@ -320,7 +338,7 @@
     });
 
     //電話の総合評価が利用したくないの時
-    kintone.events.on([ 'app.record.edit.change.総合評価_電話'], event => {
+    kintone.events.on(['app.record.edit.change.総合評価_電話','app.record.create.change.総合評価_電話'], event => {
         const rec = event.record;
         if (rec.総合評価_電話.value == '利用したくない') {
             rec.アンケート報告書_電話.value = '要';
@@ -333,17 +351,17 @@
     //発生日時を日付フィールドに変換
     kintone.events.on([
         'app.record.edit.change.発生日時',
+        'app.record.create.change.発生日時'
       ], event => {
-        const record = event.record;
-console.warn(2);
+        var record = event.record;
+
         // 文字列からDateオブジェクトを作成
         const dateTimeObject = new Date(record.発生日時.value);
-
         // 日付部分のみを取得
         record.日付_発生日時.value = dateTimeObject.toISOString().split('T')[0];
       
         return event;
-      });
+    });
       
 
 

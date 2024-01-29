@@ -1,3 +1,4 @@
+//一時的にコメントアウトしているコードがある
 (function($) {
   'use strict';
 
@@ -195,35 +196,35 @@
         userCodes.push(userfield2[0]['code']);
       }
       //---------------------------------------------------
-      if (event.nextStatus.value == '【申請】コールセンター') {
-        if(event.action.value == '申請'){
-          // IDの場合は右のように指定、rec.$id.value
-            const content =rec.店名.value + "【kintone】" + rec.$id.value;
-            console.warn("申請処理起動");
-              performCommonAction('申請', userCodes , content , URL)
-              .then(function(){
-                send_content_update(rec);
-              });
+      // if (event.nextStatus.value == '【申請】コールセンター') {
+      //   if(event.action.value == '申請'){
+      //     // IDの場合は右のように指定、rec.$id.value
+      //       const content =rec.店名.value + "【kintone】" + rec.$id.value;
+      //       // console.warn("申請処理起動");
+      //         performCommonAction('申請', userCodes , content , URL)
+      //         .then(function(){
+      //           send_content_update(rec);
+      //         });
               
-            // for (const code of userCodes_fc) {
-            //   await performCommonAction_fc('申請', code , content , URL);
-            // }
-        }else if(event.action.value == '差戻し'){
-            const content ="【kintone】"+"アンケートアプリの申請が拒否されました";
-            for (const code of userCodes) {
-              await performCommonAction('申請', code , content , URL);
-            }
-        }
-      } else if (event.nextStatus.value === '【確認】コールセンター上長_直営店') {
-        //URLの文章を変更
-        let body = rec.コメント.value + "【コールセンター】";
-          // IDの場合は右のように指定、rec.$id.value
-          const content =rec.店名.value + "【kintone】" + rec.$id.value;
-          await performCommonAction('完了', userCodes , content , body);
-          //メッセージ検索に関する処理
-          await GaroonMessageUpdateDelete();
+      //       // for (const code of userCodes_fc) {
+      //       //   await performCommonAction_fc('申請', code , content , URL);
+      //       // }
+      //   }else if(event.action.value == '差戻し'){
+      //       const content ="【kintone】"+"アンケートアプリの申請が拒否されました";
+      //       for (const code of userCodes) {
+      //         await performCommonAction('申請', code , content , URL);
+      //       }
+      //   }
+      // } else if (event.nextStatus.value === '【確認】コールセンター上長_直営店') {
+      //   //URLの文章を変更
+      //   let body = rec.コメント.value + "【コールセンター】";
+      //     // IDの場合は右のように指定、rec.$id.value
+      //     const content =rec.店名.value + "【kintone】" + rec.$id.value;
+      //     await performCommonAction('完了', userCodes , content , body);
+      //     //メッセージ検索に関する処理
+      //     await GaroonMessageUpdateDelete();
 
-      }
+      // }
       return event;
     });
 
@@ -288,7 +289,7 @@
     return kintone.api(
       kintone.api.url("/k/v1/record.json", true), "PUT", body, (resp) => {
         // 更新できたらリロード
-        location.reload();
+        // location.reload();//一時的にコメントアウト
       }
     );
   }
@@ -485,94 +486,134 @@
                 }
         };
       GaroonCreateLink(record);
-    }
+    }//詳細画面で、リンクを作成する処理はここまで
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //メッセージ送信処理
+    //メッセージ送信処理(詳細画面にメッセージ送信ボタンをつける処理)
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //ログインユーザーの情報を取得
-    var login_user = kintone.getLoginUser();
-    if (login_user['id'] == 1) {
-      var myIndexButtonContainer = document.getElementById('my_index_button_container');
-      if (!myIndexButtonContainer) {
-        // メニューの上側の空白部分にボタンと文字を設置するコンテナを作成
-        const myIndexButtonContainer = document.createElement('div');
-        myIndexButtonContainer.id = 'my_index_button_container';
+    // //ログインユーザーの情報を取得
+    // var login_user = kintone.getLoginUser();
+    // if (login_user['id'] == 1) {
+    //   var myIndexButtonContainer = document.getElementById('my_index_button_container');
+    //   if (!myIndexButtonContainer) {
+    //     // メニューの上側の空白部分にボタンと文字を設置するコンテナを作成
+    //     const myIndexButtonContainer = document.createElement('div');
+    //     myIndexButtonContainer.id = 'my_index_button_container';
     
-        // ボタンを作成
-        const myIndexButton = document.createElement('button');
-        myIndexButton.id = 'my_index_button';
-        myIndexButton.innerText = 'Garoonにメッセージ送信';
-        myIndexButton.onclick = () => {
-          window.alert('Garoonにメッセージ送信');
-          let rec = event.record;
-          // お試し版URL【変更】
-          const kntAppURL = 'https://lg6o0hese56a.cybozu.com/k/8/';
-          // URLを作成
-          let URL = kntAppURL + 'show#record=' + rec.$id.value;
-          // ユーザー情報を格納する変数
-          let userCodes = [];
-          // FCのユーザー情報を編集する変数
-          let userCodes_fc = [];
-          // 宛先まとめる処理-----------------------------------
-          // ユーザー選択のコードを変数に代入
-          if (rec.コールセンター上長.value.length != 0) {
-            let top_userfield = rec.コールセンター上長.value;
-            userCodes.push(top_userfield[0]['code']);
-          }
-          if (rec.AM.value.length != 0) {
-            let userfield = rec.AM.value;
-            userCodes.push(userfield[0]['code']);
-          }
-          if (rec.部長.value.length != 0) {
-            let userfield1 = rec.部長.value;
-            userCodes.push(userfield1[0]['code']);
-          }
-          if (rec.本部長.value.length != 0) {
-            let userfield2 = rec.本部長.value;
-            userCodes.push(userfield2[0]['code']);
-          }
-          // IDの場合は右のように指定、rec.$id.value
-          const content = rec.店名.value + "【kintone】" + rec.$id.value;
-          performCommonAction('申請', userCodes, content, rec.コメント.value)
-            .then(function () {
-              GaroonMessageUpdateDelete();
-              send_content_update(rec);
-            })
-        };
-    
-        // 文字を作成
-        // 改行で文字列を分割し、配列に変換
-        if(record.Garoon送信履歴.value != ''){
-          const dateArray =  record.Garoon送信履歴.value.split('\n');
-        }else{
-          const dateArray =  record.Garoon送信履歴.value;
-        }
-        const dateArray =  record.Garoon送信履歴.value.split('\n');
+    //     // ボタンを作成
+    //     const myIndexButton = document.createElement('button');
+    //     myIndexButton.id = 'my_index_button';
+    //     myIndexButton.innerText = 'Garoonにメッセージ送信';
+    //     myIndexButton.onclick = () => {
 
-        // 一番下の行を取得
-        const lastDateString = dateArray[dateArray.length - 1];
+          
+    //       // 改行で文字列を分割し、配列に変換
+    //       if(record.Garoon送信履歴.value != ''){
+    //         const dateArray =  record.Garoon送信履歴.value.split('\n');
+    //       }else{
+    //         const dateArray =  record.Garoon送信履歴.value;
+    //       }
+    //       const dateArray =  record.Garoon送信履歴.value.split('\n');
 
-        //Garoonメッセージ送信ボタンの横に最終更新日を表示
-        const adjacentText = document.createTextNode('  最終送信日時:' + lastDateString);
+    //       // 一番下の行を取得
+    //       const lastDateString = dateArray[dateArray.length - 1];
+
+    //       //Garoonメッセージ送信ボタンの横に最終更新日を表示
+    //       const adjacentText = '最終送信日時:' + lastDateString;
+    //           // メッセージの送信内容をまとめる
+    //       const messageContent = `〇送信内容\n${record.Garoon送信メッセージ内容.value}\n\n${adjacentText}`;
+    //       const swalResult = window.swal({
+    //         title: 'メッセージを送信しますか？',
+    //         text: messageContent,
+    //         type: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#DD6B55',
+    //         confirmButtonText: '送信する',
+    //         cancelButtonText: '送信しない',
+    //         closeOnConfirm: false},
+    //         () => {
+    //           const params = {
+    //             app: event.appId,		// アプリID
+    //             id: event.recordId,			// レコードID
+    //             record: {		// レコード情報
+    //               コメント: { 
+    //                 value: 'コメントの変更ができたよ'
+    //               },
+    //               区分2: {
+    //                 value: 'A報請求済中'
+    //               }
+    //             }
+    //           };
+    //           kintone.api(kintone.api.url('/k/v1/record.json', true), 'PUT', params).then((resp) => {
+    //             // PUT成功
+    //             return event;
+    //           })
+    //           //メッセージを送信する処理
+    //           // お試し版URL【変更】
+    //           const kntAppURL = 'https://lg6o0hese56a.cybozu.com/k/8/';
+    //           // URLを作成
+    //           let URL = kntAppURL + 'show#record=' + record.$id.value;
+    //           // ユーザー情報を格納する変数
+    //           let userCodes = [];
+    //           // FCのユーザー情報を編集する変数
+    //           let userCodes_fc = [];
+    //           // 宛先まとめる処理-----------------------------------
+    //           // ユーザー選択のコードを変数に代入
+    //           if (record.コールセンター上長.value.length != 0) {
+    //             let top_userfield = record.コールセンター上長.value;
+    //             userCodes.push(top_userfield[0]['code']);
+    //           }
+    //           if (record.AM.value.length != 0) {
+    //             let userfield = record.AM.value;
+    //             userCodes.push(userfield[0]['code']);
+    //           }
+    //           if (record.部長.value.length != 0) {
+    //             let userfield1 = record.部長.value;
+    //             userCodes.push(userfield1[0]['code']);
+    //           }
+    //           if (record.本部長.value.length != 0) {
+    //             let userfield2 = record.本部長.value;
+    //             userCodes.push(userfield2[0]['code']);
+    //           }
+    //           // IDの場合は右のように指定、record.$id.value
+    //           const content = record.店名.value + "【kintone】" + record.$id.value;
+    //           performCommonAction('申請', userCodes, content, record.コメント.value)
+    //             .then(function () {
+    //               GaroonMessageUpdateDelete();
+    //               send_content_update(record);
+    //           })
     
-        // ボタンと文字をコンテナに追加
-        myIndexButtonContainer.appendChild(myIndexButton);
-        myIndexButtonContainer.appendChild(adjacentText);
+    //           //メッセージを送信する処理ここまで
     
-        // コンテナをドキュメントに追加
-        kintone.app.record.getHeaderMenuSpaceElement().appendChild(myIndexButtonContainer);
-      }
-    }        
+    //           //モーダルを閉じる処理
+    //           window.swal.close();
+    //         }
+    //       );
+    //     };
+    
+    //     // 文字を作成
+    //     // 改行で文字列を分割し、配列に変換
+    //     if(record.Garoon送信履歴.value != ''){
+    //       const dateArray =  record.Garoon送信履歴.value.split('\n');
+    //     }else{
+    //       const dateArray =  record.Garoon送信履歴.value;
+    //     }
+    //     const dateArray =  record.Garoon送信履歴.value.split('\n');
+
+    //     // 一番下の行を取得
+    //     const lastDateString = dateArray[dateArray.length - 1];
+
+    //     //Garoonメッセージ送信ボタンの横に最終更新日を表示
+    //     const adjacentText = document.createTextNode('  最終送信日時:' + lastDateString);
+    
+    //     // ボタンと文字をコンテナに追加
+    //     myIndexButtonContainer.appendChild(myIndexButton);
+    //     myIndexButtonContainer.appendChild(adjacentText);
+    
+    //     // コンテナをドキュメントに追加
+    //     kintone.app.record.getHeaderMenuSpaceElement().appendChild(myIndexButtonContainer);
+    //   }
+    // }//メッセージ送信処理はここまで/////////////////////////////////////////////////////////////////
   });
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-//新規画面で保存ボタンを押したとき、メッセージを送信する処理
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-kintone.events.on(['app.record.edit.submit.success'], async (event) => {
-  let record = event.record;
-  console.warn("新規追加保存後のデータ",record);
-
-});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //編集画面で保存ボタンを押したとき、メッセージを送信する処理
@@ -622,7 +663,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             id: event.recordId,			// レコードID
             record: {		// レコード情報
               コメント: { 
-                value: 'コメントの変更ができたよ'
+                value: record.コメント.value
               },
               区分2: {
                 value: 'A報請求済中'
@@ -633,12 +674,47 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             // PUT成功
             return event;
           })
-          location.reload();
+          //メッセージを送信する処理
+          // お試し版URL【変更】
+          const kntAppURL = 'https://lg6o0hese56a.cybozu.com/k/8/';
+          // URLを作成
+          let URL = kntAppURL + 'show#record=' + record.$id.value;
+          // ユーザー情報を格納する変数
+          let userCodes = [];
+          // FCのユーザー情報を編集する変数
+          let userCodes_fc = [];
+          // 宛先まとめる処理-----------------------------------
+          // ユーザー選択のコードを変数に代入
+          if (record.コールセンター上長.value.length != 0) {
+            let top_userfield = record.コールセンター上長.value;
+            userCodes.push(top_userfield[0]['code']);
+          }
+          if (record.AM.value.length != 0) {
+            let userfield = record.AM.value;
+            userCodes.push(userfield[0]['code']);
+          }
+          if (record.部長.value.length != 0) {
+            let userfield1 = record.部長.value;
+            userCodes.push(userfield1[0]['code']);
+          }
+          if (record.本部長.value.length != 0) {
+            let userfield2 = record.本部長.value;
+            userCodes.push(userfield2[0]['code']);
+          }
+          // IDの場合は右のように指定、record.$id.value
+          const content = record.店名.value + "【kintone】" + record.$id.value;
+          performCommonAction('申請', userCodes, content, record.コメント.value)
+            .then(function () {
+              GaroonMessageUpdateDelete();
+              //送信メッセージ内容
+              send_content_update(record);
+          })
+          // メッセージを送信する処理ここまで
+          // //モーダルを閉じる処理
+          window.swal.close()
+
         }
       );
-
-  
-      
   }
 
   return event;
@@ -651,7 +727,6 @@ kintone.events.on([
 ], event => {
   const record = event.record;
 
-  console.warn("発生日時",record.発生日時.value);
   record.Garoon送信メッセージ内容.value = '店番:' + record.店番.value + '\n' +'店名:' + record.店名.value + '\n' + 'コメント:' + record.コメント.value;
 
   return event;
@@ -742,10 +817,12 @@ function redirectToNewPage(URL) {
               let threadsArray = Array.from(threads);
               //空の配列を作成
               let newArray = [];
+      // console.warn("繰り返し処理の前の配列",threadsArray);
               //繰り返し
               Object.keys(subjectThreadIds).forEach(subject => {
                 //同じメッセージが2つ以上見つかった時
                 if (subjectThreadIds[subject].length >= 2) {
+      // console.warn("同じメッセージは2つ以上見つかってる");
                   //1通目のメッセージIDを取得
                   let firstID = subjectThreadIds[subject][0];
 
@@ -923,7 +1000,7 @@ function redirectToNewPage(URL) {
   //---------------------------------------------------------------------------------------------------------------------------------
   //メッセージ削除処理
   //---------------------------------------------------------------------------------------------------------------------------------
-   /**
+   /**web認証方式
    * 共通SOAPコンテンツ
    * ${XXXX}の箇所は実施処理等に合わせて置換して使用
    */
@@ -958,6 +1035,7 @@ function redirectToNewPage(URL) {
       try {
         //リクエストのテンプレート
         let msgDeleteRequest = SOAP_DELETE_TEMPLATE;
+        // console.warn("削除処理に入ってきた。");
         //削除するIDを置換
         msgDeleteRequest = msgDeleteRequest.replace('${DELETE_ID}', delete_id );
   
@@ -977,4 +1055,77 @@ function redirectToNewPage(URL) {
         console.error("エラーが発生しました:", error);
       }
     };
+//   //--------------------------------------------------------------------------------------------------------------------------------------------------
+//   //メッセージ削除処理(トークン処理) ログイン情報を入力しないといけなかったため、不採用
+//   //---------------------------------------------------------------------------------------------------------------------------------------------------
+//    /**
+//    * 共通SOAPコンテンツ
+//    * ${XXXX}の箇所は実施処理等に合わせて置換して使用
+//    */
+//    const SOAP_DELETE_TEMPLATE =
+//    '<?xml version="1.0" encoding="UTF-8"?>' +
+//    '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">' +
+//      '<soap:Header>' +
+//        '<Action>${ACTION}</Action>' +
+//         '<Security>' +
+//         '<UsernameToken>' +
+//         '<Username>光富</Username>' +
+//         '<Password>km081215</Password>' +
+//         '</UsernameToken>' +
+//         '</Security>' +
+//        '<Timestamp>' +
+//          '<Created>2023-08-12T14:45:00Z</Created>' +
+//          '<Expires>2037-08-12T14:45:00Z</Expires>' +
+//        '</Timestamp>' +
+//        '<Locale>jp</Locale>' +
+//      '</soap:Header>' +
+//      '<soap:Body>' +
+//        '<${ACTION}>' +
+//          '${PARAMETERS}' +
+//        '</${ACTION}>' +
+//      '</soap:Body>' +
+//    '</soap:Envelope>';
+// /**
+//   * メッセージ更新パラメータテンプレート
+//   * ${XXXX}の箇所は入力値等で置換して使用
+//   */
+// const MSG_DELETE_TEMPLATE =
+//        '<parameters delete_all_inbox="true">' +
+//        '<param xmlns="" folder_id="2" thread_id="${DELETE_ID}"></param>' +
+//        '</parameters>' ;
+
+
+//   //メッセージ実行の共通処理(ユーザーフィールド)
+//   const MessageDelete = async (delete_id) => {
+//     try {
+
+//       //トークンを取得
+//       let requestTokenaaa = await getRequestToken();
+
+//       //リクエストのテンプレート
+//       let msgDeleteParam = MSG_DELETE_TEMPLATE;
+//       msgDeleteParam = msgDeleteParam.replace('${REQUEST_TOKEN}', escapeHtml(requestTokenaaa));//トークン
+//       //削除するIDを置換
+//       msgDeleteParam = msgDeleteParam.replace('${DELETE_ID}', delete_id );
+//       let msgDeleteRequest = SOAP_DELETE_TEMPLATE;
+//       // SOAPパラメータを完成させる
+//       msgDeleteRequest = msgDeleteRequest.replace('${PARAMETERS}', msgDeleteParam);
+
+//       // 実行処理を指定
+//       msgDeleteRequest = msgDeleteRequest.split('${ACTION}').join('MessageRemoveThreads');
+
+//       // メッセージ登録の実行
+//       await $.ajax({
+//         type: 'post',
+//         url: 'https://lg6o0hese56a.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+//         cache: false,
+//         data: msgDeleteRequest,
+//       }).then(function(responseData) {
+//         // console.warn("削除に成功"); // レスポンスデータをコンソールに表示
+//       });
+//     } catch (error) {
+//       console.error("エラーが発生しました:", error);
+//     }
+//   };
+
 })(jQuery.noConflict(true));

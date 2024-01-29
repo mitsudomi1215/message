@@ -35,7 +35,6 @@
         //アンケート報告書の時間を自動的に入れる処理
         kintone.events.on(['app.record.edit.change._1'], function(event) {
             const record = event.record;
-            console.log("処理開始");
             
             let _1Value = parseInt(record._1.value); // _1フィールドの値を整数に変換
             if (!isNaN(_1Value)) {
