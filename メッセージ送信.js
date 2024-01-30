@@ -282,6 +282,9 @@
         Garoon送信履歴: {
           value: send_history,
         },
+        Garoonメッセージ送信制御: {
+          value: '送信しない',
+        },
       },
     };
 
@@ -469,6 +472,7 @@
                                         kintone.api.url("/k/v1/record.json", true), "PUT", body, (resp) => {
                                         // 更新できたらリロード
                                         if(record.Garoonリンク.value == ""){
+                                          console.warn("処理入ってる？");
                                           location.reload();
                                         }
                                         
@@ -701,20 +705,33 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let userfield2 = record.本部長.value;
             userCodes.push(userfield2[0]['code']);
           }
+          var body = [];
+          if(record.コメント.value == undefined){
+            body = URL + '\n' +'店番:' + record.店番.value + '\n' +'店名:' + record.店名.value;
+          }else{
+            body =  URL + '\n' + '店番:' + record.店番.value + '\n' +'店名:' + record.店名.value + '\n' + 'コメント:' + record.コメント.value;
+          }
+        
+
+
           // IDの場合は右のように指定、record.$id.value
           const content = record.店名.value + "【kintone】" + record.$id.value;
-          performCommonAction('申請', userCodes, content, record.コメント.value)
+          performCommonAction('申請', userCodes, content, body)
             .then(function () {
               GaroonMessageUpdateDelete();
               //送信メッセージ内容
               send_content_update(record);
+              window.swal.close();
           })
-          // メッセージを送信する処理ここまで
-          // //モーダルを閉じる処理
-          window.swal.close()
 
+          // window.swal.close();
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+          
         }
       );
+      
   }
 
   return event;
@@ -724,10 +741,18 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 kintone.events.on([
   'app.record.edit.change.店番',
   'app.record.edit.change.店名',
+  'app.record.edit.change.コメント',
 ], event => {
   const record = event.record;
+  const kntAppURL = 'https://lg6o0hese56a.cybozu.com/k/8/';
+  // URLを作成
+  let URL = kntAppURL + 'show#record=' + record.$id.value;
 
-  record.Garoon送信メッセージ内容.value = '店番:' + record.店番.value + '\n' +'店名:' + record.店名.value + '\n' + 'コメント:' + record.コメント.value;
+  if(record.コメント.value == undefined){
+    record.Garoon送信メッセージ内容.value = URL + '\n' + '店番:' + record.店番.value + '\n' +'店名:' + record.店名.value;
+  }else{
+    record.Garoon送信メッセージ内容.value = URL + '\n' + '店番:' + record.店番.value + '\n' +'店名:' + record.店名.value + '\n' + 'コメント:' + record.コメント.value;
+  }
 
   return event;
 });

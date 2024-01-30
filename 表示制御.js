@@ -232,6 +232,13 @@
         record._14.disabled = true;
         record._15.disabled = true;
 
+         //Garoonメッセージ送信内容フィールドを作成する
+         if(record.コメント.value == undefined){
+            record.Garoon送信メッセージ内容.value = '店番:' + record.店番.value + '\n' +'店名:' + record.店名.value;
+          }else{
+            record.Garoon送信メッセージ内容.value = '店番:' + record.店番.value + '\n' +'店名:' + record.店名.value + '\n' + 'コメント:' + record.コメント.value;
+          }        
+
         return event;
     });
 

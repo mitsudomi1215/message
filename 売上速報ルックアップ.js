@@ -187,19 +187,23 @@
                     _this.showModal(target);
                 }
             } else {
-              //もし「日付_発生日時にデータがあれば」
-                console.warn("売上速報ルックアップ",_this.event);
-                showSpinner(); // スピナー表示
-                fetchAllRecords(0, [], companyName, tantouName,_this.event)
-                .then(function(response){
-                    if (!response.length) {
-                        alert('データがありません。');
-                    } else {
-                        _this.records = response;
-                        _this.showModal(response);
-                    }
-                    hideSpinner(); // スピナー非表示
-                });
+            
+                if(_this.event.record.日付_発生日時.value != undefined){
+                  showSpinner(); // スピナー表示
+                  fetchAllRecords(0, [], companyName, tantouName,_this.event)
+                  .then(function(response){
+                      if (!response.length) {
+                          alert('データがありません。');
+                      } else {
+                          _this.records = response;
+                          _this.showModal(response);
+                      }
+                      hideSpinner(); // スピナー非表示
+                  });
+                }else{
+                  alert('発生日時フィールドを入力してください。');
+                }
+                
             }
   
           });
@@ -325,7 +329,7 @@
         
         let params = {
           'app': lookupAppId, // ルックアップのデータ取得先アプリID
-          'query': '店番="' + event.record.店番.value + '" and 日付 > "' + getThreeDaysBefore(event.record.日付_発生日時.value) + '" and 日付 < "' + getThreeDaysAfter(event.record.日付_発生日時.value) + '" order by レコード番号 asc limit ' + searchLimit,
+          'query': '店番="' + event.record.店番.value + '" and 日付 > "' + getThreeDaysBefore(event.record.日付_発生日時.value) + '" and 日付 < "' + getThreeDaysAfter(event.record.日付_発生日時.value) + '" order by 日付 desc limit ' + searchLimit,
           'totalCount': true
       };
       
