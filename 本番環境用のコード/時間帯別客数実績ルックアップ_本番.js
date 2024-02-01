@@ -7,8 +7,8 @@
     // ルックアップ取得先のデータを保持したリスト。
     // これが空の場合はapi経由で全量取得し、値がある場合はここから検索する。
     const fullRecords = [];
-    // ルックアップ先のアプリID【環境毎に編集が必要】
-    let lookupAppId = 21;
+    // ルックアップ先のアプリID【環境毎に変更が必要】
+    let lookupAppId = 403;
     // コンストラクタ定義
     let LookUpSample = (function(fieldSettings){
       function LookUpSample(fieldSettings) {
@@ -188,19 +188,24 @@
                     _this.showModal(target);
                 }
             } else {
+              if(_this.event.record.日付_発生日時.value == undefined || _this.event.record.日付_発生日時.value == ''){
+                alert('発生日時フィールドを入力してください。');
+              }else if(_this.event.record._1.value == undefined || _this.event.record._1.value == ''){
+                alert('ST開始時間を入力してください。');
+              }else{
                 showSpinner(); // スピナー表示
                 fetchAllRecords(0, [], companyName, tantouName,_this.event)
                 .then(function(response){
                     if (!response.length) {
-                        alert('データがありません。これか');
+                        alert('データがありません。');
                     } else {
                         _this.records = response;
                         _this.showModal(response);
                     }
-                    hideSpinner(); // スピナー非表示
+                  hideSpinner(); // スピナー非表示
                 });
+              }
             }
-  
           });
           return this;
         },
@@ -335,14 +340,14 @@
       // 3日前の日付を取得する関数
       function getThreeDaysBefore(dateString) {
           const currentDate = new Date(dateString);
-          currentDate.setDate(currentDate.getDate() - 3);
+          currentDate.setDate(currentDate.getDate() - 1);
           return currentDate.toISOString();
       }
       
       // 3日後の日付を取得する関数
       function getThreeDaysAfter(dateString) {
           const currentDate = new Date(dateString);
-          currentDate.setDate(currentDate.getDate() + 3);
+          currentDate.setDate(currentDate.getDate() + 1);
           return currentDate.toISOString();
       }
       

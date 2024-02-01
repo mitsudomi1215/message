@@ -6,8 +6,8 @@
     // ルックアップ取得先のデータを保持したリスト。
     // これが空の場合はapi経由で全量取得し、値がある場合はここから検索する。
     const fullRecords = [];
-    // ルックアップ先のアプリID【環境毎に編集が必要】
-    let lookupAppId = 19;
+    // ルックアップ先のアプリID【環境毎に変更が必要】
+    let lookupAppId = 12;
     // コンストラクタ定義
     let LookUpSample = (function(fieldSettings){
       function LookUpSample(fieldSettings) {
@@ -307,7 +307,7 @@
       {to: '売上_実績', from: '売上実績'},//変更
       {to: '売上_達成率', from: '売上達成率'},//変更
       ],
-      viewFields: ['店番', '店名','日付', '売上計画','売上実績_週マネ','売上実績','売上達成率'], //modalに表示するフィールド
+      viewFields: ['店番', '店名','日付', '売上計画','売上実績_週マネ','売上実績','売上達成率'], //modalに表示するフィールド//変更
       companyNameFieldName : '店番',
       tantouNameFieldName : '店名',
       resultTableID : 'table2',

@@ -6,8 +6,8 @@
   // ルックアップ取得先のデータを保持したリスト。
   // これが空の場合はapi経由で全量取得し、値がある場合はここから検索する。
   const fullRecords = [];
-  // ルックアップ先のアプリID【環境毎に編集が必要】
-  let lookupAppId = 14;
+  // ルックアップ先のアプリID【環境毎に変更】
+  let lookupAppId = 63;
   // コンストラクタ定義
   let LookUpSample = (function(fieldSettings){
     function LookUpSample(fieldSettings) {
@@ -300,10 +300,10 @@
     {to: '部', from: '部'},//変更
     {to: 'エリア', from: 'エリア'},//変更
     {to: '区分', from: '区分'},//変更
-    {to: 'AM', from: 'AM'},
-    {to: 'FCオーナー', from: 'FCオーナー'},
-    {to: '部長', from: '部長'},
-    {to: '本部長', from: '本部長'},
+    // {to: 'AM', from: 'AM'},
+    // {to: 'FCオーナー', from: 'FCオーナー'},
+    // {to: '部長', from: '部長'},
+    // {to: '本部長', from: '本部長'},
     ],
     viewFields: ['店番', '店名'], //modalに表示するフィールド
     companyNameFieldName : '店番',
@@ -324,7 +324,7 @@
       let searchLimit = 500;
       let params = {
           'app': lookupAppId, //ルックアップのデータ取得先アプリID
-          'query' : ' レコード番号 > ' + maxRecordNumber + ' order by レコード番号 asc limit ' + searchLimit + ' ', // 全量取得するためにレコード番号でソートした上で絞り込んでいく
+          'query' : ' レコード番号 > ' + maxRecordNumber + ' order by 店番 asc limit ' + searchLimit + ' ', // 全量取得するためにレコード番号でソートした上で絞り込んでいく
           'totalCount' : true
       };
   

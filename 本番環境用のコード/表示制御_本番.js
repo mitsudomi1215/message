@@ -8,10 +8,30 @@
     kintone.events.on("app.record.create.show", event => {
         const record = event.record;
 
+        //アンケート報告書のST開始時間、入力不可設定
+        record._2.disabled = true;
+        record._3.disabled = true;
+        record._4.disabled = true;
+        record._5.disabled = true;
+        record._6.disabled = true;
+        record._7.disabled = true;
+        record._8.disabled = true;
+        record._9.disabled = true;
+        record._10.disabled = true;
+        record._11.disabled = true;
+        record._12.disabled = true;
+        record._13.disabled = true;
+        record._14.disabled = true;
+        record._15.disabled = true;
+
         //フィールド編集不可
         record.お客様とのご連絡回数.disabled = true;
         record.Garoonリンク.disabled = true;
 
+        //Garoonメッセージ送信制御を非表示
+        kintone.app.record.setFieldShown('Garoonメッセージ送信制御', false);
+
+        //グループを非表示
         kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', false);
         kintone.app.record.setFieldShown('電話受付', false);
         kintone.app.record.setFieldShown('お客様とのご連絡詳細_2回目以降_', false);
@@ -28,7 +48,7 @@
         //お客様とのご連絡詳細_3回目
         kintone.app.record.setFieldShown('お客様とのご連絡詳細_3回目_',false);
 
-        //グループの制御  (変更)
+        //グループの制御
         kintone.app.record.setGroupFieldOpen('電話受付', true)
         kintone.app.record.setGroupFieldOpen('メール・ネットアンケート・口コミサイト受付', true);
         kintone.app.record.setGroupFieldOpen('アンケート報告書', true);
@@ -67,6 +87,8 @@
             kintone.app.record.setFieldShown('アンケート報告書_グループ',false);
         }
     });
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //以下、詳細画面
@@ -149,9 +171,36 @@
     //(編集画面)表示したとき
     kintone.events.on("app.record.edit.show", event => {
         const record = event.record;
-        
+
+        //Garoon送信メッセージ内容
+        record.Garoon送信メッセージ内容.value = '';
+
+        //Garoonメッセージ送信制御
+        record.Garoonメッセージ送信制御.value = '送信しない';
+
         //Garoonリンクフィールドを編集不可
         record.Garoonリンク.disabled = true;
+
+        //アンケート報告書のST開始時間、入力不可設定
+        record._2.disabled = true;
+        record._3.disabled = true;
+        record._4.disabled = true;
+        record._5.disabled = true;
+        record._6.disabled = true;
+        record._7.disabled = true;
+        record._8.disabled = true;
+        record._9.disabled = true;
+        record._10.disabled = true;
+        record._11.disabled = true;
+        record._12.disabled = true;
+        record._13.disabled = true;
+        record._14.disabled = true;
+        record._15.disabled = true;
+
+        //Garoon送信履歴入力不可
+        record.Garoon送信履歴.disabled = true;
+
+        // button_click();//追加
         
         if(record.受付方法.value == "電話"){
             kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', false);
@@ -216,28 +265,7 @@
         //システム管理者用を非表示にする
         kintone.app.record.setFieldShown('システム管理者用',false);
 
-        //アンケート報告書のST開始時間、入力不可設定
-        record._2.disabled = true;
-        record._3.disabled = true;
-        record._4.disabled = true;
-        record._5.disabled = true;
-        record._6.disabled = true;
-        record._7.disabled = true;
-        record._8.disabled = true;
-        record._9.disabled = true;
-        record._10.disabled = true;
-        record._11.disabled = true;
-        record._12.disabled = true;
-        record._13.disabled = true;
-        record._14.disabled = true;
-        record._15.disabled = true;
-
-         //Garoonメッセージ送信内容フィールドを作成する
-         if(record.コメント.value == undefined){
-            record.Garoon送信メッセージ内容.value = '店番:' + record.店番.value + '\n' +'店名:' + record.店名.value;
-          }else{
-            record.Garoon送信メッセージ内容.value = '店番:' + record.店番.value + '\n' +'店名:' + record.店名.value + '\n' + 'コメント:' + record.コメント.value;
-          }        
+        
 
         return event;
     });
@@ -369,7 +397,94 @@
       
         return event;
     });
-      
+          
+    // //--------------------------------------------------------------------------------
+    // //以下、保存ボタンが押された時にレコードの内容を取得する【追加】
+    // //--------------------------------------------------------------------------------
+    // // 全てのbutton要素を取得
+    // function button_click(){
+    //     var allButtons = document.querySelectorAll('button');
+    //     // 条件に合致するボタンを探す
+    //     for (var i = 0; i < allButtons.length; i++) {
+    //     var currentButton = allButtons[i];
+    
+    //     if (currentButton.textContent === '保存') {
+    //         // クリックイベントリスナーを追加
+    //         currentButton.addEventListener('click', function() {
+    
+    //         const obj = kintone.app.record.get();
+    //         // ここに保存ボタンが押されたときの処理を書きます
+    //         if(obj.record.Gaoonメッセージ内容作成フラグ.value == "左"){
+    //             obj.record.Gaoonメッセージ内容作成フラグ.value = "右";
+    //             kintone.app.record.set(obj);
+    //         }else{
+    //             obj.record.Gaoonメッセージ内容作成フラグ.value = "左";
+    //             kintone.app.record.set(obj);
+    //         }
+            
+    //         });
+    //         // 条件に合致するボタンが見つかったら処理を終了
+    //         break;
+    //     }
+    //     }
+    // }
 
+    // //送信するメッセージの内容を作成する
+    // kintone.events.on([
+    //     'app.record.edit.change.Gaoonメッセージ内容作成フラグ'
+    //     ], event => {
+    //     var record = event.record;
 
+    //     //■何を確認することが重要だろうか
+    //     //⓵文字列複数行を変更されたことが、モーダルに反映できているかどうか
+    //     //⓶モーダルを閉じた瞬間、文字列複数行の変更が「Garoon送信メッセージ内容」フィールドに反映されているかどうか
+    //     //⓷いつの時点か
+    //     console.warn("これはいつの時点のデータか気になる。",record);
+    //     //record.Garoon送信メッセージ内容.value + '\n' + record.顛末.valueという風にしないといけない。
+    //     record.Garoon送信メッセージ内容.value = record.顛末.value;
+    //     //送信するメッセージの内容を構築する(始まり)初期表示+変更があるごとに--------------------------------------------------------------------------------------
+    //     //コメントフィールド
+    //     // if(record.コメント.value != ''){
+    //     // var comment = '\n' + 'コメント:' + record.コメント.value;
+    //     // }else {
+    //     // var comment = '';
+    //     // }
+    //     // if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '要'){
+    //     // Garoon送信メッセージ内容.value = URL + '\n' + '店番：' + record.店番.value + '\n' + '店名：' + record.店名.value + comment + '\n' + 'アンケート報告書：必要';
+    //     // }else if (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '否'){
+    //     // Garoon送信メッセージ内容.value = URL + '\n' + '店番：' + record.店番.value + '\n' + '店名：' + record.店名.value + comment;
+    //     // }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み'){
+    //     // Garoon送信メッセージ内容.value = 'コメント：' + record.コメント.value;
+    //     // }
+    //     //送信するメッセージの内容を構築する(終わり)---------------------------------------------------------------------------------------
+
+    //     return event;
+    // });
+
+    //送信するメッセージの内容を作成する
+    kintone.events.on([
+        'app.record.edit.change.Garoonメッセージ送信制御'
+        ], event => {
+        var record = event.record;
+
+        if(record.Garoonメッセージ送信制御.value == '送信する'){
+            //送信するメッセージの内容を構築する(始まり)初期表示+変更があるごとに------------------------------------------------------------
+            //コメントフィールド
+            if(record.コメント.value == '' || record.コメント.value == undefined){
+                var comment = '';
+            }else {
+                var comment = '\n' + 'コメント:' + record.コメント.value;
+            }
+            if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '要'){
+                record.Garoon送信メッセージ内容.value = '店番：' + record.店番.value + '\n' + '店名：' + record.店名.value + comment + '\n' + 'アンケート報告書：必要';
+            }else if (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '否'){
+                record.Garoon送信メッセージ内容.value = '店番：' + record.店番.value + '\n' + '店名：' + record.店名.value + comment;
+            }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み'){
+                //変化があったフィールドのみを送信する予定(一旦コメントで待機)
+                record.Garoon送信メッセージ内容.value = 'コメント：' + record.コメント.value;
+            }
+        //送信するメッセージの内容を構築する(終わり)---------------------------------------------------------------------------------------
+        }
+        return event;
+    });
 })();
