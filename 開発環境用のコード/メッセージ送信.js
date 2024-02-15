@@ -454,128 +454,127 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //新規画面で保存ボタンを押したとき、メッセージを送信する処理
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// kintone.events.on(['app.record.create.submit.success'], async (event) => {
-//   event.url = null;
-//   let record = event.record;
+kintone.events.on(['app.record.create.submit.success'], async (event) => {
+  event.url = null;
+  let record = event.record;
 
-//   // 文字を作成
-//   // 改行で文字列を分割し、配列に変換
-//   if(record.Garoon送信履歴.value != ''){
-//     const dateArray =  record.Garoon送信履歴.value.split('\n');
-//   }else{
-//     const dateArray =  record.Garoon送信履歴.value;
-//   }
-//   const dateArray =  record.Garoon送信履歴.value.split('\n');
+  // 文字を作成
+  // 改行で文字列を分割し、配列に変換
+  if(record.Garoon送信履歴.value != ''){
+    const dateArray =  record.Garoon送信履歴.value.split('\n');
+  }else{
+    const dateArray =  record.Garoon送信履歴.value;
+  }
+  const dateArray =  record.Garoon送信履歴.value.split('\n');
 
-//   // 一番下の行を取得
-//   const lastDateString = dateArray[dateArray.length - 1];
+  // 一番下の行を取得
+  const lastDateString = dateArray[dateArray.length - 1];
 
-//   //Garoonメッセージ送信ボタンの横に最終更新日を表示
-//   const adjacentText = '最終送信日時:' + lastDateString;
+  //Garoonメッセージ送信ボタンの横に最終更新日を表示
+  const adjacentText = '最終送信日時:' + lastDateString;
     
 
-//   if (record.Garoonメッセージ送信制御.value == '送信する') {
-
-//     //お試し版URL【変更】
-//     const kntAppURL = 'https://1r65vi67okqr.cybozu.com/k/9/';
-//     //URLを作成
-//     let URL =  kntAppURL + 'show#record=' + record.$id.value;
+  if (record.Garoonメッセージ送信制御.value == '送信する') {
+    //お試し版URL【変更】
+    const kntAppURL = 'https://1r65vi67okqr.cybozu.com/k/9/';
+    //URLを作成
+    let URL =  kntAppURL + 'show#record=' + record.$id.value;
     
-//     // メッセージの送信内容をまとめる
-//     const messageContent = `〇送信内容\n${record.Garoon送信メッセージ内容.value}\n\n${adjacentText}`;
-//     // メッセージの送信内容をまとめる
-//       const swalResult = await window.swal({
-//         title: 'メッセージを送信しますか？',
-//         text: messageContent,
-//         type: 'warning',
-//         showCancelButton: true,
-//         confirmButtonColor: '#DD6B55',
-//         confirmButtonText: '送信する',
-//         cancelButtonText: '送信しない',
-//         closeOnConfirm: false},
-//         () => {
-//           // //モーダルを閉じる
-//           // window.swal.close();
-//           //メッセージを送信する処理
-//           // お試し版URL【変更】URLとアプリID
-//           const kntAppURL = 'https://1r65vi67okqr.cybozu.com/k/9/';
-//           // URLを作成
-//           let URL = kntAppURL + 'show#record=' + record.$id.value;
-//           // ユーザー情報を格納する変数
-//           let userCodes = [];
-//           // FCのユーザー情報を編集する変数
-//           let userCodes_fc = [];
-//           // 宛先まとめる処理-----------------------------------
-//           // ユーザー選択のコードを変数に代入
-//           if (record.コールセンター上長.value.length != 0) {
-//             let top_userfield = record.コールセンター上長.value;
-//             userCodes.push(top_userfield[0]['code']);
-//           }
-//           if (record.AM.value.length != 0) {
-//             let userfield = record.AM.value;
-//             userCodes.push(userfield[0]['code']);
-//           }
-//           if (record.部長.value.length != 0) {
-//             let userfield1 = record.部長.value;
-//             userCodes.push(userfield1[0]['code']);
-//           }
-//           if (record.本部長.value.length != 0) {
-//             let userfield2 = record.本部長.value;
-//             userCodes.push(userfield2[0]['code']);
-//           }
+    // メッセージの送信内容をまとめる
+    const messageContent = `〇送信内容\n${record.Garoon送信メッセージ内容.value}\n\n${adjacentText}`;
+    // メッセージの送信内容をまとめる
+      const swalResult = await window.swal({
+        title: 'メッセージを送信しますか？',
+        text: messageContent,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#DD6B55',
+        confirmButtonText: '送信する',
+        cancelButtonText: '送信しない',
+        closeOnConfirm: false},
+        () => {
+          // //モーダルを閉じる
+          // window.swal.close();
+          //メッセージを送信する処理
+          // お試し版URL【変更】URLとアプリID
+          const kntAppURL = 'https://1r65vi67okqr.cybozu.com/k/9/';
+          // URLを作成
+          let URL = kntAppURL + 'show#record=' + record.$id.value;
+          // ユーザー情報を格納する変数
+          let userCodes = [];
+          // FCのユーザー情報を編集する変数
+          let userCodes_fc = [];
+          // 宛先まとめる処理-----------------------------------
+          // ユーザー選択のコードを変数に代入
+          if (record.コールセンター上長.value.length != 0) {
+            let top_userfield = record.コールセンター上長.value;
+            userCodes.push(top_userfield[0]['code']);
+          }
+          if (record.AM.value.length != 0) {
+            let userfield = record.AM.value;
+            userCodes.push(userfield[0]['code']);
+          }
+          if (record.部長.value.length != 0) {
+            let userfield1 = record.部長.value;
+            userCodes.push(userfield1[0]['code']);
+          }
+          if (record.本部長.value.length != 0) {
+            let userfield2 = record.本部長.value;
+            userCodes.push(userfield2[0]['code']);
+          }
 
-//           if(record.アンケート報告書.value == '要'){
-//             var enquete_result = 'A報請求済中'
-//           }else{
-//             var enquete_result = ''
-//           }
+          if(record.アンケート報告書.value == '要'){
+            var enquete_result = 'A報請求済中'
+          }else{
+            var enquete_result = ''
+          }
 
-//           const params = {
-//             app: event.appId,		// アプリID
-//             id: event.recordId,	// レコードID
-//             record: {		        // レコード情報
-//               送信1回目フラグ: { 
-//                 value: '送信済み'
-//               },
-//               区分2: {
-//                 value: enquete_result
-//               },
-//               Garoonメッセージ送信制御 :{
-//                 value: '送信しない' 
-//               }
-//             }
-//           };
-//           kintone.api(kintone.api.url('/k/v1/record.json', true), 'PUT', params).then((resp) => {
-//             // PUT成功
-//             return event;
-//           })
+          const params = {
+            app: event.appId,		// アプリID
+            id: event.recordId,	// レコードID
+            record: {		        // レコード情報
+              送信1回目フラグ: { 
+                value: '送信済み'
+              },
+              区分2: {
+                value: enquete_result
+              },
+              Garoonメッセージ送信制御 :{
+                value: '送信しない' 
+              }
+            }
+          };
+          kintone.api(kintone.api.url('/k/v1/record.json', true), 'PUT', params).then((resp) => {
+            // PUT成功
+            return event;
+          })
 
-//           var body = [];
-//           if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '要'){
-//             body = URL + '\n' + record.Garoon送信メッセージ内容.value;
-//           }else if (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '否'){
-//             body = URL + '\n' + record.Garoon送信メッセージ内容.value;
-//           }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み'){
-//             body = record.Garoon送信メッセージ内容.value;
-//           }
+          var body = [];
+          if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '要'){
+            body = URL + '\n' + record.Garoon送信メッセージ内容.value;
+          }else if (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '否'){
+            body = URL + '\n' + record.Garoon送信メッセージ内容.value;
+          }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み'){
+            body = record.Garoon送信メッセージ内容.value;
+          }
 
-//           // IDの場合は右のように指定、record.$id.value
-//           const content = record.店名.value + "【kintone】" + record.$id.value;
-//           performCommonAction('申請', userCodes, content, body)
-//             .then(function () {
-//               GaroonMessageUpdateDelete();
-//               //送信メッセージ内容
-//               send_content_update(record);
+          // IDの場合は右のように指定、record.$id.value
+          const content = record.店名.value + "【kintone】" + record.$id.value;
+          performCommonAction('申請', userCodes, content, body)
+            .then(function () {
+              GaroonMessageUpdateDelete();
+              //送信メッセージ内容
+              send_content_update(record);
         
-//                 // setTimeout(() => {
-//                 //   window.location.reload();
-//                 // }, 1000);
-//            })
-//         }
-//       );
-//   }
-//   return event;
-// });
+                // setTimeout(() => {
+                //   window.location.reload();
+                // }, 1000);
+           })
+        }
+      );
+  }
+  return event;
+});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //編集画面で保存ボタンを押したとき、メッセージを送信する処理
@@ -600,7 +599,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     
 
   if (record.Garoonメッセージ送信制御.value == '送信する') {
-
+    const appId = event.appId;
+    const recordId = event.recordId;
+    
     //お試し版URL【変更】
     const kntAppURL = 'https://1r65vi67okqr.cybozu.com/k/9/';
     //URLを作成
@@ -696,11 +697,13 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   window.location.reload();
                 }, 1000);
            })
+
         }
       );
   }
   return event;
 });
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //Garoonのメッセージを検索➝更新➝削除する処理

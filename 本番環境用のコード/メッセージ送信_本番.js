@@ -1,9 +1,7 @@
 //一時的にコメントアウトしているコードがある
 (function($) {
   'use strict';
-    //------------------------------------------------------------------------------------------------
-    //メッセージ送信処理(はじまり)
-    //------------------------------------------------------------------------------------------------
+
     /**
      * 共通SOAPコンテンツ
      * ${XXXX}の箇所は実施処理等に合わせて置換して使用
@@ -168,14 +166,11 @@
         }
       };
     
-    //------------------------------------------------------------------------------------------------
-    //メッセージ送信処理(おわり)
-    //------------------------------------------------------------------------------------------------
     //ワークフロー時のメッセージ送信処理
     kintone.events.on(['app.record.detail.process.proceed'], async (event) => {
       let rec = event.record;
       //お試し版URL【変更】
-      const kntAppURL = 'https://watami.cybozu.com/k/818/';//【変更】
+      const kntAppURL = 'https://watami.cybozu.com/k/822/';//【変更】
       //URLを作成
       let URL =  kntAppURL + 'show#record=' + rec.$id.value;
       //ユーザー情報を格納する変数
@@ -244,17 +239,10 @@
       var send_history = sending_time + '\n' + latest_time;
     }
 
-    //Garoon送信メッセージを空白にする
-    var send_body = '';
-
-
     const body = {
       app: kintone.app.getId(),
       id: kintone.app.record.getId(),
       record: {
-        Garoon送信メッセージ内容: {
-          value: send_body,
-        },
         Garoon送信履歴: {
           value: send_history,
         }
@@ -273,7 +261,7 @@
     let record = event.record;
 
     //////////////////////////////////////////////////////////////////////
-    //詳細画面でGaroonのリンクを作成する処理(はじまり)
+    //詳細画面でGaroonのリンクを作成する処理
     //////////////////////////////////////////////////////////////////////
     if(record.Garoonリンク.value == ""){
       /**
@@ -320,9 +308,9 @@
       };
 
       // リクエストトークン取得
-      const getRequestToken = async() => {
+      const getRequestToken = () => {
           try {
-          const response = await $.ajax({
+          const response = $.ajax({
               type: 'post',
               url: '/g/util_api/util/api.csp',
               cache: false,
@@ -337,9 +325,9 @@
       };
 
       //メッセージ実行の共通処理(ユーザーフィールド)
-      const GaroonCreateLink = async (record) => {
+      const GaroonCreateLink = (record) => {
         try {
-            let requestToken = await getRequestToken();
+            let requestToken = getRequestToken();
 
             // 送信するメッセージパラメータを作成
             let msgSearchParam = MSG_SEARCH_TEMPLATE;
@@ -352,7 +340,7 @@
             msgSearchRequest = msgSearchRequest.split('${ACTION}').join('MessageSearchThreads');
 
             // メッセージ検索の実行
-            await $.ajax({
+            $.ajax({
                 type: 'post',
                 url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
                 cache: false,
@@ -460,21 +448,139 @@
             }
         };
       GaroonCreateLink(record);
+      //詳細画面で、リンクを作成する処理はここまで
     }
-    //////////////////////////////////////////////////////////////////////
-    //詳細画面でGaroonのリンクを作成する処理(おわり)
-    //////////////////////////////////////////////////////////////////////
   });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //新規画面で保存ボタンを押したとき、メッセージを送信する処理
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//後で
+// kintone.events.on(['app.record.create.submit.success'], async (event) => {
+//   event.url = null;
+//   let record = event.record;
+
+//   // 文字を作成
+//   // 改行で文字列を分割し、配列に変換
+//   if(record.Garoon送信履歴.value != ''){
+//     const dateArray =  record.Garoon送信履歴.value.split('\n');
+//   }else{
+//     const dateArray =  record.Garoon送信履歴.value;
+//   }
+//   const dateArray =  record.Garoon送信履歴.value.split('\n');
+
+//   // 一番下の行を取得
+//   const lastDateString = dateArray[dateArray.length - 1];
+
+//   //Garoonメッセージ送信ボタンの横に最終更新日を表示
+//   const adjacentText = '最終送信日時:' + lastDateString;
+    
+
+//   if (record.Garoonメッセージ送信制御.value == '送信する') {
+//     //お試し版URL【変更】
+//     const kntAppURL = 'https://watami.s.cybozu.com/k/822/';
+//     //URLを作成
+//     let URL =  kntAppURL + 'show#record=' + record.$id.value;
+    
+//     // メッセージの送信内容をまとめる
+//     const messageContent = `〇送信内容\n${record.Garoon送信メッセージ内容.value}\n\n${adjacentText}`;
+//     // メッセージの送信内容をまとめる
+//       const swalResult = await window.swal({
+//         title: 'メッセージを送信しますか？',
+//         text: messageContent,
+//         type: 'warning',
+//         showCancelButton: true,
+//         confirmButtonColor: '#DD6B55',
+//         confirmButtonText: '送信する',
+//         cancelButtonText: '送信しない',
+//         closeOnConfirm: false},
+//         () => {
+//           // //モーダルを閉じる
+//           // window.swal.close();
+//           //メッセージを送信する処理
+//           // お試し版URL【変更】URLとアプリID
+//           const kntAppURL = 'https://watami.s.cybozu.com/k/822/';
+//           // URLを作成
+//           let URL = kntAppURL + 'show#record=' + record.$id.value;
+//           // ユーザー情報を格納する変数
+//           let userCodes = [];
+//           // FCのユーザー情報を編集する変数
+//           let userCodes_fc = [];
+//           // 宛先まとめる処理-----------------------------------
+//           // ユーザー選択のコードを変数に代入
+//           if (record.コールセンター上長.value.length != 0) {
+//             let top_userfield = record.コールセンター上長.value;
+//             userCodes.push(top_userfield[0]['code']);
+//           }
+//           if (record.AM.value.length != 0) {
+//             let userfield = record.AM.value;
+//             userCodes.push(userfield[0]['code']);
+//           }
+//           if (record.部長.value.length != 0) {
+//             let userfield1 = record.部長.value;
+//             userCodes.push(userfield1[0]['code']);
+//           }
+//           if (record.本部長.value.length != 0) {
+//             let userfield2 = record.本部長.value;
+//             userCodes.push(userfield2[0]['code']);
+//           }
+
+//           if(record.アンケート報告書.value == '要'){
+//             var enquete_result = 'A報請求済中'
+//           }else{
+//             var enquete_result = ''
+//           }
+
+//           const params = {
+//             app: event.appId,		// アプリID
+//             id: event.recordId,	// レコードID
+//             record: {		        // レコード情報
+//               送信1回目フラグ: { 
+//                 value: '送信済み'
+//               },
+//               区分2: {
+//                 value: enquete_result
+//               },
+//               Garoonメッセージ送信制御 :{
+//                 value: '送信しない' 
+//               }
+//             }
+//           };
+//           kintone.api(kintone.api.url('/k/v1/record.json', true), 'PUT', params).then((resp) => {
+//             // PUT成功
+//             return event;
+//           })
+
+//           var body = [];
+//           if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '要'){
+//             body = URL + '\n' + record.Garoon送信メッセージ内容.value;
+//           }else if (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '否'){
+//             body = URL + '\n' + record.Garoon送信メッセージ内容.value;
+//           }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み'){
+//             body = record.Garoon送信メッセージ内容.value;
+//           }
+
+//           // IDの場合は右のように指定、record.$id.value
+//           const content = record.店名.value + "【kintone】" + record.$id.value;
+//           performCommonAction('申請', userCodes, content, body)
+//             .then(function () {
+//               GaroonMessageUpdateDelete();
+//               //送信メッセージ内容
+//               send_content_update(record);
+        
+//                 // setTimeout(() => {
+//                 //   window.location.reload();
+//                 // }, 1000);
+//            })
+//         }
+//       );
+//   }
+//   return event;
+// });
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //編集画面で保存ボタンを押したとき、メッセージを送信する処理
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 kintone.events.on(['app.record.edit.submit.success'], async (event) => {
-
   let record = event.record;
 
   // 文字を作成
@@ -494,9 +600,11 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     
 
   if (record.Garoonメッセージ送信制御.value == '送信する') {
-
+    const appId = event.appId;
+    const recordId = event.recordId;
+    
     //お試し版URL【変更】
-    const kntAppURL = 'https://watami.cybozu.com/k/818/';
+    const kntAppURL = 'https://watami.cybozu.com/k/822/';
     //URLを作成
     let URL =  kntAppURL + 'show#record=' + record.$id.value;
     
@@ -517,7 +625,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           window.swal.close();
           //メッセージを送信する処理
           // お試し版URL【変更】URLとアプリID
-          const kntAppURL = 'https://watami.cybozu.com/k/818/';
+          const kntAppURL = 'https://watami.cybozu.com/k/822/';
           // URLを作成
           let URL = kntAppURL + 'show#record=' + record.$id.value;
           // ユーザー情報を格納する変数
@@ -590,11 +698,13 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   window.location.reload();
                 }, 1000);
            })
+
         }
       );
   }
   return event;
 });
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //Garoonのメッセージを検索➝更新➝削除する処理
@@ -882,7 +992,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         '<soap:Body>' +
         '<MessageRemoveThreads>' +
         '<parameters delete_all_inbox="true">' +
-        '<param xmlns="" folder_id="2" thread_id="${DELETE_ID}"></param>' +
+        '<param xmlns="" folder_id="107563" thread_id="${DELETE_ID}"></param>' +
         '</parameters>' +
         '</MessageRemoveThreads>' +
         '</soap:Body>' +
@@ -900,15 +1010,15 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         // 実行処理を指定
         msgDeleteRequest = msgDeleteRequest.split('${ACTION}').join('MessageRemoveThreads');
   
-        // // メッセージ登録の実行
-        // await $.ajax({
-        //   type: 'post',
-        //   url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
-        //   cache: false,
-        //   data: msgDeleteRequest,
-        // }).then(function(responseData) {
-        //   console.warn("削除に成功"); // レスポンスデータをコンソールに表示
-        // });
+        // メッセージ登録の実行
+        await $.ajax({
+          type: 'post',
+          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          cache: false,
+          data: msgDeleteRequest,
+        }).then(function(responseData) {
+          console.warn("削除に成功"); // レスポンスデータをコンソールに表示
+        });
       } catch (error) {
         console.error("エラーが発生しました:", error);
       }
@@ -975,7 +1085,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 //       // メッセージ登録の実行
 //       await $.ajax({
 //         type: 'post',
-//         url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+//         url: 'https://1r65vi67okqr.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
 //         cache: false,
 //         data: msgDeleteRequest,
 //       }).then(function(responseData) {

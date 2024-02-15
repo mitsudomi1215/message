@@ -147,6 +147,7 @@
         },
         // ルックアップからのデータ取得リンク
         createGetButton: function(){
+          console.warn("thisの中身",this);
           let _this = this;
           this.getButton = document.createElement('a');
           this.getButton.innerHTML = '売上速報からデータを取得';
@@ -155,38 +156,40 @@
   
             // fullRecords取得済みであればそのリストから検索、なければ取得先から取得する
             _this.event = kintone.app.record.get();
+            console.warn("_this.eventの中身",_this.event);
             let companyName = _this.event.record[_this.fieldSettings.companyNameFieldName].value;
             let tantouName = _this.event.record[_this.fieldSettings.tantouNameFieldName].value;
-            if (fullRecords.length > 0) {
-                let target = [];
-                for (let i = 0; i < fullRecords.length; i++) {
-                  let isCompanyNameExist = true;
-                  if (companyName) {
-                    if (fullRecords[i].店番.value.indexOf(companyName) === -1) { //あいまい検索するためindexOfで評価する
-                      isCompanyNameExist = false;
-                    }
-                  }
+            //　以下のコードはボタンを2回押した際にqueryを再実行してくれなくなるので、コメントアウトしている
+            // if (fullRecords.length > 0) {
+            //     let target = [];
+            //     for (let i = 0; i < fullRecords.length; i++) {
+            //       let isCompanyNameExist = true;
+            //       if (companyName) {
+            //         if (fullRecords[i].店番.value.indexOf(companyName) === -1) { //あいまい検索するためindexOfで評価する
+            //           isCompanyNameExist = false;
+            //         }
+            //       }
   
-                  let isTantouNameExist = true;
-                  if (tantouName) {
-                    if (fullRecords[i].店名.value.indexOf(tantouName) === -1) { //あいまい検索するためindexOfで評価する
-                      isTantouNameExist = false;
-                    }
-                  }
+            //       let isTantouNameExist = true;
+            //       if (tantouName) {
+            //         if (fullRecords[i].店名.value.indexOf(tantouName) === -1) { //あいまい検索するためindexOfで評価する
+            //           isTantouNameExist = false;
+            //         }
+            //       }
   
-                  if (isCompanyNameExist && isTantouNameExist) {
-                    target.push(fullRecords[i]);
-                  }
+            //       if (isCompanyNameExist && isTantouNameExist) {
+            //         target.push(fullRecords[i]);
+            //       }
   
-                }
+            //     }
   
-                if (!target.length) {
-                    alert('データがありません。');
-                } else {
-                    _this.records = target;
-                    _this.showModal(target);
-                }
-            } else {
+            //     if (!target.length) {
+            //         alert('データがありません。');
+            //     } else {
+            //         _this.records = target;
+            //         _this.showModal(target);
+            //     }
+            // } else {
             
                 if(_this.event.record.日付_発生日時.value != undefined){
                   showSpinner(); // スピナー表示
@@ -204,7 +207,7 @@
                   alert('発生日時フィールドを入力してください。');
                 }
                 
-            }
+            // }
   
           });
           return this;
@@ -212,7 +215,7 @@
         createClearButton: function(){
           let _this = this;
           this.clearButton = document.createElement('a');
-          this.clearButton.classList.add('saleslookUpButton');
+          this.clearButton.classList.add('salesClearlookUpButton');
           this.clearButton.innerHTML = 'クリア';
           this.clearButton.addEventListener('click', function(){
             _this.clearDatas();
@@ -290,32 +293,7 @@
       }
       return LookUpSample;
     })();
-    // ここから要編集(フィールド設定)
-    let lookUpParams = {
-      //appSelectField: '顧客会社名', 
-      buttonSpace: 'EarningsLookUp', //ボタン設置用のスペースフィールド
-      recordIdField: '売上速報ルックアップ', //ルックアップ先のレコード番号保存用のフィールド
-      app: lookupAppId,
-      copyField: {
-        to: '売上速報ルックアップ', //自作のルックアップフィールド
-        from: '店名' //コピー元のフィールド
-      },
-      //コピー先のフィールドを追加したい場合は以下に追加していく
-      otherCopyFields: [ //ほかのフィールドのコピー
-      {to: '売上_計画', from: '売上計画'},//変更
-      {to: '売上_週マネ', from: '売上実績_週マネ'},//変更
-      {to: '売上_実績', from: '売上実績'},//変更
-      {to: '売上_達成率', from: '売上達成率'},//変更
-      ],
-      viewFields: ['店番', '店名','日付', '売上計画','売上実績_週マネ','売上実績','売上達成率'], //modalに表示するフィールド//変更
-      companyNameFieldName : '店番',
-      tantouNameFieldName : '店名',
-      resultTableID : 'table2',
-      companyCodeID: 'companyCode2',
-      tantouNameID: 'hinban2',
-      fileterButtonID: 'filterButton2',
-      showAllButtoneID: 'showAllButton2',
-    };
+
     //他のアプリからデータを取得するためのコード
     async function fetchAllRecords(maxRecordNumber, records, companyName, tantouName,event){
         //maxRecordNumberは、取得したデータの最大レコード番号
@@ -326,7 +304,7 @@
         //kintone.apiでレコード取得するためのパラメータ
         let searchLimit = 500;
 
-        
+        console.warn("ここには何が来ているのか",event);
         let params = {
           'app': lookupAppId, // ルックアップのデータ取得先アプリID
           'query': '店番="' + event.record.店番.value + '" and 日付 > "' + getThreeDaysBefore(event.record.日付_発生日時.value) + '" and 日付 < "' + getThreeDaysAfter(event.record.日付_発生日時.value) + '" order by 日付 desc limit ' + searchLimit,
@@ -336,14 +314,14 @@
       // 3日前の日付を取得する関数
       function getThreeDaysBefore(dateString) {
           const currentDate = new Date(dateString);
-          currentDate.setDate(currentDate.getDate() - 3);
+          currentDate.setDate(currentDate.getDate() - 2);
           return currentDate.toISOString();
       }
       
       // 3日後の日付を取得する関数
       function getThreeDaysAfter(dateString) {
           const currentDate = new Date(dateString);
-          currentDate.setDate(currentDate.getDate() + 3);
+          currentDate.setDate(currentDate.getDate() + 2);
           return currentDate.toISOString();
       }
       
@@ -385,20 +363,98 @@
         });
       }
     }
+
+     //新規画面と編集画面で処理を行う
+     kintone.events.on(['app.record.create.change.日付_発生日時','app.record.edit.change.日付_発生日時'], function(event){
+      let record = event.record;
+          // ここから要編集(フィールド設定)
+          let lookUpParams = {
+            //appSelectField: '顧客会社名', 
+            buttonSpace: 'EarningsLookUp', //ボタン設置用のスペースフィールド
+            recordIdField: '売上速報ルックアップ', //ルックアップ先のレコード番号保存用のフィールド
+            app: lookupAppId,
+            copyField: {
+              to: '売上速報ルックアップ', //自作のルックアップフィールド
+              from: '店名' //コピー元のフィールド
+            },
+            //コピー先のフィールドを追加したい場合は以下に追加していく
+            otherCopyFields: [ //ほかのフィールドのコピー
+            {to: '売上_計画', from: '売上計画'},//変更
+            {to: '売上_週マネ', from: '売上実績_週マネ'},//変更
+            {to: '売上_実績', from: '売上実績'},//変更
+            {to: '売上_達成率', from: '売上達成率'},//変更
+            ],
+            viewFields: ['店番', '店名','日付', '売上計画','売上実績_週マネ','売上実績','売上達成率'], //modalに表示するフィールド//変更
+            companyNameFieldName : '店番',
+            tantouNameFieldName : '店名',
+            resultTableID : 'table2',
+            companyCodeID: 'companyCode2',
+            tantouNameID: 'hinban2',
+            fileterButtonID: 'filterButton2',
+            showAllButtoneID: 'showAllButton2',
+          };
+        console.warn("イベントの中身",event);
+        let lookUP = new LookUpSample(lookUpParams);
+        lookUP.event = event;
+        lookUP.createGetButton(event).createModal();
+        lookUP.showButtons().disableOtherCopyFields(event);
+
+                //テスト------------------------------------------------------------------------------
+        // 対象となる要素を取得
+        var lookUpSpace = document.getElementById('user-js-EarningsLookUp');
+
+        // GuestsNumberlookUpButtonのリンクが2つ以上ある場合、1つ目を削除
+        var lookUpButtons = lookUpSpace.getElementsByClassName('saleslookUpButton');
+        if (lookUpButtons.length >= 2) {
+          console.warn("発動",);
+            lookUpSpace.removeChild(lookUpButtons[0]);
+        }
+
+        // GuestsNumberCliarlookUpButtonのリンクが2つ以上ある場合、1つ目を削除
+        var clearButtons = lookUpSpace.getElementsByClassName('salesClearlookUpButton');
+        if (clearButtons.length >= 2) {
+          console.warn("発動2");
+            lookUpSpace.removeChild(clearButtons[0]);
+        }
+        //------------------------------------------------------------------------------------
+
+        return event;
+
+     })
   
-    let lookUP = new LookUpSample(lookUpParams).createGetButton().createModal();
-    kintone.events.on(['app.record.index.show'], function(event){
-      // return lookUP.createLinks(event); //割愛
-      return event;
-    });
-    //詳細画面ルックアップのリンクを作成
-    kintone.events.on(['app.record.detail.show'], function(event){
-      return lookUP.createLink(event);
-    });
+
     //新規画面と編集画面で処理を行う
     kintone.events.on(['app.record.create.show','app.record.edit.show'], function(event){
+    // ここから要編集(フィールド設定)
+    let lookUpParams = {
+      //appSelectField: '顧客会社名', 
+      buttonSpace: 'EarningsLookUp', //ボタン設置用のスペースフィールド
+      recordIdField: '売上速報ルックアップ', //ルックアップ先のレコード番号保存用のフィールド
+      app: lookupAppId,
+      copyField: {
+        to: '売上速報ルックアップ', //自作のルックアップフィールド
+        from: '店名' //コピー元のフィールド
+      },
+      //コピー先のフィールドを追加したい場合は以下に追加していく
+      otherCopyFields: [ //ほかのフィールドのコピー
+      {to: '売上_計画', from: '売上計画'},//変更
+      {to: '売上_週マネ', from: '売上実績_週マネ'},//変更
+      {to: '売上_実績', from: '売上実績'},//変更
+      {to: '売上_達成率', from: '売上達成率'},//変更
+      ],
+      viewFields: ['店番', '店名','日付', '売上計画','売上実績_週マネ','売上実績','売上達成率'], //modalに表示するフィールド//変更
+      companyNameFieldName : '店番',
+      tantouNameFieldName : '店名',
+      resultTableID : 'table2',
+      companyCodeID: 'companyCode2',
+      tantouNameID: 'hinban2',
+      fileterButtonID: 'filterButton2',
+      showAllButtoneID: 'showAllButton2',
+    };
+      let lookUP = new LookUpSample(lookUpParams).createGetButton().createModal();
       lookUP.event = event;
       lookUP.showButtons().disableOtherCopyFields(event);
+
       return event;
     });
   

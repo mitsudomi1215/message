@@ -33,7 +33,7 @@
     
     
         //アンケート報告書の時間を自動的に入れる処理
-        kintone.events.on(['app.record.edit.change._1'], function(event) {
+        kintone.events.on(['app.record.create.change._1','app.record.edit.change._1'], function(event) {
             const record = event.record;
             
             let _1Value = parseInt(record._1.value); // _1フィールドの値を整数に変換
