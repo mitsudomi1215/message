@@ -2,7 +2,7 @@
     'use strict';
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//以下、共通処理(新規・詳細・編集)
+//以下、共通処理(新規・詳細・編集・印刷画面)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 kintone.events.on(["app.record.create.show","app.record.detail.show","app.record.edit.show"], event => {
     const record = event.record;
@@ -197,9 +197,9 @@ kintone.events.on(['app.record.create.change.発生日時','app.record.edit.chan
     return event;
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//以下、詳細画面と編集画面画面のみの処理
+//以下、詳細画面と編集画面画面と印刷画面のみの処理
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-kintone.events.on(["app.record.detail.show","app.record.edit.show"], event => {
+kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.print.show"], event => {
     const record = event.record;
     if(record.受付方法.value == "電話"){
         kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', false);
@@ -666,4 +666,30 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show"], event => {
         }
         return event;
     });
+
+    //--------------------------------------------------------------------------------
+    //以下、印刷画面の制御
+    //--------------------------------------------------------------------------------
+    //(詳細画面)表示したとき
+    kintone.events.on("app.record.print.show", event => {
+        const record = event.record;
+
+        //フィールドを非表示
+        kintone.app.record.setFieldShown('Garoonメッセージ送信制御', false);
+        kintone.app.record.setFieldShown('Garoon送信メッセージ内容', false);
+        kintone.app.record.setFieldShown('Garoon送信履歴', false);
+
+        //アンケート報告書
+        if(record.アンケート報告書.value == "要"){
+            kintone.app.record.setFieldShown('アンケート報告書_グループ',true);
+            kintone.app.record.setGroupFieldOpen('アンケート報告書_グループ', true);
+        }else{
+            kintone.app.record.setFieldShown('アンケート報告書_グループ',false);
+        }
+    
+        //システム管理者用を非表示にする
+        kintone.app.record.setFieldShown('システム管理者用',false); 
+        return event;
+    });
+
 })();

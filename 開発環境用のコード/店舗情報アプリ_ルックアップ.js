@@ -6,8 +6,8 @@
   // ルックアップ取得先のデータを保持したリスト。
   // これが空の場合はapi経由で全量取得し、値がある場合はここから検索する。
   const fullRecords = [];
-  // ルックアップ先のアプリID【環境毎に変更が必要】
-  let lookupAppId = 462;
+  // ルックアップ先のアプリID【環境毎に変更】
+  let lookupAppId = 16;
   // コンストラクタ定義
   let LookUpSample = (function(fieldSettings){
     function LookUpSample(fieldSettings) {
@@ -68,79 +68,77 @@
         this.modal.classList.add('on');
 
         // modal上にいくつか機能を追加
-//ヘッダー------------------------------------------------------------------------------
-        // // 検索結果件数の表示
-        // this.header.innerHTML = ('件数：' + _this.records.length);
+
+        // 検索結果件数の表示
+        this.header.innerHTML = ('件数：' + _this.records.length);
         
-        // // 絞込み条件フィールドを追加
-        // let companyCodeName = _this.fieldSettings.companyCodeID;
-        // let tantouName = _this.fieldSettings.tantouNameID;
-        // // 店番
-        // const companyCode = document.createElement("input");
-        // companyCode.setAttribute("type", "text");
-        // companyCode.setAttribute("id", companyCodeName);
-        // companyCode.setAttribute("placeholder", "店番");
-        // companyCode.classList.add('margin3');
-        // this.header.appendChild(companyCode);
-        // // 店名
-        // const tantou = document.createElement("input");
-        // tantou.setAttribute("type", "text");
-        // tantou.setAttribute("id", tantouName);
-        // tantou.setAttribute("placeholder", "店名");
-        // tantou.classList.add('margin3');
-        // this.header.appendChild(tantou);        
+        // 絞込み条件フィールドを追加
+        let companyCodeName = _this.fieldSettings.companyCodeID;
+        let tantouName = _this.fieldSettings.tantouNameID;
+        // 店番
+        const companyCode = document.createElement("input");
+        companyCode.setAttribute("type", "text");
+        companyCode.setAttribute("id", companyCodeName);
+        companyCode.setAttribute("placeholder", "店番");
+        companyCode.classList.add('margin3');
+        this.header.appendChild(companyCode);
+        // 店名
+        const tantou = document.createElement("input");
+        tantou.setAttribute("type", "text");
+        tantou.setAttribute("id", tantouName);
+        tantou.setAttribute("placeholder", "店名");
+        tantou.classList.add('margin3');
+        this.header.appendChild(tantou);        
 
-        // // 検索結果の絞込みボタン処理
-        // const filterButton = document.createElement('input');
-        // filterButton.setAttribute("id", _this.fieldSettings.fileterButtonID);
-        // filterButton.type = 'button';
-        // filterButton.value = '絞込み';
-        // filterButton.classList.add('margin3');
-        // filterButton.addEventListener('click', function(e){
-        //   let companyName, tantou, re, re2;
-        //   companyName = $("#" + companyCodeName).val();
-        //   tantou = $("#" + tantouName).val();
-        //   re = new RegExp(companyName);
-        //   re2 = new RegExp(tantou);
+        // 検索結果の絞込みボタン処理
+        const filterButton = document.createElement('input');
+        filterButton.setAttribute("id", _this.fieldSettings.fileterButtonID);
+        filterButton.type = 'button';
+        filterButton.value = '絞込み';
+        filterButton.classList.add('margin3');
+        filterButton.addEventListener('click', function(e){
+          let companyName, tantou, re, re2;
+          companyName = $("#" + companyCodeName).val();
+          tantou = $("#" + tantouName).val();
+          re = new RegExp(companyName);
+          re2 = new RegExp(tantou);
         
-        //   $("#" + _this.fieldSettings.resultTableID + " tr").show(); //初期化
-        //   $("#" + _this.fieldSettings.resultTableID + " tbody tr").each(function(){
-        //     let isShow1= true;
-        //     let isShow2= true;
-        //     if (companyName) {
-        //       let companyVal = $(this).find("td:eq(0)").text(); //1列目
-        //       if(companyVal.match(re) == null){
-        //         isShow1 = false;
-        //       }
-        //     }
+          $("#" + _this.fieldSettings.resultTableID + " tr").show(); //初期化
+          $("#" + _this.fieldSettings.resultTableID + " tbody tr").each(function(){
+            let isShow1= true;
+            let isShow2= true;
+            if (companyName) {
+              let companyVal = $(this).find("td:eq(0)").text(); //1列目
+              if(companyVal.match(re) == null){
+                isShow1 = false;
+              }
+            }
 
-        //     if (tantou) {
-        //       let tantouVal = $(this).find("td:eq(1)").text(); //2列目
-        //       if(tantouVal.match(re2) == null){
-        //         isShow2 = false;
-        //       }
-        //     }
+            if (tantou) {
+              let tantouVal = $(this).find("td:eq(1)").text(); //2列目
+              if(tantouVal.match(re2) == null){
+                isShow2 = false;
+              }
+            }
 
-        //     if (!isShow1 || !isShow2) {
-        //       $(this).hide();
-        //     }
-        //   });
-        // });
-        // this.header.appendChild(filterButton);
+            if (!isShow1 || !isShow2) {
+              $(this).hide();
+            }
+          });
+        });
+        this.header.appendChild(filterButton);
 
-        // // 全て表示ボタン
-        // const showAllButton = document.createElement('input');
-        // showAllButton.setAttribute("id", _this.fieldSettings.showAllButtoneID);
-        // showAllButton.type = 'button';
-        // showAllButton.value = '全て表示';
-        // showAllButton.classList.add('margin3');
-        // showAllButton.addEventListener('click', function(e){
-        //   $("#" + _this.fieldSettings.resultTableID + " tr").show();
-        // });
-        ////ヘッダーを追加
-        // this.header.appendChild(showAllButton);
+        // 全て表示ボタン
+        const showAllButton = document.createElement('input');
+        showAllButton.setAttribute("id", _this.fieldSettings.showAllButtoneID);
+        showAllButton.type = 'button';
+        showAllButton.value = '全て表示';
+        showAllButton.classList.add('margin3');
+        showAllButton.addEventListener('click', function(e){
+          $("#" + _this.fieldSettings.resultTableID + " tr").show();
+        });
+        this.header.appendChild(showAllButton);
       },
-// ヘッダーここまで-------------------------------------------------------------------------
       // modal消す処理
       removeModal: function(){
         this.modal.classList.remove('on');
@@ -149,62 +147,56 @@
       createGetButton: function(){
         let _this = this;
         this.getButton = document.createElement('a');
-        this.getButton.innerHTML = '売上速報からデータを取得';
-        this.getButton.classList.add('saleslookUpButton');
+        this.getButton.innerHTML = '取得';
+        this.getButton.classList.add('lookUpButton');
         this.getButton.addEventListener('click', function(){
 
           // fullRecords取得済みであればそのリストから検索、なければ取得先から取得する
           _this.event = kintone.app.record.get();
           let companyName = _this.event.record[_this.fieldSettings.companyNameFieldName].value;
           let tantouName = _this.event.record[_this.fieldSettings.tantouNameFieldName].value;
-          //以下のコードは
-          // if (fullRecords.length > 0) {
-          //     let target = [];
-          //     for (let i = 0; i < fullRecords.length; i++) {
-          //       let isCompanyNameExist = true;
-          //       if (companyName) {
-          //         if (fullRecords[i].店番.value.indexOf(companyName) === -1) { //あいまい検索するためindexOfで評価する
-          //           isCompanyNameExist = false;
-          //         }
-          //       }
+          if (fullRecords.length > 0) {
+              let target = [];
+              for (let i = 0; i < fullRecords.length; i++) {
+                let isCompanyNameExist = true;
+                if (companyName) {
+                  if (fullRecords[i].店番.value.indexOf(companyName) === -1) { //あいまい検索するためindexOfで評価する
+                    isCompanyNameExist = false;
+                  }
+                }
 
-          //       let isTantouNameExist = true;
-          //       if (tantouName) {
-          //         if (fullRecords[i].店名.value.indexOf(tantouName) === -1) { //あいまい検索するためindexOfで評価する
-          //           isTantouNameExist = false;
-          //         }
-          //       }
+                let isTantouNameExist = true;
+                if (tantouName) {
+                  if (fullRecords[i].店名.value.indexOf(tantouName) === -1) { //あいまい検索するためindexOfで評価する
+                    isTantouNameExist = false;
+                  }
+                }
 
-          //       if (isCompanyNameExist && isTantouNameExist) {
-          //         target.push(fullRecords[i]);
-          //       }
+                if (isCompanyNameExist && isTantouNameExist) {
+                  target.push(fullRecords[i]);
+                }
 
-          //     }
-
-          //     if (!target.length) {
-          //         alert('データがありません。');
-          //     } else {
-          //         _this.records = target;
-          //         _this.showModal(target);
-          //     }
-          // } else {
-          
-              if(_this.event.record.発生日時.value != undefined){
-                showSpinner(); // スピナー表示
-                fetchAllRecords(0, [], companyName, tantouName,_this.event)
-                .then(function(response){
-                    if (!response.length) {
-                        alert('データがありません。');
-                    } else {
-                        _this.records = response;
-                        _this.showModal(response);
-                    }
-                    hideSpinner(); // スピナー非表示
-                });
-              }else{
-                alert('発生日時フィールドを入力してください。');
               }
-          // }
+
+              if (!target.length) {
+                  alert('データがありません。');
+              } else {
+                  _this.records = target;
+                  _this.showModal(target);
+              }
+          } else {
+              showSpinner(); // スピナー表示
+              fetchAllRecords(0, [], companyName, tantouName)
+              .then(function(response){
+                  if (!response.length) {
+                      alert('データがありません。');
+                  } else {
+                      _this.records = response;
+                      _this.showModal(response);
+                  }
+                  hideSpinner(); // スピナー非表示
+              });
+          }
 
         });
         return this;
@@ -212,7 +204,7 @@
       createClearButton: function(){
         let _this = this;
         this.clearButton = document.createElement('a');
-        this.clearButton.classList.add('saleslookUpButton');
+        this.clearButton.classList.add('lookUpButton');
         this.clearButton.innerHTML = 'クリア';
         this.clearButton.addEventListener('click', function(){
           _this.clearDatas();
@@ -293,62 +285,49 @@
   // ここから要編集(フィールド設定)
   let lookUpParams = {
     //appSelectField: '顧客会社名', 
-    buttonSpace: 'EarningsLookUp', //ボタン設置用のスペースフィールド
-    recordIdField: '売上速報ルックアップ', //ルックアップ先のレコード番号保存用のフィールド
+    buttonSpace: 'lookUpButton', //ボタン設置用のスペースフィールド
+    recordIdField: 'テスト', //ルックアップ先のレコード番号保存用のフィールド
     app: lookupAppId,
     copyField: {
-      to: '売上速報ルックアップ', //自作のルックアップフィールド
+      to: 'テスト', //自作のルックアップフィールド
       from: '店名' //コピー元のフィールド
     },
     //コピー先のフィールドを追加したい場合は以下に追加していく
     otherCopyFields: [ //ほかのフィールドのコピー
-    {to: '売上_計画', from: '売上単日_計画'},//変更
-    {to: '売上_週マネ', from: '週マネ単日_売上見込'},//変更
-    {to: '売上_実績', from: '売上単日_実績'},//変更
-    {to: '売上_達成率', from: '売上単日_達成率'},//変更
-    {to: '欠員', from: '単日_欠員'}
+    {to: '店番', from: '店番'},
+    {to: '店名', from: '店名'},
+    {to: '本部', from: '本部'},//変更
+    {to: '部', from: '部'},//変更
+    {to: 'エリア', from: 'エリア'},//変更
+    {to: '区分', from: '区分'},//変更
+    {to: 'AM', from: 'AM'},
+    {to: 'FCオーナー', from: 'FCオーナー'},
+    {to: '部長', from: '部長'},
+    {to: '本部長', from: '本部長'},
     ],
-    viewFields: ['店番', '店名','日付', '売上単日_計画','週マネ単日_売上見込','売上単日_実績','売上単日_達成率','単日_欠員'], //modalに表示するフィールド//変更
+    viewFields: ['店番', '店名'], //modalに表示するフィールド
     companyNameFieldName : '店番',
     tantouNameFieldName : '店名',
-    resultTableID : 'table2',
-    companyCodeID: 'companyCode2',
-    tantouNameID: 'hinban2',
-    fileterButtonID: 'filterButton2',
-    showAllButtoneID: 'showAllButton2',
+    resultTableID : 'table1',
+    companyCodeID: 'companyCode1',
+    tantouNameID: 'hinban1',
+    fileterButtonID: 'filterButton1',
+    showAllButtoneID: 'showAllButton1',
   };
-  //他のアプリからデータを取得するためのコード
-  async function fetchAllRecords(maxRecordNumber, records, companyName, tantouName,event){
+
+  async function fetchAllRecords(maxRecordNumber, records, companyName, tantouName){
       //maxRecordNumberは、取得したデータの最大レコード番号
       maxRecordNumber = maxRecordNumber || 0;
       let showRecords = records || []; //検索キーワードにヒットしたレコードのリスト
-      let rec = event.record;
   
       //kintone.apiでレコード取得するためのパラメータ
       let searchLimit = 500;
-      console.warn("発生日時",event.record.発生日時.value);
-      console.warn("日付_発生日時",event.record.日付_発生日時.value);
       let params = {
-        'app': lookupAppId, // ルックアップのデータ取得先アプリID
-        'query': '店番="' + event.record.店番.value + '" and 日付 > "' + getThreeDaysBefore(event.record.日付_発生日時.value) + '" and 日付 < "' + getThreeDaysAfter(event.record.日付_発生日時.value) + '" order by 日付 desc limit ' + searchLimit,
-        'totalCount': true
-    };
-    
-    // 3日前の日付を取得する関数
-    function getThreeDaysBefore(dateString) {
-        const currentDate = new Date(dateString);
-        currentDate.setDate(currentDate.getDate() - 2);
-        return currentDate.toISOString();
-    }
-    
-    // 3日後の日付を取得する関数
-    function getThreeDaysAfter(dateString) {
-        const currentDate = new Date(dateString);
-        currentDate.setDate(currentDate.getDate() +2);
-        return currentDate.toISOString();
-    }
-    
-    if(rec.日付_発生日時.value != undefined){
+          'app': lookupAppId, //ルックアップのデータ取得先アプリID
+          'query' : ' レコード番号 > ' + maxRecordNumber + ' order by 店番 asc limit ' + searchLimit + ' ', // 全量取得するためにレコード番号でソートした上で絞り込んでいく
+          'totalCount' : true
+      };
+  
       return await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', params).then(function(response){
           if (response.records.length > 0) {
               for (let i = 0; i < response.records.length; i++) {
@@ -384,11 +363,16 @@
               return showRecords;
           }
       });
-    }
   }
 
   let lookUP = new LookUpSample(lookUpParams).createGetButton().createModal();
-  //新規画面と編集画面で処理を行う
+  kintone.events.on(['app.record.index.show'], function(event){
+    // return lookUP.createLinks(event); //割愛
+    return event;
+  });
+  kintone.events.on(['app.record.detail.show'], function(event){
+    return lookUP.createLink(event);
+  });
   kintone.events.on(['app.record.create.show','app.record.edit.show'], function(event){
     lookUP.event = event;
     lookUP.showButtons().disableOtherCopyFields(event);

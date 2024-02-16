@@ -50,6 +50,37 @@
 
 
 /* 店舗の情報を取得フィールドのCSS */
+/* ヘッダー */
+.lookUpModalHeader {
+  background-color: #f2f2f2;
+  padding: 10px;
+}
+
+#companyCode1,
+#hinban1 {
+  padding: 5px;
+  margin: 3px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+#filterButton1,
+#showAllButton1 {
+  padding: 5px 10px;
+  margin: 3px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#filterButton1:hover,
+#showAllButton1:hover {
+  background-color: #45a049;
+}
+
+/* ヘッダーここまで */
 .lookUpModal{
     display: none;
     position: fixed;
