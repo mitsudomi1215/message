@@ -103,6 +103,24 @@ kintone.events.on(["app.record.create.change.アンケート報告書","app.reco
     return event;
 });
 
+//(電話)ご来店人数変更時
+kintone.events.on([ 'app.record.edit.change.ご来店人数_電話', 'app.record.create.change.ご来店人数_電話'], event => {
+    const rec = event.record;
+
+    rec.ご利用人数.value = rec.ご来店人数_電話.value;
+
+    return event;
+});
+
+//(メール・ネットアンケート)ご利用人数変更時
+kintone.events.on([ 'app.record.edit.change.ご利用人数_メール_ネット', 'app.record.create.change.ご利用人数_メール_ネット'], event => {
+    const rec = event.record;
+
+    rec.ご利用人数.value = rec.ご利用人数_メール_ネット.value;
+
+    return event;
+});
+
 //メール・口コミ、ネットアンケートの総合評価が利用したくないの時
 kintone.events.on([ 'app.record.edit.change.総合評価_メール', 'app.record.create.change.総合評価_メール'], event => {
     const rec = event.record;
@@ -111,6 +129,13 @@ kintone.events.on([ 'app.record.edit.change.総合評価_メール', 'app.record
     }else{
         rec.アンケート報告書_メール.value = '否';
     }
+
+    if(rec.総合評価_メール.value == 'ー' ){
+        rec.内容.value = '未記入、その他';
+    }else{
+        rec.内容.value = rec.総合評価_メール.value;
+    }
+
     return event;
 });
 
@@ -122,6 +147,9 @@ kintone.events.on(['app.record.edit.change.総合評価_電話','app.record.crea
     }else{
         rec.アンケート報告書_電話.value = '否';
     }
+
+    rec.内容.value = rec.総合評価_電話.value;
+
     return event;
 });
 
@@ -284,6 +312,7 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         //お客様とのご連絡詳細_3回目
         kintone.app.record.setFieldShown('お客様とのご連絡詳細_3回目_',false);
 
+        kintone.app.record.setFieldShown('Garoonメッセージ送信制御',false);
         kintone.app.record.setFieldShown('Garoon送信メッセージ内容',false);
         kintone.app.record.setFieldShown('Garoon送信履歴',false);
 
