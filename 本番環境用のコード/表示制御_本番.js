@@ -556,14 +556,6 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
                         var contact_address_call = record.ご連絡先_電話.value;
                     }
 
-                    //コメント
-                    if(record.コメント.value == undefined || record.コメント.value == ''){
-                        var comment = '';
-                    }else{
-                        var comment = record.コメント.value;
-                    }  
-
-
                     //電話の場合、Garoonに送信するメッセージを作成
                     if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '要'){
                         record.Garoon送信メッセージ内容.value = 

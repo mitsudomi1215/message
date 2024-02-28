@@ -410,7 +410,6 @@
                             const subjectGet = Array.from(threadElementGet).map(thread => thread.getAttribute('id'));
 
                             if (key == record.$id.value) {
-                                record.コメント.value = "コメント";
                                 
                                 // record.Garoonリンク.value = "https://io8f1l5axfqn.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";
                                 let GaroonLink = "https://watami.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要

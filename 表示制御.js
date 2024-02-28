@@ -479,222 +479,277 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
     //     return event;
     // });
 
-    //送信するメッセージの内容を作成する
-    kintone.events.on([
-        'app.record.edit.change.Garoonメッセージ送信制御'
-        ], event => {
-        var record = event.record;
-        const options = { timeZone: 'Asia/Tokyo' };
+    // //送信するメッセージの内容を作成する
+    // kintone.events.on([
+    //     'app.record.edit.change.Garoonメッセージ送信制御'
+    //     ], event => {
+    //     var record = event.record;
+    //     const options = { timeZone: 'Asia/Tokyo' };
 
-        if(record.Garoonメッセージ送信制御.value == '送信する'){
-            //送信するメッセージの内容を構築する(始まり)初期表示+変更があるごとに------------------------------------------------------------
-            if(record.受付方法.value == '電話'){
+    //     if(record.Garoonメッセージ送信制御.value == '送信する'){
+    //         //送信するメッセージの内容を構築する(始まり)初期表示+変更があるごとに------------------------------------------------------------
+    //         if(record.受付方法.value == '電話'){
                 
-                    //ご来店日時を編集
-                    if(record.ご来店日時_電話.value == '' || record.ご来店日時_電話.value == undefined){
-                        var visits_date_call = '' ;
-                        var visits_time_call = '';
-                    }else {
-                        const dateTime = new Date(record.ご来店日時_電話.value);
-                        // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split(' ')[0];
+    //                 //ご来店日時を編集
+    //                 if(record.ご来店日時_電話.value == '' || record.ご来店日時_電話.value == undefined){
+    //                     var visits_date_call = '' ;
+    //                     var visits_time_call = '';
+    //                 }else {
+    //                     const dateTime = new Date(record.ご来店日時_電話.value);
+    //                     // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split(' ')[0];
 
-                        // 年月日の取得
-                        const year = dateTime.getFullYear();
-                        const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
-                        const day = String(dateTime.getDate()).padStart(2, '0'); // 日も2桁に整形
+    //                     // 年月日の取得
+    //                     const year = dateTime.getFullYear();
+    //                     const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+    //                     const day = String(dateTime.getDate()).padStart(2, '0'); // 日も2桁に整形
 
-                        // 時分の取得
-                        const hours = String(dateTime.getHours()).padStart(2, '0');
-                        const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+    //                     // 時分の取得
+    //                     const hours = String(dateTime.getHours()).padStart(2, '0');
+    //                     const minutes = String(dateTime.getMinutes()).padStart(2, '0');
 
-                        // ご来店日
-                        var visits_date_call = `${year}-${month}-${day}`;
+    //                     // ご来店日
+    //                     var visits_date_call = `${year}-${month}-${day}`;
                         
-                        // 来店時間
-                        var visits_time_call = `${hours}:${minutes}`;
-                    }//---------------------------------------------------------------------------------------------------
+    //                     // 来店時間
+    //                     var visits_time_call = `${hours}:${minutes}`;
+    //                 }//---------------------------------------------------------------------------------------------------
 
-                    //ご来店人数
-                    if(record.ご来店人数_電話.value == undefined || record.ご来店人数_電話.value == undefined ){
-                        var visits_number = '' ;
-                    }else{
-                        var visits_number = record.ご来店人数_電話.value;
-                    }
+    //                 //ご来店人数
+    //                 if(record.ご来店人数_電話.value == undefined || record.ご来店人数_電話.value == undefined ){
+    //                     var visits_number = '' ;
+    //                 }else{
+    //                     var visits_number = record.ご来店人数_電話.value;
+    //                 }
 
-                    //お気づきの内容
-                    if(record.ご意見詳細.value == undefined || record.ご意見詳細.value == '' ){
-                        var opinion_detail = '';
-                    }else{
-                        var opinion_detail = record.ご意見詳細.value;
-                    }
+    //                 //お気づきの内容
+    //                 if(record.ご意見詳細.value == undefined || record.ご意見詳細.value == '' ){
+    //                     var opinion_detail = '';
+    //                 }else{
+    //                     var opinion_detail = record.ご意見詳細.value;
+    //                 }
 
-                    //総合評価
-                    if(record.総合評価_電話.value == undefined || record.総合評価_電話.value == ''){
-                        var evaluation_call = '';
-                    }else{
-                        var evaluation_call = record.総合評価_電話.value;
-                    }
+    //                 //総合評価
+    //                 if(record.総合評価_電話.value == undefined || record.総合評価_電話.value == ''){
+    //                     var evaluation_call = '';
+    //                 }else{
+    //                     var evaluation_call = record.総合評価_電話.value;
+    //                 }
 
-                    //性別
-                    if(record.性別_電話.value == undefined || record.性別_電話 == ''){
-                        var sex_call = '';
-                    }else{
-                        var sex_call = record.性別_電話.value;
-                    }
+    //                 //性別
+    //                 if(record.性別_電話.value == undefined || record.性別_電話 == ''){
+    //                     var sex_call = '';
+    //                 }else{
+    //                     var sex_call = record.性別_電話.value;
+    //                 }
 
-                    //名前
-                    if(record.お名前_電話.value == undefined || record.お名前_電話.value == ''){
-                        var name_call = '';
-                    }else{
-                        var name_call = record.お名前_電話.value;
-                    }
+    //                 //名前
+    //                 if(record.お名前_電話.value == undefined || record.お名前_電話.value == ''){
+    //                     var name_call = '';
+    //                 }else{
+    //                     var name_call = record.お名前_電話.value;
+    //                 }
 
-                    //ご連絡先
-                    if(record.ご連絡先_電話.value == undefined || record.ご連絡先_電話.value == ''){
-                        var contact_address_call = '';
-                    }else{ 
-                        var contact_address_call = record.ご連絡先_電話.value;
-                    }
+    //                 //ご連絡先
+    //                 if(record.ご連絡先_電話.value == undefined || record.ご連絡先_電話.value == ''){
+    //                     var contact_address_call = '';
+    //                 }else{ 
+    //                     var contact_address_call = record.ご連絡先_電話.value;
+    //                 }
 
-                    //コメント
-                    if(record.コメント.value == undefined || record.コメント.value == ''){
-                        var comment = '';
-                    }else{
-                        var comment = record.コメント.value;
-                    }  
+    //                 //電話の場合、Garoonに送信するメッセージを作成
+    //                 if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '要'){
+    //                     record.Garoon送信メッセージ内容.value = 
+    //                     '【1通目(始)】' + '\n' +
+    //                     'ご利用店舗:' + record.店名.value+ '\n' + 
+    //                     'ご来店日:' + visits_date_call + '\n' + 
+    //                     '来店日時:' + visits_time_call +'\n' + 
+    //                     '利用人数:' + visits_number + '\n' + 
+    //                     'お気づきの内容:'+'\n'+opinion_detail+ '\n' + 
+    //                     '総合評価:' + evaluation_call + '\n' + 
+    //                     '性別:' + sex_call + '\n' + 
+    //                     '漢字氏名:' + name_call + '\n' + 
+    //                     'ご連絡先:' + contact_address_call + '\n' +
+    //                     'アンケート報告書：必要' + '\n'+
+    //                     '【1通目(終)】';
+    //                 }else if (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '否'){
+    //                     record.Garoon送信メッセージ内容.value = 
+    //                     '【1通目(始)】' + '\n' + 
+    //                     'ご利用店舗：' + record.店名.value+ '\n' + 
+    //                     'ご来店日:' + visits_date_call + '\n' + 
+    //                     '来店日時:' + visits_time_call +'\n' + 
+    //                     '利用人数:' + visits_number + '\n' + 
+    //                     'お気づきの内容:'+'\n'+opinion_detail + '\n' + 
+    //                     '総合評価:' + evaluation_call + '\n' + 
+    //                     '性別:' + sex_call + '\n' + 
+    //                     '漢字氏名:' + name_call + '\n' + 
+    //                     'ご連絡先:' + contact_address_call + '\n' + 
+    //                     '【1通目(終)】';
+    //                 }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み'){
+    //                     //記入者_電話
+    //                     if(record.ご返答内容_記入者_電話.value == undefined || record.ご返答内容_記入者_電話.value == ''){
+    //                         var reply_content_entry_person_call = '';
+    //                     }else{
+    //                         var reply_content_entry_person_call = record.ご返答内容_記入者_電話.value;
+    //                     }
+    //                     //ご返答内容_電話
+    //                     if(record.ご返答内容_電話.value == undefined || record.ご返答内容_電話.value == ''){
+    //                         var reply_content_call = '';
+    //                     }else{
+    //                         var reply_content_call = record.ご返答内容_電話.value;
+    //                     }
+    //                     //ご返答日_電話
+    //                     if(record.ご返答日_電話.value == undefined || record.ご返答日_電話.value == ''){
+    //                         var reply_content_call = '';
+    //                     }else{
+    //                         var reply_content_call = record.ご返答日_電話.value;
+    //                     }
 
-                    //電話の場合、Garoonに送信するメッセージを作成
-                    if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '要'){
-                        record.Garoon送信メッセージ内容.value = 
-                        'ご利用店舗:' + record.店名.value+ '\n' + 
-                        'ご来店日:' + visits_date_call + '\n' + 
-                        '来店日時:' + visits_time_call +'\n' + 
-                        '利用人数:' + visits_number + '\n' + 
-                        'お気づきの内容:'+'\n'+opinion_detail+ '\n' + 
-                        '総合評価:' + evaluation_call + '\n' + 
-                        '性別:' + sex_call + '\n' + 
-                        '漢字氏名:' + name_call + '\n' + 
-                        'ご連絡先:' + contact_address_call + '\n' +
-                        'アンケート報告書：必要';
-                    }else if (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '否'){
-                        record.Garoon送信メッセージ内容.value = 
-                        'ご利用店舗：' + record.店名.value+ '\n' + 
-                        'ご来店日:' + visits_date_call + '\n' + 
-                        '来店日時:' + visits_time_call +'\n' + 
-                        '利用人数:' + visits_number + '\n' + 
-                        'お気づきの内容:'+'\n'+opinion_detail + '\n' + 
-                        '総合評価:' + evaluation_call + '\n' + 
-                        '性別:' + sex_call + '\n' + 
-                        '漢字氏名:' + name_call + '\n' + 
-                        'ご連絡先:' + contact_address_call;
-                    }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み'){
-                        //変化があったフィールドのみを送信する予定(一旦コメントで待機)
-                        record.Garoon送信メッセージ内容.value ='\n' + '2回目移行のメッセージ内容は未実装です。';
-                    }
-            }else if(record.受付方法.value == 'メール・ネットアンケート' || record.受付方法.value == '口コミサイト'){
+    //                     //記入者
+    //                     record.Garoon送信メッセージ内容.value = 
+    //                     '【2通目(始)】' + '\n' +
+    //                     '記入者：' + reply_content_entry_person_call + '\n' +
+    //                     'ご返答内容：' + '\n'  + reply_content_call + '\n' +
+    //                     'ご返答日：' + reply_content_call + '\n' +
+    //                     '【2通目(終)】';
 
-                    //ご来店日時を編集
-                    if(record.ご来店日時_メール_ネットアンケート.value == '' || record.ご来店日時_メール_ネットアンケート.value == undefined){
-                        var visits_date_mail_net = '' ;
-                        var visits_time_mail_net = '';
-                    }else {
-                        var visits_date_time_mail_net = record.ご来店日時_メール_ネットアンケート.value;
-                        const dateTime = new Date(visits_date_time_mail_net);
+    //                 }else{
+    //                     //変化があったフィールドのみを送信する予定(一旦コメントで待機)
+    //                     record.Garoon送信メッセージ内容.value ='2回目以降のメッセージ内容は未実装です。';
+    //                 }
+    //         }else if(record.受付方法.value == 'メール・ネットアンケート' || record.受付方法.value == '口コミサイト'){
 
-                        // 年月日の取得
-                        const year = dateTime.getFullYear();
-                        const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
-                        const day = String(dateTime.getDate()).padStart(2, '0'); // 日も2桁に整形
+    //                 //ご来店日時を編集
+    //                 if(record.ご来店日時_メール_ネットアンケート.value == '' || record.ご来店日時_メール_ネットアンケート.value == undefined){
+    //                     var visits_date_mail_net = '' ;
+    //                     var visits_time_mail_net = '';
+    //                 }else {
+    //                     var visits_date_time_mail_net = record.ご来店日時_メール_ネットアンケート.value;
+    //                     const dateTime = new Date(visits_date_time_mail_net);
 
-                        // 時分の取得
-                        const hours = String(dateTime.getHours()).padStart(2, '0');
-                        const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+    //                     // 年月日の取得
+    //                     const year = dateTime.getFullYear();
+    //                     const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+    //                     const day = String(dateTime.getDate()).padStart(2, '0'); // 日も2桁に整形
 
-                        // ご来店日
-                        var visits_date_mail_net = `${year}-${month}-${day}`;
+    //                     // 時分の取得
+    //                     const hours = String(dateTime.getHours()).padStart(2, '0');
+    //                     const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+
+    //                     // ご来店日
+    //                     var visits_date_mail_net = `${year}-${month}-${day}`;
                         
-                        // 来店時間
-                        var visits_time_mail_net = `${hours}:${minutes}`;
-                    }
+    //                     // 来店時間
+    //                     var visits_time_mail_net = `${hours}:${minutes}`;
+    //                 }
 
-                    //ご利用人数
-                    if(record.ご利用人数_メール_ネット.value == undefined || record.ご利用人数_メール_ネット.value == ''){
-                        var use_count = '';
-                    }else{
-                        var use_count = record.ご利用人数_メール_ネット.value;
-                    }
+    //                 //ご利用人数
+    //                 if(record.ご利用人数_メール_ネット.value == undefined || record.ご利用人数_メール_ネット.value == ''){
+    //                     var use_count = '';
+    //                 }else{
+    //                     var use_count = record.ご利用人数_メール_ネット.value;
+    //                 }
 
-                    //お気づきの内容
-                    if(record.お気づきの内容.value == undefined || record.お気づきの内容.value == '' ){
-                        var opinion_detail = '';
-                    }else{
-                        var opinion_detail = record.お気づきの内容.value;
-                    }
+    //                 //お気づきの内容
+    //                 if(record.お気づきの内容.value == undefined || record.お気づきの内容.value == '' ){
+    //                     var opinion_detail = '';
+    //                 }else{
+    //                     var opinion_detail = record.お気づきの内容.value;
+    //                 }
 
-                    //総合評価
-                    if(record.総合評価_メール.value == undefined || record.総合評価_メール.value == ''){
-                        var evaluation_mail = '';
-                    }else{
-                        var evaluation_mail = record.総合評価_メール.value;
-                    }
+    //                 //総合評価
+    //                 if(record.総合評価_メール.value == undefined || record.総合評価_メール.value == ''){
+    //                     var evaluation_mail = '';
+    //                 }else{
+    //                     var evaluation_mail = record.総合評価_メール.value;
+    //                 }
 
-                    //性別
-                    if(record.性別_メール.value == undefined || record.性別_メール.value == ''){
-                        var sex_mail = '';
-                    }else{
-                        var sex_mail = record.性別_メール.value;
-                    }
+    //                 //性別
+    //                 if(record.性別_メール.value == undefined || record.性別_メール.value == ''){
+    //                     var sex_mail = '';
+    //                 }else{
+    //                     var sex_mail = record.性別_メール.value;
+    //                 }
 
-                    //漢字氏名
-                    if(record.お名前_メール.value == undefined || record.お名前_メール.value == ''){
-                        var name_mail = '';
-                    }else{
-                        var name_mail = record.お名前_メール.value;
-                    }   
+    //                 //漢字氏名
+    //                 if(record.お名前_メール.value == undefined || record.お名前_メール.value == ''){
+    //                     var name_mail = '';
+    //                 }else{
+    //                     var name_mail = record.お名前_メール.value;
+    //                 }   
 
-                    //ご連絡先
-                    if(record.ご連絡先_メール.value == undefined || record.ご連絡先_メール.value == ''){
-                        var contact_address_call = '';
-                    }else{
-                        var contact_address_call = record.ご連絡先_メール.value;
-                    }
+    //                 //ご連絡先
+    //                 if(record.ご連絡先_メール.value == undefined || record.ご連絡先_メール.value == ''){
+    //                     var contact_address_call = '';
+    //                 }else{
+    //                     var contact_address_call = record.ご連絡先_メール.value;
+    //                 }
 
-                    //電話の場合、Garoonに送信するメッセージを作成
-                    if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '要'){
-                        record.Garoon送信メッセージ内容.value = 
-                        'ご利用店舗:' + record.店名.value+ '\n' + 
-                        'ご来店日:' + visits_date_mail_net + '\n' + 
-                        '来店日時:' + visits_time_mail_net +'\n' + 
-                        '利用人数:' + use_count + '\n' +  
-                        'お気づきの内容:'+ '\n' + opinion_detail + '\n'  + 
-                        '総合評価:' + evaluation_mail + '\n' + 
-                        '性別:' + sex_mail + '\n' + 
-                        '漢字氏名:' + name_mail + '\n' + 
-                        'ご連絡先:' + contact_address_call +
-                        'アンケート報告書：必要';
-                    }else if (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '否'){
-                        record.Garoon送信メッセージ内容.value = 
-                        'ご利用店舗：' + record.店名.value+ '\n' + 
-                        'ご来店日:' + visits_date_mail_net + '\n' + 
-                        '来店日時:' + visits_time_mail_net +'\n' + 
-                        '利用人数:' + use_count + '\n' +  
-                        'お気づきの内容:'+ '\n' + opinion_detail + '\n'  + 
-                        '総合評価:' + evaluation_mail + '\n' + 
-                        '性別:' + sex_mail + '\n' + 
-                        '漢字氏名:' + name_mail + '\n' + 
-                        'ご連絡先:' + contact_address_call;
-                    }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み'){
-                        //変化があったフィールドのみを送信する予定(一旦コメントで待機)
-                        record.Garoon送信メッセージ内容.value = '\n' + '2回目移行のメッセージ内容は未実装です。';
-                    }
+    //                 //電話の場合、Garoonに送信するメッセージを作成
+    //                 if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '要'){
+    //                     record.Garoon送信メッセージ内容.value = 
+    //                     '【1通目(始)】' + '\n' +
+    //                     'ご利用店舗:' + record.店名.value+ '\n' + 
+    //                     'ご来店日:' + visits_date_mail_net + '\n' + 
+    //                     '来店日時:' + visits_time_mail_net +'\n' + 
+    //                     '利用人数:' + use_count + '\n' +  
+    //                     'お気づきの内容:'+ '\n' + opinion_detail + '\n'  + 
+    //                     '総合評価:' + evaluation_mail + '\n' + 
+    //                     '性別:' + sex_mail + '\n' + 
+    //                     '漢字氏名:' + name_mail + '\n' + 
+    //                     'ご連絡先:' + contact_address_call +
+    //                     'アンケート報告書：必要' + '\n'+
+    //                     '【1通目(終)】';
+    //                 }else if (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '否'){
+    //                     record.Garoon送信メッセージ内容.value =
+    //                     '【1通目(始)】' + '\n' + 
+    //                     'ご利用店舗：' + record.店名.value+ '\n' + 
+    //                     'ご来店日:' + visits_date_mail_net + '\n' + 
+    //                     '来店日時:' + visits_time_mail_net +'\n' + 
+    //                     '利用人数:' + use_count + '\n' +  
+    //                     'お気づきの内容:'+ '\n' + opinion_detail + '\n'  + 
+    //                     '総合評価:' + evaluation_mail + '\n' + 
+    //                     '性別:' + sex_mail + '\n' + 
+    //                     '漢字氏名:' + name_mail + '\n' + 
+    //                     'ご連絡先:' + contact_address_call + '\n' + 
+    //                     '【1通目(終)】';
+    //                 }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み'){
+    //                     //記入者_メール
+    //                     if(record.ご返信内容_記入者_メール.value == undefined || record.ご返信内容_記入者_メール.value == ''){
+    //                         var reply_content_entry_person_email = '';
+    //                     }else{
+    //                         var reply_content_entry_person_email = record.ご返信内容_記入者_メール.value;
+    //                     }
+    //                     //ご返答内容_電話
+    //                     if(record.ご返答内容_メール.value == undefined || record.ご返答内容_メール.value == ''){
+    //                         var reply_content_email = '';
+    //                     }else{
+    //                         var reply_content_email = record.ご返答内容_メール.value;
+    //                     }
+    //                     //ご返答日_電話
+    //                     if(record.ご返答日_電話.value == undefined || record.ご返答日_電話.value == ''){
+    //                         var reply_date_email = '';
+    //                     }else{
+    //                         var reply_date_email = record.ご返答日_電話.value;
+    //                     }
+
+    //                     //記入者
+    //                     record.Garoon送信メッセージ内容.value = 
+    //                     '【2通目(始)】' + '\n' +
+    //                     '記入者' + reply_content_entry_person_email + '\n' +
+    //                     'ご返答内容' + '\n'  + reply_content_email + '\n' +
+    //                     'ご返答日' + reply_date_email + '\n' +
+    //                     '【2通目(終)】';
+    //                 }else{
+    //                     record.Garoon送信メッセージ内容.value = '3通目以降のメッセージ内容は未実装です。'
+    //                 }
 
 
-            }
+    //         }
 
-        //送信するメッセージの内容を構築する(終わり)---------------------------------------------------------------------------------------
-        }
-        return event;
-    });
+    //     //送信するメッセージの内容を構築する(終わり)---------------------------------------------------------------------------------------
+    //     }
+    //     return event;
+    // });
 
     //--------------------------------------------------------------------------------
     //以下、印刷画面の制御
@@ -720,5 +775,7 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         kintone.app.record.setFieldShown('システム管理者用',false); 
         return event;
     });
+
+    
 
 })();
