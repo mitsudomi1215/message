@@ -6,6 +6,10 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 kintone.events.on(["app.record.create.show","app.record.detail.show","app.record.edit.show"], event => {
     const record = event.record;
+    
+    // console.warn('お試し',record.原因.value != '');
+    // console.warn('お試し',record.原因.value != undefined);
+    
     var GetLoginUser = kintone.getLoginUser()
 
     // console.warn("ゲットユーザー",GetLoginUser);
@@ -24,7 +28,7 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
     }
 
     //システム管理者用を非表示にする
-    kintone.app.record.setFieldShown('システム管理者用',false); 
+    // kintone.app.record.setFieldShown('システム管理者用',false); 
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //以下、共通処理(新規・編集)
