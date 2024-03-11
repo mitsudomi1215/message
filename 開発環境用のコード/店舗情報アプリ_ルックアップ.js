@@ -1,7 +1,7 @@
 // @author koguren
 // 参考:https://community.cybozu.dev/t/topic/3252
 // jQueryとspinnerを使います。https://cybozu.dev/ja/kintone/sdk/library/cybozu-cdn/
-(function() {
+(function($) {
   "use strict";
   // ルックアップ取得先のデータを保持したリスト。
   // これが空の場合はapi経由で全量取得し、値がある場合はここから検索する。
@@ -299,6 +299,7 @@
     {to: '本部', from: '本部'},//変更
     {to: '部', from: '部'},//変更
     {to: 'エリア', from: 'エリア'},//変更
+    {to: '業態', from: '業態'},
     {to: '区分', from: '区分'},//変更
     {to: 'AM', from: 'AM'},
     {to: 'FCオーナー', from: 'FCオーナー'},
@@ -378,9 +379,7 @@
     lookUP.showButtons().disableOtherCopyFields(event);
     return event;
   });
-
-})();
-
+})(jQuery);
 // スピナー起動関数
 function showSpinner() {
   if ($('.kintone-spinner').length == 0) {

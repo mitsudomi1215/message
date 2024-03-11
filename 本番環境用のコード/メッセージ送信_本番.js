@@ -119,7 +119,7 @@
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://vlqus5oxxg9s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           async: false,
           data: msgAddRequest,
@@ -154,7 +154,7 @@
           // メッセージ登録の実行
           await $.ajax({
             type: 'post',
-            url: 'https://vlqus5oxxg9s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+            url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
             cache: false,
             async: false,
             data: msgAddRequest,
@@ -166,38 +166,38 @@
         }
       };
     
-    //ワークフロー時のメッセージ送信処理
-    kintone.events.on(['app.record.detail.process.proceed'], async (event) => {
-      let rec = event.record;
-      //お試し版URL【変更】
-      const kntAppURL = 'https://vlqus5oxxg9s.cybozu.com/k/8/';//【変更】
-      //URLを作成
-      let URL =  kntAppURL + 'show#record=' + rec.$id.value;
-      //ユーザー情報を格納する変数
-      let userCodes = [];
-      //FCのユーザー情報を編集する変数
-      let userCodes_fc = [];
-      //宛先まとめる処理-----------------------------------
-      // ユーザー選択のコードを変数に代入
-      if(rec.コールセンター上長.value.length !== 0){
-        let top_userfield = rec.コールセンター上長.value;
-        userCodes.push(top_userfield[0]['code']);
-      }
-      if(rec.AM.value.length !== 0){
-        let userfield = rec.AM.value;
-        userCodes.push(userfield[0]['code']);
-      }
-      if(rec.部長.value.length !== 0){
-        let userfield1 = rec.部長.value;
-        userCodes.push(userfield1[0]['code']);
-      }
-      if(rec.本部長.value.length !== 0){
-        let userfield2 = rec.本部長.value;
-        userCodes.push(userfield2[0]['code']);
-      }
+    // //ワークフロー時のメッセージ送信処理
+    // kintone.events.on(['app.record.detail.process.proceed'], async (event) => {
+    //   let rec = event.record;
+    //   //お試し版URL【変更】
+    //   const kntAppURL = 'https://vlqus5oxxg9s.cybozu.com/k/8/';//【変更】
+    //   //URLを作成
+    //   let URL =  kntAppURL + 'show#record=' + rec.$id.value;
+    //   //ユーザー情報を格納する変数
+    //   let userCodes = [];
+    //   //FCのユーザー情報を編集する変数
+    //   let userCodes_fc = [];
+    //   //宛先まとめる処理-----------------------------------
+    //   // ユーザー選択のコードを変数に代入
+    //   if(rec.コールセンター上長.value.length !== 0){
+    //     let top_userfield = rec.コールセンター上長.value;
+    //     userCodes.push(top_userfield[0]['code']);
+    //   }
+    //   if(rec.AM.value.length !== 0){
+    //     let userfield = rec.AM.value;
+    //     userCodes.push(userfield[0]['code']);
+    //   }
+    //   if(rec.部長.value.length !== 0){
+    //     let userfield1 = rec.部長.value;
+    //     userCodes.push(userfield1[0]['code']);
+    //   }
+    //   if(rec.本部長.value.length !== 0){
+    //     let userfield2 = rec.本部長.value;
+    //     userCodes.push(userfield2[0]['code']);
+    //   }
 
-      return event;
-    });
+    //   return event;
+    // });
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //kintoneユーザーコードからGaroonのユーザー情報を取得
@@ -260,9 +260,9 @@
   kintone.events.on(['app.record.detail.show'], async (event) => {
     let record = event.record;
 
-    //////////////////////////////////////////////////////////////////////
+    //----------------------------------------------------
     //詳細画面でGaroonのリンクを作成する処理
-    //////////////////////////////////////////////////////////////////////
+    //----------------------------------------------------
     if(record.Garoonリンク.value == ""){
       /**
        * 共通SOAPコンテンツ
@@ -342,7 +342,7 @@
             // メッセージ検索の実行
             $.ajax({
                 type: 'post',
-                url: 'https://vlqus5oxxg9s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+                url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
                 cache: false,
                 data: msgSearchRequest,
             }).then(function(responseData) {
@@ -412,7 +412,7 @@
                             if (key == record.$id.value) {
                                 
                                 // record.Garoonリンク.value = "https://io8f1l5axfqn.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";
-                                let GaroonLink = "https://vlqus5oxxg9s.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
+                                let GaroonLink = "https://watami.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
                                 
                                     // レコード更新のパラメータ設定
                                 let body = {
@@ -451,9 +451,9 @@
     }
   });
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------
 //新規画面で保存ボタンを押したとき、メッセージを送信する処理
-////////////////////////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------
 // kintone.events.on(['app.record.create.submit.success'], async (event) => {
 //   event.url = null;
 //   let record = event.record;
@@ -580,15 +580,15 @@
 //   return event;
 // });
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+//-------------------------------------------------------------------------------------------------
 //編集画面で保存ボタンを押したとき、メッセージを送信する処理
-////////////////////////////////////////////////////////////////////////////////////////////////////
+//-------------------------------------------------------------------------------------------------
 kintone.events.on(['app.record.edit.submit.success'], async (event) => {
   let record = event.record;
 
   // 文字を作成
   // 改行で文字列を分割し、配列に変換
-  if(record.Garoon送信履歴.value != ''){
+  if(record.Garoon送信履歴.value){
     const dateArray =  record.Garoon送信履歴.value.split('\n');
   }else{
     const dateArray =  record.Garoon送信履歴.value;
@@ -607,7 +607,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     const recordId = event.recordId;
     
     //お試し版URL【変更】
-    const kntAppURL = 'https://vlqus5oxxg9s.cybozu.com/k/8/';
+    const kntAppURL = 'https://watami.cybozu.com/k/822/';
     //URLを作成
     let URL =  kntAppURL + 'show#record=' + record.$id.value;
     
@@ -628,31 +628,116 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           window.swal.close();
           //メッセージを送信する処理
           // お試し版URL【変更】URLとアプリID
-          const kntAppURL = 'https://vlqus5oxxg9s.cybozu.com/k/8/';
+          const kntAppURL = 'https://watami.cybozu.com/k/822/';
           // URLを作成
           let URL = kntAppURL + 'show#record=' + record.$id.value;
           // ユーザー情報を格納する変数
           let userCodes = [];
           // FCのユーザー情報を編集する変数
           let userCodes_fc = [];
-          // 宛先まとめる処理-----------------------------------
+          //-----------------------------------------------------
+          // 宛先まとめる処理
+          //-----------------------------------------------------
           // ユーザー選択のコードを変数に代入
+          //コールセンター
+          if (record.コールセンター.value.length != 0) {
+            let call_center = record.コールセンター.value;
+            userCodes.push(call_center[0]['code']);
+          }
+          //コールセンター上長
           if (record.コールセンター上長.value.length != 0) {
             let top_userfield = record.コールセンター上長.value;
             userCodes.push(top_userfield[0]['code']);
           }
-          if (record.AM.value.length != 0) {
-            let userfield = record.AM.value;
-            userCodes.push(userfield[0]['code']);
+          //店舗名
+          if(record.店舗名.value.length != 0){
+            let store_name_field = record.店舗名.value;
+            userCodes.push(store_name_field[0]['code']);
           }
-          if (record.部長.value.length != 0) {
-            let userfield1 = record.部長.value;
-            userCodes.push(userfield1[0]['code']);
-          }
+          //本部長
           if (record.本部長.value.length != 0) {
-            let userfield2 = record.本部長.value;
-            userCodes.push(userfield2[0]['code']);
+            let general_manager_field = record.本部長.value;
+            userCodes.push(general_manager_field[0]['code']);
           }
+          //部長
+          if (record.部長.value.length != 0) {
+            let department_chief_field = record.部長.value;
+            userCodes.push(department_chief_field[0]['code']);
+          }
+          //AM
+          if (record.AM.value.length != 0) {
+            let AM_field = record.AM.value;
+            userCodes.push(AM_field[0]['code']);
+          }
+          //FCオーナー
+          if(record.FCオーナー.value.length != 0){
+            let fc_owner_field = record.FCオーナー.value;
+            userCodes.push(fc_owner_field[0]['code']);
+          }
+          //閲覧権限追加ユーザー1
+          if(record.閲覧権限ユーザー1.value.length != 0){
+            let view_authority_user_1 = record.閲覧権限ユーザー1.value;
+            userCodes.push(view_authority_user_1[0]['code']);
+          }
+          //閲覧権限追加ユーザー2
+          if(record.閲覧権限ユーザー2.value.length != 0){
+            let view_authority_user_2 = record.閲覧権限ユーザー2.value;
+            userCodes.push(view_authority_user_2[0]['code']);
+          }
+          //閲覧権限追加ユーザー3
+          if(record.閲覧権限ユーザー3.value.length != 0){
+            let view_authority_user_3 = record.閲覧権限ユーザー3.value;
+            userCodes.push(view_authority_user_3[0]['code']);
+          }
+          //閲覧権限追加ユーザー4
+          if(record.閲覧権限ユーザー4.value.length != 0){
+            let view_authority_user_4 = record.閲覧権限ユーザー4.value;
+            userCodes.push(view_authority_user_4[0]['code']);
+          }
+          //閲覧権限追加ユーザー5
+          if(record.閲覧権限ユーザー5.value.length != 0){
+            let view_authority_user_5 = record.閲覧権限ユーザー5.value;
+            userCodes.push(view_authority_user_5[0]['code']);
+          }
+          //閲覧権限追加ユーザー6
+          if(record.閲覧権限ユーザー6.value.length != 0){
+            let view_authority_user_6 = record.閲覧権限ユーザー6.value;
+            userCodes.push(view_authority_user_6[0]['code']);
+          }
+          //閲覧権限追加ユーザー7
+          if(record.閲覧権限ユーザー7.value.length != 0){
+            let view_authority_user_7 = record.閲覧権限ユーザー7.value;
+            userCodes.push(view_authority_user_7[0]['code']);
+          }
+          //閲覧権限追加ユーザー8
+          if(record.閲覧権限ユーザー8.value.length != 0){
+            let view_authority_user_8 = record.閲覧権限ユーザー8.value;
+            userCodes.push(view_authority_user_8[0]['code']);
+          }
+          //閲覧権限追加ユーザー9
+          if(record.閲覧権限ユーザー9.value.length != 0){
+            let view_authority_user_9 = record.閲覧権限ユーザー9.value;
+            userCodes.push(view_authority_user_9[0]['code']);
+          }
+          //閲覧権限追加ユーザー10
+          if(record.閲覧権限ユーザー10.value.length != 0){
+            let view_authority_user_10 = record.閲覧権限ユーザー10.value;
+            userCodes.push(view_authority_user_10[0]['code']);
+          }
+          //閲覧権限追加ユーザー11
+          if(record.閲覧権限ユーザー11.value.length != 0){
+            let view_authority_user_11 = record.閲覧権限ユーザー11.value;
+            userCodes.push(view_authority_user_11[0]['code']);
+          }
+          //閲覧権限追加ユーザー12
+          if(record.閲覧権限ユーザー12.value.length != 0){
+            let view_authority_user_12 = record.閲覧権限ユーザー12.value;
+            userCodes.push(view_authority_user_12[0]['code']);
+          }
+
+          //-----------------------------------------------------
+          //メッセージ送信時、区分の変更
+          //-----------------------------------------------------
 
           if(record.アンケート報告書.value == '要'){
             if(record.区分2.value == 'A報保存済'){
@@ -663,37 +748,39 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           }else{
             var enquete_result = ''
           }
-
+          //-----------------------------------------------------
+          //送信フラグの変更
+          //-----------------------------------------------------
           //【送信2回目フラグ】1回目が送信済みであれば、2回目フラグを送信済みにする
-          if( (record.送信1回目フラグ.value == '送信済み' && record.ご返答内容_電話.value != '' )  || (record.送信1回目フラグ.value == '送信済み' && record.ご返信内容_メール.value != '') || record.送信2回目フラグ.value == '送信済み' ){ //【修正後】if( (record.送信1回目フラグ.value == '送信済み' && record.ご返答内容_電話.value != '' )  || (record.送信1回目フラグ.value == '送信済み' && record.ご返信内容_メール.value != '') || record.送信2回目フラグ.value == '送信済み' ) 【修正前】if(record.送信1回目フラグ.value == '送信済み'
+          if( (record.送信1回目フラグ.value == '送信済み' && record.ご返答内容_電話.value)  || (record.送信1回目フラグ.value == '送信済み' && record.ご返信内容_メール.value) || record.送信2回目フラグ.value == '送信済み' ){ 
             var send_flag_second = '送信済み';
           }else{;
             var send_flag_second = '未送信';
           }
 
           //【送信3回目フラグ】2回目のやり取りの時、1回目の2通目フラグが'送信済み'
-          if((record.お客様とのご連絡回数.value == '2回目' && record.送信2回目フラグ.value == '送信済み') || record.送信3回目フラグ.value == '送信済み'){
+          if(record.お客様とのご連絡回数.value == '2回目' || record.送信3回目フラグ.value == '送信済み'){ //変更前((record.お客様とのご連絡回数.value == '2回目' && record.送信2回目フラグ.value == '送信済み') || record.送信3回目フラグ.value == '送信済み')
             var send_flag_third = '送信済み';
           }else{
             var send_flag_third = '未送信';
           }
 
           //【送信4回目フラグ】
-          if((record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '送信済み' && record.お客様への返答内容_コールセンター記入_2回目.value != '' ) || record.送信4回目フラグ.value == '送信済み'){
+          if((record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '送信済み' && record.お客様への返答内容_コールセンター記入_2回目.value) || record.送信4回目フラグ.value == '送信済み'){
             var send_flag_four = '送信済み';
           }else{
             var send_flag_four = '未送信';
           }
 
           //【送信5回目フラグ】3回目のやり取りの時、2回目の2通目フラグが'送信済み'
-          if((record.お客様とのご連絡回数.value == '3回目' && record.送信4回目フラグ.value == '送信済み') || record.送信5回目フラグ.value == '送信済み'){
+          if(record.お客様とのご連絡回数.value == '3回目' || record.送信5回目フラグ.value == '送信済み'){//変更前((record.お客様とのご連絡回数.value == '3回目' && record.送信4回目フラグ.value == '送信済み') || record.送信5回目フラグ.value == '送信済み')
             var send_flag_five = '送信済み';
           }else{
             var send_flag_five = '未送信';
           }
 
           //【送信6回目フラグ】
-          if((record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '送信済み' && record.お客様への返答内容_コールセンター記入_3回目.value != '' ) || record.送信6回目フラグ.value == '送信済み'){
+          if((record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '送信済み' && record.お客様への返答内容_コールセンター記入_3回目.value) || record.送信6回目フラグ.value == '送信済み'){
             var send_flag_six = '送信済み';
           }else{
             var send_flag_six = '未送信';
@@ -702,7 +789,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           //【アンケート報告書送信フラグ】
           if(record.アンケート報告書送信フラグ.value == '送信済み'){
             var send_flag_enquete_report = '送信済み';
-          }else if(record.お客様対応の状況.value != '' || record.原因.value != '' || record.改善策_内容1.value != ''){
+          }else if(record.お客様対応の状況.value || record.原因.value || record.改善策_内容1.value ){
             var send_flag_enquete_report = '送信済み';
           }else{
             var send_flag_enquete_report = '未送信'; 
@@ -741,47 +828,108 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
               }
             }
           };
+
+          //レコードのデータ更新
           kintone.api(kintone.api.url('/k/v1/record.json', true), 'PUT', params).then((resp) => {
             // PUT成功
             return event;
           })
 
-          //お客様名
+          // 担当者からお客様に送信した場合
           if(record.お客様名_管理用.value == undefined || record.お客様名_管理用.value == '' ){
-            var gest_name =  '担当者' + '➝' + 'お客様' + '\n' + '\n';;
+            var sent = '担当者' + '➝' + 'お客様' + '\n' + '\n';
           }else{
-            var gest_name =  '担当者' + '➝' + record.お客様名_管理用.value + '様' + '\n' + '\n';
+            var sent = '担当者' + '➝' + record.お客様名_管理用.value + '様' + '\n' + '\n';
           }
+
+          //お客様から受信した場合
+          if(record.お客様名_管理用.value == undefined || record.お客様名_管理用.value == '' ){
+            var received =  'お客様' + '➝' + '担当者' + '\n' + '\n'; 
+          }else{
+            var received = record.お客様名_管理用.value + '様' + '➝' + '担当者' + '\n' + '\n';
+          }
+
+          //-------------------------------------------------------------------
+          // Garoonに送信するテンプレートの作成
+          //-------------------------------------------------------------------
 
           var body = [];
           if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信'){
-            body = '------------------------------------------------------------------' + '\n' + record.Garoon送信メッセージ内容.value + '\n' + '------------------------------------------------------------------' + '\n' + '\n' + 'kintoneリンク:' + URL ;
-          }else if((record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み' && record.送信2回目フラグ.value == '未送信' && record.ご返答内容_電話.value != '') || (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み' && record.送信2回目フラグ.value == '未送信' && record.ご返信内容_メール.value != '')|| (record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '送信済み' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value != '')  ||   (record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '送信済み' && record.送信6回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_3回目.value != '')){//【修正後】【修正前】if((record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み' && record.送信2回目フラグ.value == '未送信') || (record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '送信済み' && record.送信4回目フラグ.value == '未送信'))
-            body = '------------------------------------------------------------------' + '\n' +  gest_name + record.Garoon送信メッセージ内容.value + '\n' + '------------------------------------------------------------------';
-          }else{
+            body = '------------------------------------------------------------------' + '\n' + received + record.Garoon送信メッセージ内容.value + '\n' + '------------------------------------------------------------------' + '\n' + '\n' + 'kintoneリンク:' + URL ;
+          }else if((record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み' && record.送信2回目フラグ.value == '未送信' && record.ご返答内容_電話.value) || (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み' && record.送信2回目フラグ.value == '未送信' && record.ご返信内容_メール.value )|| (record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '送信済み' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value)  ||   (record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '送信済み' && record.送信6回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_3回目.value )){//【修正後】【修正前】if((record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み' && record.送信2回目フラグ.value == '未送信') || (record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '送信済み' && record.送信4回目フラグ.value == '未送信'))
+            body = '------------------------------------------------------------------' + '\n' +  sent + record.Garoon送信メッセージ内容.value + '\n' + '------------------------------------------------------------------';
+          }else if((record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '未送信') || (record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '未送信') ){
+            body = '------------------------------------------------------------------' + '\n' +  received + record.Garoon送信メッセージ内容.value + '\n' + '------------------------------------------------------------------';
+          }
+          else{
             body = '------------------------------------------------------------------' + '\n' +  record.Garoon送信メッセージ内容.value + '\n' + '------------------------------------------------------------------';
           }
 
-          // IDの場合は右のように指定、record.$id.value
-          const content = record.店名.value + "【kintone】" + record.$id.value;
+          //タイトルは次のフォーマット日付　業態) 店名 受付方法 (総合評価) + "【kintone】" + record.$id.value
+          //-------------------------------------------------------------------
+          //メッセージのタイトル
+          //-------------------------------------------------------------------
+          const today = new Date();
+          //現在の日付を取得
+          const year = today.getFullYear().toString().slice(2);
+          const month = ('0' + (today.getMonth() + 1)).slice(-2);
+          const day = ('0' + today.getDate()).slice(-2);
+          const formattedDate = year + month + day;
+
+          //業態
+          if(record.業態.value){
+            var industry = record.業態.value;
+          }else{
+            var industry = '';
+          }
+          
+          //店名
+          if(record.店名.value){
+            var store_name = record.店名.value;
+          }else{
+            var store_name = '';
+          }
+
+          //総合評価
+          if(record.総合評価_まとめ.value){
+            var comprehensive_evaluation = '(' + record.総合評価_まとめ.value + ')';
+          }else{
+            var comprehensive_evaluation = '';
+          }
+
+          //Garoonメッセージのタイトル
+          const content = formattedDate + ":" + industry + ')' + store_name+ "　" + record.受付方法.value + comprehensive_evaluation + "【kintone】" + record.$id.value;
+
           performCommonAction('申請', userCodes, content, body)
             .then(function () {
+
               GaroonMessageUpdateDelete(record);
-              //送信メッセージ内容
+              //送信履歴フィールドを更新
               send_content_update(record);
-                setTimeout(() => {
-                  window.location.reload();
-                }, 1000);
-            })
+              setTimeout(() => {
+                //新規タブ(今はあきらめた)
+                // window.open(`${record.Garoonリンク.value}`, '_blank');
+                window.location.reload();
+              }, 1200);  
+          })
         }
       );
   }
   return event;
 });
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+                // //新規タブ
+                // window.open(`${record.Garoonリンク.value}`, '_blank');
+
+                // setTimeout(() => {
+                  // const urlToOpen = `${record.Garoonリンク.value}`; // ここに開きたいURLを指定
+                  // // 新しいタブを開く
+                  // window.open(urlToOpen, '_blank');
+                // }, 2000);
+
+//-------------------------------------------------------------------
 //Garoonのメッセージを検索➝更新➝削除する処理
-////////////////////////////////////////////////////////////////////////////////////////////////////
+//-------------------------------------------------------------------
   /**
   * メッセージ登録パラメータテンプレート
   * ${XXXX}の箇所は入力値等で置換して使用
@@ -812,7 +960,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           // メッセージ検索の実行
           await $.ajax({
             type: 'post',
-            url: 'https://vlqus5oxxg9s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+            url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
             cache: false,
             data: msgSearchRequest,
           }).then(function(responseData) {
@@ -875,23 +1023,42 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                 const FirstXMLparser = new DOMParser();
                 const FirstXMLparserxmlDoc = FirstXMLparser.parseFromString(FirstTargetThread.outerHTML, "application/xml");
 
+                 //1通目のsubjectタグ情報を抜き取る
+                 const threadElementGet= FirstXMLparserxmlDoc.getElementsByTagName('thread');
+                 var subjectGet = Array.from(threadElementGet).map(thread => thread.getAttribute('subject'));
+
                 //最新メッセージのID
                 let finalArray = subjectThreadIds[subject][subjectThreadIds[subject].length - 1];
 
                 //最終メッセージの情報を取得
                 let FinalTargetThread = threadsArray.find(thread => thread.getAttribute('id') == finalArray);
 
-                //1通目のDocumentオブジェクトを得る
+                //最後メッセージののDocumentオブジェクトを得る
                 const FinalXMLparser = new DOMParser();
                 const FinalXMLparserxmlDoc = FinalXMLparser.parseFromString(FinalTargetThread.outerHTML, "application/xml");
+                console.warn("テスト",FinalXMLparserxmlDoc);
                 
                 // 名前空間を指定してaddresseeタグのユーザーIDを抜き取る
                 const addresseeElements = FinalXMLparserxmlDoc.getElementsByTagName('th:addressee');
                 const addresseeUserIds = Array.from(addresseeElements).map(addressee => addressee.getAttribute('user_id'));
 
-                // subjectタグ情報を抜き取る
-                const threadElementGet= FirstXMLparserxmlDoc.getElementsByTagName('thread');
-                const subjectGet = Array.from(threadElementGet).map(thread => thread.getAttribute('subject'));
+                const subjectElements = FinalXMLparserxmlDoc.getElementsByTagName('thread');
+                const subjectFinalMessageArray  = Array.from(subjectElements).map(thread => thread.getAttribute('subject'));
+                // 配列を文字列に結合
+                const subjectFinalMessage = subjectFinalMessageArray.join(' '); 
+                //::より左側の文字を取得(年月日)
+                var new_send_date = subjectFinalMessage.split(":")[0];
+
+                // subjectGetを文字列に変換
+                var subjectGetMessage = subjectGet.join(' '); 
+                // 数字と"再更新"という文字列を含むパターンを正規表現で検索して削除
+                var subjectGetMessage = subjectGetMessage.replace(/(\d*再更新:)/, '');
+
+
+                const send_subject = new_send_date + '再更新' + ':' + subjectGetMessage;
+
+
+                // 名前空間を指定して「」タグのタイトルを抜き取る
 
                   // タイトルごとに繰り返し
                   subjectThreadIds[subject].forEach(id => {
@@ -974,15 +1141,15 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                       replacedString = replacedString.replace(/【6通目\(始\)】([\s\S]*?)【6通目\(終\)】/g, six_message_result);
                     }
 
-                    // newArray[i]の中に【アンケート報告書(始)】があれば、置き換える
-                    if (newArray[i].includes("【アンケート報告書(始)】")) {
-                      //アンケート報告書のテンプレート文を変数に代入
-                      var enquete_report_result = enquete_report_message(record);
-                      // 【アンケート報告書(始)】から【アンケート報告書(終)】までの文字列を置き換える
-                      replacedString = replacedString.replace(/【アンケート報告書\(始\)】([\s\S]*?)【アンケート報告書\(終\)】/g, enquete_report_result);
-                    }
+                    // // newArray[i]の中に【アンケート報告書(始)】があれば、置き換える
+                    // if (newArray[i].includes("【アンケート報告書(始)】")) {
+                    //   //アンケート報告書のテンプレート文を変数に代入
+                    //   var enquete_report_result = enquete_report_message(record);
+                    //   // 【アンケート報告書(始)】から【アンケート報告書(終)】までの文字列を置き換える
+                    //   replacedString = replacedString.replace(/【アンケート報告書\(始\)】([\s\S]*?)【アンケート報告書\(終\)】/g, enquete_report_result);
+                    // }
                     
-                    resultString += replacedString + '\n';
+                    resultString += replacedString;
                   
                     // 最後の要素でない場合、改行と "--------------------------------------------" を追加
                     if (i < newArray.length - 1) {
@@ -991,7 +1158,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   }
 
                   //メッセージ更新処理
-                  MessageUpdate(firstID,resultString,subjectGet,addresseeUserIds);
+                  MessageUpdate(firstID,resultString,send_subject,addresseeUserIds);
 
                   // //1通目以外のメッセージを削除
                   let index = subjectThreadIds[subject].indexOf(firstID);
@@ -1014,9 +1181,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       }
     };
 
-  //---------------------------------------------------------------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------
   //更新処理
-  //---------------------------------------------------------------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------
    /**
    * 共通SOAPコンテンツ
    * ${XXXX}の箇所は実施処理等に合わせて置換して使用
@@ -1091,7 +1258,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       // メッセージ登録の実行
       await $.ajax({
         type: 'post',
-        url: 'https://vlqus5oxxg9s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+        url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
         cache: false,
         async: false,
         data: msgUpdateRequest
@@ -1104,9 +1271,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     }
   };
 
-  //---------------------------------------------------------------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------
   //メッセージ削除処理
-  //---------------------------------------------------------------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------
    /**web認証方式
    * 共通SOAPコンテンツ
    * ${XXXX}の箇所は実施処理等に合わせて置換して使用
@@ -1119,8 +1286,8 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         '<Action>${ACTION}</Action>' + // この行を修正
         '<Security>' +
         '<UsernameToken>' +
-        '<Username>テスト</Username>' +
-        '<Password>kkmm9988</Password>' +
+        '<Username>watami01</Username>' +
+        '<Password>wtmsus22</Password>' +
         '</UsernameToken>' +
         '</Security>' +
         '<Timestamp>' +
@@ -1132,7 +1299,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         '<soap:Body>' +
         '<MessageRemoveThreads>' +
         '<parameters delete_all_inbox="true">' +
-        '<param xmlns="" folder_id="2" thread_id="${DELETE_ID}"></param>' +
+        '<param xmlns="" folder_id="107563" thread_id="${DELETE_ID}"></param>' +
         '</parameters>' +
         '</MessageRemoveThreads>' +
         '</soap:Body>' +
@@ -1153,7 +1320,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://vlqus5oxxg9s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {
@@ -1163,213 +1330,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         console.error("エラーが発生しました:", error);
       }
     };
-//   //--------------------------------------------------------------------------------------------------------------------------------------------------
-//   //メッセージ削除処理(トークン処理) ログイン情報を入力しないといけなかったため、不採用
-//   //---------------------------------------------------------------------------------------------------------------------------------------------------
-//    /**
-//    * 共通SOAPコンテンツ
-//    * ${XXXX}の箇所は実施処理等に合わせて置換して使用
-//    */
-//    const SOAP_DELETE_TEMPLATE =
-//    '<?xml version="1.0" encoding="UTF-8"?>' +
-//    '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">' +
-//      '<soap:Header>' +
-//        '<Action>${ACTION}</Action>' +
-//         '<Security>' +
-//         '<UsernameToken>' +
-//         '<Username>光富</Username>' +
-//         '<Password>km081215</Password>' +
-//         '</UsernameToken>' +
-//         '</Security>' +
-//        '<Timestamp>' +
-//          '<Created>2023-08-12T14:45:00Z</Created>' +
-//          '<Expires>2037-08-12T14:45:00Z</Expires>' +
-//        '</Timestamp>' +
-//        '<Locale>jp</Locale>' +
-//      '</soap:Header>' +
-//      '<soap:Body>' +
-//        '<${ACTION}>' +
-//          '${PARAMETERS}' +
-//        '</${ACTION}>' +
-//      '</soap:Body>' +
-//    '</soap:Envelope>';
-// /**
-//   * メッセージ更新パラメータテンプレート
-//   * ${XXXX}の箇所は入力値等で置換して使用
-//   */
-// const MSG_DELETE_TEMPLATE =
-//        '<parameters delete_all_inbox="true">' +
-//        '<param xmlns="" folder_id="2" thread_id="${DELETE_ID}"></param>' +
-//        '</parameters>' ;
 
-
-//   //メッセージ実行の共通処理(ユーザーフィールド)
-//   const MessageDelete = async (delete_id) => {
-//     try {
-
-//       //トークンを取得
-//       let requestTokenaaa = await getRequestToken();
-
-//       //リクエストのテンプレート
-//       let msgDeleteParam = MSG_DELETE_TEMPLATE;
-//       msgDeleteParam = msgDeleteParam.replace('${REQUEST_TOKEN}', escapeHtml(requestTokenaaa));//トークン
-//       //削除するIDを置換
-//       msgDeleteParam = msgDeleteParam.replace('${DELETE_ID}', delete_id );
-//       let msgDeleteRequest = SOAP_DELETE_TEMPLATE;
-//       // SOAPパラメータを完成させる
-//       msgDeleteRequest = msgDeleteRequest.replace('${PARAMETERS}', msgDeleteParam);
-
-//       // 実行処理を指定
-//       msgDeleteRequest = msgDeleteRequest.split('${ACTION}').join('MessageRemoveThreads');
-
-//       // メッセージ登録の実行
-//       await $.ajax({
-//         type: 'post',
-//         url: 'https://1r65vi67okqr.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
-//         cache: false,
-//         data: msgDeleteRequest,
-//       }).then(function(responseData) {
-//         // console.warn("削除に成功"); // レスポンスデータをコンソールに表示
-//       });
-//     } catch (error) {
-//       console.error("エラーが発生しました:", error);
-//     }
-//   };
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //メッセージ送信処理(詳細画面にメッセージ送信ボタンをつける処理)
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  //ーーーーーーーーーー詳細画面を開いた時のイベントの中に以下の処理を入れてください。ーーーーーーーーーーーーーーーーーーーーーー
-
-  // //ログインユーザーの情報を取得
-  // var login_user = kintone.getLoginUser();
-  // if (login_user['id'] == 1) {
-  //   var myIndexButtonContainer = document.getElementById('my_index_button_container');
-  //   if (!myIndexButtonContainer) {
-  //     // メニューの上側の空白部分にボタンと文字を設置するコンテナを作成
-  //     const myIndexButtonContainer = document.createElement('div');
-  //     myIndexButtonContainer.id = 'my_index_button_container';
-  
-  //     // ボタンを作成
-  //     const myIndexButton = document.createElement('button');
-  //     myIndexButton.id = 'my_index_button';
-  //     myIndexButton.innerText = 'Garoonにメッセージ送信';
-  //     myIndexButton.onclick = () => {
-
-        
-  //       // 改行で文字列を分割し、配列に変換
-  //       if(record.Garoon送信履歴.value != ''){
-  //         const dateArray =  record.Garoon送信履歴.value.split('\n');
-  //       }else{
-  //         const dateArray =  record.Garoon送信履歴.value;
-  //       }
-  //       const dateArray =  record.Garoon送信履歴.value.split('\n');
-
-  //       // 一番下の行を取得
-  //       const lastDateString = dateArray[dateArray.length - 1];
-
-  //       //Garoonメッセージ送信ボタンの横に最終更新日を表示
-  //       const adjacentText = '最終送信日時:' + lastDateString;
-  //           // メッセージの送信内容をまとめる
-  //       const messageContent = `〇送信内容\n${record.Garoon送信メッセージ内容.value}\n\n${adjacentText}`;
-  //       const swalResult = window.swal({
-  //         title: 'メッセージを送信しますか？',
-  //         text: messageContent,
-  //         type: 'warning',
-  //         showCancelButton: true,
-  //         confirmButtonColor: '#DD6B55',
-  //         confirmButtonText: '送信する',
-  //         cancelButtonText: '送信しない',
-  //         closeOnConfirm: false},
-  //         () => {
-  //           const params = {
-  //             app: event.appId,		// アプリID
-  //             id: event.recordId,			// レコードID
-  //             record: {		// レコード情報
-  //               コメント: { 
-  //                 value: 'コメントの変更ができたよ'
-  //               },
-  //               区分2: {
-  //                 value: 'A報請求済中'
-  //               }
-  //             }
-  //           };
-  //           kintone.api(kintone.api.url('/k/v1/record.json', true), 'PUT', params).then((resp) => {
-  //             // PUT成功
-  //             return event;
-  //           })
-  //           //メッセージを送信する処理
-  //           // お試し版URL【変更】
-  //           const kntAppURL = 'https://1r65vi67okqr.cybozu.com/k/8/';
-  //           // URLを作成
-  //           let URL = kntAppURL + 'show#record=' + record.$id.value;
-  //           // ユーザー情報を格納する変数
-  //           let userCodes = [];
-  //           // FCのユーザー情報を編集する変数
-  //           let userCodes_fc = [];
-  //           // 宛先まとめる処理-----------------------------------
-  //           // ユーザー選択のコードを変数に代入
-  //           if (record.コールセンター上長.value.length != 0) {
-  //             let top_userfield = record.コールセンター上長.value;
-  //             userCodes.push(top_userfield[0]['code']);
-  //           }
-  //           if (record.AM.value.length != 0) {
-  //             let userfield = record.AM.value;
-  //             userCodes.push(userfield[0]['code']);
-  //           }
-  //           if (record.部長.value.length != 0) {
-  //             let userfield1 = record.部長.value;
-  //             userCodes.push(userfield1[0]['code']);
-  //           }
-  //           if (record.本部長.value.length != 0) {
-  //             let userfield2 = record.本部長.value;
-  //             userCodes.push(userfield2[0]['code']);
-  //           }
-  //           // IDの場合は右のように指定、record.$id.value
-  //           const content = record.店名.value + "【kintone】" + record.$id.value;
-  //           performCommonAction('申請', userCodes, content, record.コメント.value)
-  //             .then(function () {
-  //               GaroonMessageUpdateDelete();
-  //               send_content_update(record);
-  //           })
-  
-  //           //メッセージを送信する処理ここまで
-  
-  //           //モーダルを閉じる処理
-  //           window.swal.close();
-  //         }
-  //       );
-  //     };
-  
-  //     // 文字を作成
-  //     // 改行で文字列を分割し、配列に変換
-  //     if(record.Garoon送信履歴.value != ''){
-  //       const dateArray =  record.Garoon送信履歴.value.split('\n');
-  //     }else{
-  //       const dateArray =  record.Garoon送信履歴.value;
-  //     }
-  //     const dateArray =  record.Garoon送信履歴.value.split('\n');
-
-  //     // 一番下の行を取得
-  //     const lastDateString = dateArray[dateArray.length - 1];
-
-  //     //Garoonメッセージ送信ボタンの横に最終更新日を表示
-  //     const adjacentText = document.createTextNode('  最終送信日時:' + lastDateString);
-  
-  //     // ボタンと文字をコンテナに追加
-  //     myIndexButtonContainer.appendChild(myIndexButton);
-  //     myIndexButtonContainer.appendChild(adjacentText);
-  
-  //     // コンテナをドキュメントに追加
-  //     kintone.app.record.getHeaderMenuSpaceElement().appendChild(myIndexButtonContainer);
-  //   }
-  // }//メッセージ送信処理はここまで/////////////////////////////////////////////////////////////////
-
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //メッセージのユーザー定義関数
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
     /*
       メッセージの1通目(電話)
     */
@@ -1446,29 +1410,29 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         if(record.アンケート報告書.value == '要'){
             Garoon_message = 
             '【1通目(始)】' + '\n' +
-            'ご利用店舗:　' + record.店名.value+ '\n' + 
-            'ご来店日:　　' +  + visits_date_call + '\n' + 
-            '来店日時:　　' + visits_time_call +'\n' + 
-            '利用人数:　　' + visits_number + '\n' + 
-            'お気づきの内容:'+'\n' + '\n' + opinion_detail + '\n' + '\n' + 
-            '総合評価:　　' + evaluation_call + '\n' + 
-            '性別:　　　　' + sex_call + '\n' + 
-            '漢字氏名:　　' + name_call + '\n' + 
-            'ご連絡先:　　' + contact_address_call + '\n' +
+            'ご利用店舗　:' + record.店名.value+ '\n' + 
+            'ご来店日　　:' +  + visits_date_call + '\n' + 
+            '来店日時　　:' + visits_time_call +'\n' + 
+            '利用人数　　:' + visits_number + '\n' + 
+            'お気づきの内容:'+'\n'+ opinion_detail + '\n' + '\n' + 
+            '総合評価　　:' + evaluation_call + '\n' + 
+            '性別　　　　:' + sex_call + '\n' + 
+            '漢字氏名　　:' + name_call + '\n' + 
+            'ご連絡先　　:' + contact_address_call + '\n' +
             'アンケート報告書：必要' + '\n'+
             '【1通目(終)】';
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message = 
             '【1通目(始)】' + '\n' + 
-            'ご利用店舗:　' + record.店名.value+ '\n' + 
-            'ご来店日:　　' + visits_date_call + '\n' + 
-            '来店日時:　　' + visits_time_call +'\n' + 
-            '利用人数:　　' + visits_number + '\n' + 
-            'お気づきの内容:'+'\n'+ '\n' + opinion_detail + '\n' + '\n' +
-            '総合評価:　　' + evaluation_call + '\n' + 
-            '性別:　　　　' + sex_call + '\n' + 
-            '漢字氏名:　　' + name_call + '\n' + 
-            'ご連絡先:　　' + contact_address_call + '\n' + 
+            'ご利用店舗　:' + record.店名.value+ '\n' + 
+            'ご来店日　　:' + visits_date_call + '\n' + 
+            '来店日時　　:' + visits_time_call +'\n' + 
+            '利用人数　　:' + visits_number + '\n' + 
+            'お気づきの内容:'+'\n'+ opinion_detail + '\n' + '\n' +
+            '総合評価　　:' + evaluation_call + '\n' + 
+            '性別　　　　:' + sex_call + '\n' + 
+            '漢字氏名　　:' + name_call + '\n' + 
+            'ご連絡先　　:' + contact_address_call + '\n' + 
             '【1通目(終)】';
         }
 
@@ -1515,9 +1479,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         //記入者
         Garoon_message = 
         '【2通目(始)】' + '\n' +
-        '記入者：　　' + reply_content_entry_person_call + '\n' +
-        'ご返答内容：' + '\n' + '\n' + reply_content_call + '\n' +  '\n' +
-        'ご返答日時：' + reply_date_call + '\n' +
+        '記入者　　:' + reply_content_entry_person_call + '\n' +
+        'ご返答内容:' + '\n' + reply_content_call + '\n' +  '\n' +
+        'ご返答日時:' + reply_date_call + '\n' +
         '【2通目(終)】';
 
         return Garoon_message;
@@ -1599,29 +1563,29 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         if( record.アンケート報告書.value == '要'){
             Garoon_message = 
             '【1通目(始)】' + '\n' +
-            'ご利用店舗:　' + record.店名.value+ '\n' + 
-            'ご来店日:　　' + visits_date_mail_net + '\n' + 
-            '来店日時:　　' + visits_time_mail_net +'\n' + 
-            '利用人数:　　' + use_count + '\n' +  
-            'お気づきの内容:'+ '\n' + '\n' + opinion_detail + '\n' + '\n' +
-            '総合評価:　　' + evaluation_mail + '\n' + 
-            '性別:　　　　' + sex_mail + '\n' + 
-            '漢字氏名:　　' + name_mail + '\n' + 
-            'ご連絡先:　　' + contact_address_call + '\n'+
+            'ご利用店舗　:' + record.店名.value+ '\n' + 
+            'ご来店日　　:' + visits_date_mail_net + '\n' + 
+            '来店日時　　:' + visits_time_mail_net +'\n' + 
+            '利用人数　　:' + use_count + '\n' +  
+            'お気づきの内容:'+ '\n' + opinion_detail + '\n' + '\n' +
+            '総合評価　　:' + evaluation_mail + '\n' + 
+            '性別　　　　:' + sex_mail + '\n' + 
+            '漢字氏名　　:' + name_mail + '\n' + 
+            'ご連絡先　　:' + contact_address_call + '\n'+
             'アンケート報告書：必要' + '\n'+
             '【1通目(終)】';
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
             '【1通目(始)】' + '\n' + 
-            'ご利用店舗：　' + record.店名.value+ '\n' + 
-            'ご来店日:　　' + visits_date_mail_net + '\n' + 
-            '来店日時:　　' + visits_time_mail_net +'\n' + 
-            '利用人数:　　' + use_count + '\n' +  
-            'お気づきの内容:'+ '\n' + '\n' + opinion_detail + '\n' + '\n' +
-            '総合評価:　　' + evaluation_mail + '\n' + 
-            '性別:　　　　' + sex_mail + '\n' + 
-            '漢字氏名:　　' + name_mail + '\n' + 
-            'ご連絡先:　　' + contact_address_call + '\n' + 
+            'ご利用店舗　:' + record.店名.value+ '\n' + 
+            'ご来店日　　:' + visits_date_mail_net + '\n' + 
+            '来店日時　　:' + visits_time_mail_net +'\n' + 
+            '利用人数　　:' + use_count + '\n' +  
+            'お気づきの内容:'+ '\n' + opinion_detail + '\n' + '\n' +
+            '総合評価　　:' + evaluation_mail + '\n' + 
+            '性別　　　　:' + sex_mail + '\n' + 
+            '漢字氏名　　:' + name_mail + '\n' + 
+            'ご連絡先　　:' + contact_address_call + '\n' + 
             '【1通目(終)】';
         }
 
@@ -1668,8 +1632,8 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         Garoon_message = 
         '【2通目(始)】' + '\n' +
         '返信内容記入者:' + reply_content_entry_person_email + '\n' +
-        'ご返答内容:　　' + '\n' + '\n' + reply_content_email + '\n' + '\n' +
-        'ご返答日時:　　' + reply_date_email + '\n' +
+        'ご返答内容　　:' + '\n' + reply_content_email + '\n' + '\n' +
+        'ご返答日時　　:' + reply_date_email + '\n' +
         '【2通目(終)】';
 
         return Garoon_message;
@@ -1680,40 +1644,12 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     */
     //お客様とのやり取り3回目のメッセージ
     function third_message(record){
-
-      //電話_メール_口コミサイト_2回目
-      if(record.電話_メール_口コミサイト_2回目.value == undefined || record.電話_メール_口コミサイト_2回目.value == '' ){
-        var phone_email_review_site_second_time = '';
-      }else{
-        var phone_email_review_site_second_time = record.電話_メール_口コミサイト_2回目.value;
-      }
-
-      //ご連絡フォーム2回目
-      if(record.ご連絡フォーム_2回目.value == undefined || record.ご連絡フォーム_2回目.value == '' ){
-        var contact_form_second_time = '' ;
-      }else{
-        var contact_form_second_time = record.ご連絡フォーム_2回目.value;
-      }
-
-      //ご連絡の要・不要
-      if(record.ご連絡の要_不要_2回目.value == undefined || record.ご連絡の要_不要_2回目.value == ''){
-        var contact_required_unnecessary_second_time = '';
-      }else{
-        var contact_required_unnecessary_second_time = record.ご連絡の要_不要_2回目.value;
-      }
-
-      //ご連絡先
-      if(record.ご連絡先_2回目.value == undefined || record.ご連絡先_2回目.value == ''){
-        var contact_address_second_time = '';
-      }else{
-        var contact_address_second_time = record.ご連絡先_2回目.value;
-      }
       
       //ご連絡希望日時
-      if(record.ご連絡希望日時_2回目.value == undefined || record.ご連絡希望日時_2回目.value == '' ){
-        var contact_desired_time_second_time = '';
+      if(record.ご連絡日時_2回目.value == undefined || record.ご連絡日時_2回目.value == '' ){
+        var guest_contact_time_second_time = '';
       }else{
-        const dateTime = new Date(record.ご連絡希望日時_2回目.value);
+        const dateTime = new Date(record.ご連絡日時_2回目.value);
         // 年月日の取得
         const year = dateTime.getFullYear();
         const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
@@ -1724,7 +1660,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         const minutes = String(dateTime.getMinutes()).padStart(2, '0');
 
       // フォーマットされた日時の生成
-        var contact_desired_time_second_time = `${year}年${month}月${day}日${hours}時${minutes}分`;
+        var guest_contact_time_second_time = `${year}年${month}月${day}日${hours}時${minutes}分`;
       }
       //お客様からのご連絡内容
       if(record.お客様のご連絡内容_2回目.value == undefined || record.お客様のご連絡内容_2回目.value == '' ){
@@ -1734,15 +1670,11 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       }
 
       var Garoon_message = '';
-      //メッセージを作成する
+
       Garoon_message = 
       '【3通目(始)】' + '\n' + 
-      '電話・メール・口コミサイト:' + phone_email_review_site_second_time + '\n' + 
-      'ご連絡フォーム:　　' + contact_form_second_time + '\n' + 
-      'ご連絡の要・不要:　' + contact_required_unnecessary_second_time + '\n' + 
-      'ご連絡先:　　　　　' + contact_address_second_time + '\n' + 
-      'ご連絡希望日時:　　' + contact_desired_time_second_time + '\n' + 
-      'お客様からのご連絡内容：' + '\n' + '\n' + guest_contact_content_second_time + '\n' + 
+      'ご連絡日時　　　　　　:' + guest_contact_time_second_time + '\n' + 
+      'お客様からのご連絡内容:' + '\n' + guest_contact_content_second_time + '\n' + 
       '【3通目(終)】' ;
 
       return Garoon_message;
@@ -1790,9 +1722,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       */
       Garoon_message =
       '【4通目(始)】' + '\n' +
-      '返信内容記入者：' + entry_person_second_time + '\n' +
-      'ご返答内容：　　' + reply_content_call_center_entry_second_time_to_guest + '\n' + '\n' +
-      'ご返答日時：　　' + reply_time_second_time + '\n' +
+      '返答内容記入者:' + entry_person_second_time + '\n' +
+      'ご返答内容　　:' + '\n' + reply_content_call_center_entry_second_time_to_guest + '\n' + '\n' +
+      'ご返答日時　　:' + reply_time_second_time + '\n' +
       '【4通目(終)】';
 
       return Garoon_message;
@@ -1801,42 +1733,66 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     /*
       メッセージの5通目
     */
-    //お客様とのやり取り3回目のメッセージ
+    //お客様とのやり取り5回目のメッセージ
     function five_message(record){
+  
+    //ご連絡希望日時
+    if(record.ご連絡日時_3回目.value == undefined || record.ご連絡日時_3回目.value == '' ){
+      var guest_contact_time_third_time = '';
+    }else{
+      const dateTime = new Date(record.ご連絡日時_3回目.value);
+      // 年月日の取得
+      const year = dateTime.getFullYear();
+      const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+      const day = String(dateTime.getDate()).padStart(2, '0'); // 日も2桁に整形
 
-      //電話_メール_口コミサイト_2回目
-      if(record.電話_メール_口コミサイト_3回目.value == undefined || record.電話_メール_口コミサイト_3回目.value == '' ){
-        var phone_email_review_site_third_time = '';
-      }else{
-        var phone_email_review_site_third_time = record.電話_メール_口コミサイト_3回目.value;
-      }
+      // 時分の取得
+      const hours = String(dateTime.getHours()).padStart(2, '0');
+      const minutes = String(dateTime.getMinutes()).padStart(2, '0');
 
-      //ご連絡フォーム2回目
-      if(record.ご連絡フォーム_3回目.value == undefined || record.ご連絡フォーム_3回目.value == '' ){
-        var contact_form_third_time = '' ;
-      }else{
-        var contact_form_third_time = record.ご連絡フォーム_3回目.value;
-      }
+    // フォーマットされた日時の生成
+      var guest_contact_time_third_time = `${year}年${month}月${day}日${hours}時${minutes}分`;
+    }
+    //お客様からのご連絡内容
+    if(record.お客様のご連絡内容_3回目.value == undefined || record.お客様のご連絡内容_3回目.value == '' ){
+      var guest_contact_content_third_time = '';
+    }else{
+      var guest_contact_content_third_time = record.お客様のご連絡内容_3回目.value;
+    }
 
-      //ご連絡の要・不要
-      if(record.ご連絡の要_不要_3回目.value == undefined || record.ご連絡の要_不要_3回目.value == ''){
-        var contact_required_unnecessary_third_time = '';
-      }else{
-        var contact_required_unnecessary_third_time = record.ご連絡の要_不要_3回目.value;
-      }
+    var Garoon_message = '';
 
-      //ご連絡先
-      if(record.ご連絡先_3回目.value == undefined || record.ご連絡先_3回目.value == ''){
-        var contact_address_third_time = '';
+    Garoon_message = 
+    '【5通目(始)】' + '\n' + 
+    'ご連絡日時　　　　　　:' + guest_contact_time_third_time + '\n' + 
+    'お客様からのご連絡内容:' + '\n' + guest_contact_content_third_time + '\n' + 
+    '【5通目(終)】' ;
+
+    return Garoon_message;
+  }
+
+
+    /*
+      メッセージの6通目
+    */
+    function six_message(record){
+      //記入者
+      if(record.記入者_3回目.value == undefined || record.記入者_3回目.value == ''){
+        var entry_person_third_time = '';
       }else{
-        var contact_address_third_time = record.ご連絡先_3回目.value;
+        var entry_person_third_time = record.記入者_3回目.value;
       }
-      
-      //ご連絡希望日時
-      if(record.ご連絡希望日時_3回目.value == undefined || record.ご連絡希望日時_3回目.value == '' ){
-        var contact_desired_time_third_time = '';
+      //お客様への返答内容(コールセンター記入)
+      if(record.お客様への返答内容_コールセンター記入_3回目.value == undefined || record.お客様への返答内容_コールセンター記入_3回目.value == ''){
+        var reply_content_call_center_entry_third_time_to_guest = '' ;
       }else{
-        const dateTime = new Date(record.ご連絡希望日時_3回目.value);
+        var reply_content_call_center_entry_third_time_to_guest = record.お客様への返答内容_コールセンター記入_3回目.value ;
+      }
+      //ご返答日時
+      if(record.ご返答日時_3回目.value == undefined || record.ご返答日時_3回目.value == ''){
+        var reply_time_third_time = '';
+      }else{
+        const dateTime = new Date(record.ご返答日時_3回目.value);
         // 年月日の取得
         const year = dateTime.getFullYear();
         const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
@@ -1846,80 +1802,22 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         const hours = String(dateTime.getHours()).padStart(2, '0');
         const minutes = String(dateTime.getMinutes()).padStart(2, '0');
 
-      // フォーマットされた日時の生成
-        var contact_desired_time_third_time = `${year}年${month}月${day}日${hours}時${minutes}分`;
-      }
-      //お客様からのご連絡内容
-      if(record.お客様のご連絡内容_3回目.value == undefined || record.お客様のご連絡内容_3回目.value == '' ){
-        var guest_contact_content_third_time = '';
-      }else{
-        var guest_contact_content_third_time = record.お客様のご連絡内容_3回目.value;
+
+        var reply_time_third_time = `${year}年${month}月${day}日${hours}時${minutes}分`;
+
       }
 
       var Garoon_message = '';
-      //メッセージを作成する
-      Garoon_message = 
-      '【5通目(始)】' + '\n' + 
-      '電話・メール・口コミサイト:' + phone_email_review_site_third_time + '\n' + 
-      'ご連絡フォーム:　　' + contact_form_third_time + '\n' + 
-      'ご連絡の要・不要:　' + contact_required_unnecessary_third_time + '\n' + 
-      'ご連絡先:　　　　　' + contact_address_third_time + '\n' + 
-      'ご連絡希望日時:　　' + contact_desired_time_third_time + '\n' + 
-      'お客様からのご連絡内容：' + '\n' + '\n' + guest_contact_content_third_time + '\n' + 
-      '【5通目(終)】' ;
+
+      Garoon_message =
+      '【6通目(始)】' + '\n' +
+      '返答内容記入者:' + entry_person_third_time + '\n' +
+      'ご返答内容　　:' + '\n' + reply_content_call_center_entry_third_time_to_guest + '\n' + '\n' +
+      'ご返答日時　　:' + reply_time_third_time + '\n' +
+      '【6通目(終)】';
 
       return Garoon_message;
     }
-
-    /*
-      メッセージの6通目
-    */
-      function six_message(record){
-        //記入者
-        if(record.記入者_3回目.value == undefined || record.記入者_3回目.value == ''){
-          var entry_person_third_time = '';
-        }else{
-          var entry_person_third_time = record.記入者_3回目.value;
-        }
-        //お客様への返答内容(コールセンター記入)
-        if(record.お客様への返答内容_コールセンター記入_3回目.value == undefined || record.お客様への返答内容_コールセンター記入_3回目.value == ''){
-          var reply_content_call_center_entry_third_time_to_guest = '' ;
-        }else{
-          var reply_content_call_center_entry_third_time_to_guest = record.お客様への返答内容_コールセンター記入_3回目.value ;
-        }
-        //ご返答日時
-        if(record.ご返答日時_3回目.value == undefined || record.ご返答日時_3回目.value == ''){
-          var reply_time_third_time = '';
-        }else{
-          const dateTime = new Date(record.ご返答日時_3回目.value);
-          // 年月日の取得
-          const year = dateTime.getFullYear();
-          const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
-          const day = String(dateTime.getDate()).padStart(2, '0'); // 日も2桁に整形
-  
-          // 時分の取得
-          const hours = String(dateTime.getHours()).padStart(2, '0');
-          const minutes = String(dateTime.getMinutes()).padStart(2, '0');
-  
-  
-          var reply_time_third_time = `${year}年${month}月${day}日${hours}時${minutes}分`;
-  
-        }
-  
-        var Garoon_message = '';
-  
-        /*
-          メッセージの4通目
-        */
-        Garoon_message =
-        '【6通目(始)】' + '\n' +
-        '返信内容記入者：' + entry_person_third_time + '\n' +
-        'ご返答内容：　　' + reply_content_call_center_entry_third_time_to_guest + '\n' + '\n' +
-        'ご返答日時：　　' + reply_time_third_time + '\n' +
-        '【6通目(終)】';
-  
-        return Garoon_message;
-      }
 
     /*
       アンケート報告書
@@ -1949,8 +1847,8 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         enquete_report_Garoon_message = 
         '【アンケート報告書(始)】' + '\n' +
         'お客様対応の状況:' + '\n' + guest_supported_status + '\n' +'\n' +
-        '原因：' + '\n' + cause + '\n' +'\n' +
-        '改善策：'+ '\n' + improvement_plan_content_1 + '\n' +'\n' +
+        '原因　　　　　　:' + '\n' + cause + '\n' +'\n' +
+        '改善策　　　　　:'+ '\n' + improvement_plan_content_1 + '\n' +'\n' +
         '【アンケート報告書(終)】';
 
         return enquete_report_Garoon_message;
@@ -1971,95 +1869,55 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
               //電話の場合、Garoonに送信するメッセージを作成
               if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信'){
                   record.Garoon送信メッセージ内容.value = first_message_call(record);
-              }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信' && record.ご返答内容_電話.value != undefined){//【修正後】if(record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信' && record.ご返答内容_電話.value != undefined)　【修正前】if(record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信')
+              }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信' && record.ご返答内容_電話.value){
                   record.Garoon送信メッセージ内容.value = second_message_call(record);
-                  //アンケート報告書に記入があれば追加
-                  if(record.アンケート報告書送信フラグ.value == '送信済み' ){
-                  }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value != undefined || record.原因.value != undefined || record.改善策_内容1.value != undefined) ){
-                    record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
-                  }
+              }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '未送信' ){
+                record.Garoon送信メッセージ内容.value = third_message(record);
+              }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value){
+                record.Garoon送信メッセージ内容.value = four_message(record);
+              }else if(record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '未送信'){
+                record.Garoon送信メッセージ内容.value = five_message(record);
+              }else if(record.お客様とのご連絡回数.value == '3回目' && record.送信6回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_3回目.value){
+                record.Garoon送信メッセージ内容.value = six_message(record);
               }else if((record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信' && record.ご返答内容_電話.value == undefined) || (record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '送信済み')){//追加追加
                   record.Garoon送信メッセージ内容.value = '';
-                  //アンケート報告書に記入があれば追加
-                  if(record.アンケート報告書送信フラグ.value == '送信済み' ){
-                  }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value != undefined || record.原因.value != undefined || record.改善策_内容1.value != undefined) ){
-                    record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
-                  }
-              }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '未送信' ){
-                  record.Garoon送信メッセージ内容.value = third_message(record);
-                  //アンケート報告書に記入があれば追加
-                  if(record.アンケート報告書送信フラグ.value == '送信済み' ){
-                  }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value != undefined || record.原因.value != undefined || record.改善策_内容1.value != undefined) ){
-                    record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
-                  }
-              }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value != undefined){
-                  record.Garoon送信メッセージ内容.value = four_message(record);
-                  //アンケート報告書に記入があれば追加
-                  if(record.アンケート報告書送信フラグ.value == '送信済み' ){
-                  }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value != undefined || record.原因.value != undefined || record.改善策_内容1.value != undefined) ){
-                    record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
-                  }
               }else if((record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value == undefined) || (record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '送信済み')){
                   record.Garoon送信メッセージ内容.value = '';
-                  //アンケート報告書に記入があれば追加
-                  if(record.アンケート報告書送信フラグ.value == '送信済み' ){
-                  }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value != undefined || record.原因.value != undefined || record.改善策_内容1.value != undefined) ){
-                    record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
-                  }
               }else{
-                  record.Garoon送信メッセージ内容.value = '5通目以降のメッセージ内容は未実装です。';
+                  record.Garoon送信メッセージ内容.value = '';
               }
           }else if(record.受付方法.value == 'メール・ネットアンケート' || record.受付方法.value == '口コミサイト'){
 
               if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信'){
                   record.Garoon送信メッセージ内容.value = first_message_mail(record);
-                  //アンケート報告書に記入があれば追加
-                  if(record.アンケート報告書送信フラグ.value == '送信済み' ){
-                  }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value != undefined || record.原因.value != undefined || record.改善策_内容1.value != undefined) ){
-                    record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
-                  }
-              }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信' && record.ご返信内容_メール.value != undefined){
+              }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信' && record.ご返信内容_メール.value){
                   record.Garoon送信メッセージ内容.value = second_message_mail(record);
-                  //アンケート報告書に記入があれば追加
-                  if(record.アンケート報告書送信フラグ.value == '送信済み' ){
-                  }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value != undefined || record.原因.value != undefined || record.改善策_内容1.value != undefined) ){
-                    record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
-                  }
+              }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '未送信'){
+                record.Garoon送信メッセージ内容.value = third_message(record);
+              }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value){
+                record.Garoon送信メッセージ内容.value = four_message(record);
+              }else if(record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '未送信'){
+                record.Garoon送信メッセージ内容.value = five_message(record);
+              }else if(record.お客様とのご連絡回数.value == '3回目' && record.送信6回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_3回目.value){
+                record.Garoon送信メッセージ内容.value = six_message(record);
               }else if((record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信' && record.ご返信内容_メール.value == undefined) || (record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '送信済み')){
                 record.Garoon送信メッセージ内容.value = '';
-                //アンケート報告書に記入があれば追加
-                if(record.アンケート報告書送信フラグ.value == '送信済み' ){
-                }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value != undefined || record.原因.value != undefined || record.改善策_内容1.value != undefined) ){
-                  record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
-                }
-              }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '未送信'){
-                  record.Garoon送信メッセージ内容.value = third_message(record);
-                  //アンケート報告書に記入があれば追加
-                  if(record.アンケート報告書送信フラグ.value == '送信済み' ){
-                  }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value != undefined || record.原因.value != undefined || record.改善策_内容1.value != undefined) ){
-                    record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
-                  }
-              }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value != undefined){
-                  record.Garoon送信メッセージ内容.value = four_message(record);
-                  //アンケート報告書に記入があれば追加
-                  if(record.アンケート報告書送信フラグ.value == '送信済み' ){
-                  }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value != undefined || record.原因.value != undefined || record.改善策_内容1.value != undefined) ){
-                    record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
-                  }
               }else if((record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value == undefined) || (record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '送信済み')){
                   record.Garoon送信メッセージ内容.value = '';
-                  //アンケート報告書に記入があれば追加
-                  if(record.アンケート報告書送信フラグ.value == '送信済み' ){
-                  }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value != undefined || record.原因.value != undefined || record.改善策_内容1.value != undefined) ){
-                    record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
-                  }
               }else{
-                  record.Garoon送信メッセージ内容.value = '5通目以降のメッセージ内容は未実装です。'
+                  record.Garoon送信メッセージ内容.value = ''
               }
           }
       }
       return event;
     });
+    //アンケート報告書の内容をつける場合は以下のコードを参考にする
+
+    // //アンケート報告書に記入があれば追加
+    // if(record.アンケート報告書送信フラグ.value == '送信済み' ){
+    // }else if(record.アンケート報告書.value == '要' && (record.お客様対応の状況.value || record.原因.value || record.改善策_内容1.value) ){
+    //   record.Garoon送信メッセージ内容.value += '\n' + '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + '\n' + enquete_report_message(record);
+    // }
   //---------------------------------------------------------------------------------------------------------------------------------------------------------
   // 以下、メッセージ処理の修正(終わり)
   //---------------------------------------------------------------------------------------------------------------------------------------------------------

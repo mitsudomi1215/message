@@ -350,8 +350,13 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         if(GetLoginUser.id == 8561){
             // スペースフィールド
             const element = kintone.app.record.getSpaceElement('send_message');
-            element.innerHTML = '送信するを選択するとGaroonメッセージを作成';
+            element.innerHTML = '送信する➝Garoonメッセージを作成';;
             element.style.cssText = 'color: red; font-size: 18px; font-weight: bold;';
+
+            // スペースフィールド
+            const warning_statement = kintone.app.record.getSpaceElement('message_warning');
+            warning_statement.innerHTML = '"送信する"を選択後、メッセージを修正してください。';
+            warning_statement.style.cssText = 'color: red; font-size: 18px; font-weight: bold;';
         }
 
         //入力不可設定
