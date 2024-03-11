@@ -61,7 +61,13 @@ kintone.events.on(["app.record.create.change.受付日時_電話","app.record.ed
         }else{
             record.受付日時_まとめ.value  = record.受付日時_電話.value;
         }
-    }else {
+    }else if(record.受付方法.value == "口コミサイト"){
+        if(record.受付日時_口コミ.value == undefined || record.受付日時_口コミ.value == ''){
+
+        }else{
+            record.受付日時_まとめ.value  = record.受付日時_口コミ.value;
+        }
+    }else{
         if(record.受付日時_メール.value == undefined || record.受付日時_メール.value == ''){
 
         }else{
@@ -75,16 +81,20 @@ kintone.events.on(["app.record.create.change.受付日時_電話","app.record.ed
 kintone.events.on(["app.record.create.change.受付方法","app.record.edit.change.受付方法"], event => {
     const record = event.record;
     if(record.受付方法.value == "電話"){
-        kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', false);
+        kintone.app.record.setFieldShown('口コミサイト受付', false);
+        kintone.app.record.setFieldShown('メール・ネットアンケート受付', false);
         kintone.app.record.setFieldShown('電話受付', true);
     }else if(record.受付方法.value == "メール・ネットアンケート"){
-        kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', true);
+        kintone.app.record.setFieldShown('口コミサイト受付', false);
+        kintone.app.record.setFieldShown('メール・ネットアンケート受付', true);
         kintone.app.record.setFieldShown('電話受付', false);
     }else if(record.受付方法.value == "口コミサイト"){
-        kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', true);
+        kintone.app.record.setFieldShown('口コミサイト受付', true);
+        kintone.app.record.setFieldShown('メール・ネットアンケート受付', false);
         kintone.app.record.setFieldShown('電話受付', false);
     }else {
-        kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', false);
+        kintone.app.record.setFieldShown('口コミサイト受付', false);
+        kintone.app.record.setFieldShown('メール・ネットアンケート受付', false);
         kintone.app.record.setFieldShown('電話受付', false);
     }
     return event
@@ -121,7 +131,7 @@ kintone.events.on([ 'app.record.edit.change.ご利用人数_メール_ネット'
     return event;
 });
 
-//メール・口コミ、ネットアンケートの総合評価が利用したくないの時
+//メール・ネットアンケートの総合評価が利用したくないの時
 kintone.events.on([ 'app.record.edit.change.総合評価_メール', 'app.record.create.change.総合評価_メール'], event => {
     const rec = event.record;
     if (rec.総合評価_メール.value == '利用したくない') {
@@ -134,6 +144,24 @@ kintone.events.on([ 'app.record.edit.change.総合評価_メール', 'app.record
         rec.内容.value = '未記入、その他';
     }else{
         rec.内容.value = rec.総合評価_メール.value;
+    }
+
+    return event;
+});
+
+//口コミサイトの総合評価が利用したくないの時
+kintone.events.on([ 'app.record.edit.change.総合評価_口コミ', 'app.record.create.change.総合評価_口コミ'], event => {
+    const rec = event.record;
+    if (rec.総合評価_口コミ.value == '利用したくない') {
+        rec.アンケート報告書_口コミ.value = '要';
+    }else{
+        rec.アンケート報告書_口コミ.value = '否';
+    }
+
+    if(rec.総合評価_口コミ.value == "ー" ){
+        rec.内容.value = '未記入、その他';
+    }else{
+        rec.内容.value = rec.総合評価_口コミ.value;
     }
 
     return event;
@@ -153,7 +181,7 @@ kintone.events.on(['app.record.edit.change.総合評価_電話','app.record.crea
     return event;
 });
 
-kintone.events.on(['app.record.create.change.ご来店日時_電話','app.record.edit.change.ご来店日時_電話','app.record.create.change.ご来店日時_メール_ネットアンケート','app.record.edit.change.ご来店日時_メール_ネットアンケート'], event => {
+kintone.events.on(['app.record.create.change.ご来店日時_電話','app.record.edit.change.ご来店日時_電話','app.record.create.change.ご来店日時_メール_ネットアンケート','app.record.edit.change.ご来店日時_メール_ネットアンケート','app.record.create.change.ご来店日時_口コミ','app.record.edit.change.ご来店日時_口コミ'], event => {
     var record = event.record;
     
     if(record.受付方法.value == "電話"){
@@ -170,6 +198,21 @@ kintone.events.on(['app.record.create.change.ご来店日時_電話','app.record
             const day = String(visits_date_time_call.getDate()).padStart(2, '0'); // 日も2桁に整形
             record.日付_発生日時.value = year + '-' + month + '-' + day;
 
+        }
+    }else if(record.受付方法.value == "口コミサイト"){
+        if(record.ご来店日時_口コミ.value == undefined || record.ご来店日時_口コミ.value == ''){
+
+        }else{
+            record.発生日時.value = record.ご来店日時_口コミ.value;
+
+            //日付_発生日時に代入
+            var visits_date_time_review = new Date(record.ご来店日時_口コミ.value);
+            // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split('T')[0];
+            // 年月日の取得
+            const year = visits_date_time_review.getFullYear();
+            const month = String(visits_date_time_review.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+            const day = String(visits_date_time_review.getDate()).padStart(2, '0'); // 日も2桁に整形
+            record.日付_発生日時.value = year + '-' + month + '-' + day;
         }
     }else{
         if(record.ご来店日時_メール_ネットアンケート.value == undefined || record.ご来店日時_メール_ネットアンケート.value == ''){
@@ -208,6 +251,18 @@ kintone.events.on(['app.record.create.change.発生日時','app.record.edit.chan
             const day = String(visits_date_time_call.getDate()).padStart(2, '0'); // 日も2桁に整形
             record.日付_発生日時.value = year + '-' + month + '-' + day;
         }
+    }else if(record.受付方法.value == "口コミサイト"){
+        if(record.発生日時.value == undefined || record.発生日時.value == ''){
+            
+        }else{
+            var visits_date_time_review = new Date(record.発生日時.value);
+            // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split('T')[0];
+            // 年月日の取得
+            const year = visits_date_time_review.getFullYear();
+            const month = String(visits_date_time_review.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+            const day = String(visits_date_time_review.getDate()).padStart(2, '0'); // 日も2桁に整形
+            record.日付_発生日時.value = year + '-' + month + '-' + day;
+        }
     }else{
         if(record.発生日時.value == undefined || record.発生日時.value == ''){
             
@@ -230,24 +285,29 @@ kintone.events.on(['app.record.create.change.発生日時','app.record.edit.chan
 kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.print.show"], event => {
     const record = event.record;
     if(record.受付方法.value == "電話"){
-        kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', false);
+        kintone.app.record.setFieldShown('口コミサイト受付',false );
+        kintone.app.record.setFieldShown('メール・ネットアンケート受付', false);
         kintone.app.record.setFieldShown('電話受付', true);
     }else if(record.受付方法.value == "メール・ネットアンケート"){
-        kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', true);
+        kintone.app.record.setFieldShown('口コミサイト受付',false );
+        kintone.app.record.setFieldShown('メール・ネットアンケート受付', true);
         kintone.app.record.setFieldShown('電話受付', false);
     }else if(record.受付方法.value == "口コミサイト"){
-        kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', true);
+        kintone.app.record.setFieldShown('口コミサイト受付',true );
+        kintone.app.record.setFieldShown('メール・ネットアンケート受付', false);
         kintone.app.record.setFieldShown('電話受付', false);
     }else {
-        kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', false);
+        kintone.app.record.setFieldShown('口コミサイト受付',false);
+        kintone.app.record.setFieldShown('メール・ネットアンケート受付', false);
         kintone.app.record.setFieldShown('電話受付', false);
     }
     //お客様とのご連絡回数
     if(record.お客様とのご連絡回数.value == "1回目"){
         //グループの開閉
         kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
-        kintone.app.record.setGroupFieldOpen('電話受付', true)
-        kintone.app.record.setGroupFieldOpen('メール・ネットアンケート・口コミサイト受付', true);
+        kintone.app.record.setGroupFieldOpen('電話受付', true);
+        kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', true);
+        kintone.app.record.setGroupFieldOpen('口コミサイト受付', true)
         kintone.app.record.setGroupFieldOpen('アンケート報告書_グループ', true);
 
         //グループの表示
@@ -257,7 +317,8 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         //グループの開閉
         kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
         kintone.app.record.setGroupFieldOpen('電話受付', false)
-        kintone.app.record.setGroupFieldOpen('メール・ネットアンケート・口コミサイト受付', false);
+        kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', false);
+        kintone.app.record.setGroupFieldOpen('口コミサイト受付', false)
         kintone.app.record.setGroupFieldOpen('お客様とのご連絡詳細_2回目_', true);
 
         //グループの表示
@@ -268,7 +329,8 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         //グループの開閉
         kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
         kintone.app.record.setGroupFieldOpen('電話受付', false);
-        kintone.app.record.setGroupFieldOpen('メール・ネットアンケート・口コミサイト受付', false);
+        kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', false);
+        kintone.app.record.setGroupFieldOpen('口コミサイト受付', false)
         kintone.app.record.setGroupFieldOpen('お客様とのご連絡詳細_2回目_', false);
         kintone.app.record.setGroupFieldOpen('お客様とのご連絡詳細_3回目_', true);
 
@@ -299,8 +361,9 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         // kintone.app.record.setFieldShown('Garoonメッセージ送信制御', false);
 
         //グループを非表示
-        kintone.app.record.setFieldShown('メール・ネットアンケート・口コミサイト受付', false);
         kintone.app.record.setFieldShown('電話受付', false);
+        kintone.app.record.setFieldShown('メール・ネットアンケート受付', false);
+        kintone.app.record.setFieldShown('口コミサイト受付', false);
         kintone.app.record.setFieldShown('お客様とのご連絡詳細_2回目以降_', false);
 
         //アンケート報告書を非表示にする
@@ -318,7 +381,8 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
 
         //グループの制御
         kintone.app.record.setGroupFieldOpen('電話受付', true)
-        kintone.app.record.setGroupFieldOpen('メール・ネットアンケート・口コミサイト受付', true);
+        kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', true);
+        kintone.app.record.setGroupFieldOpen('口コミサイト受付', true);
         kintone.app.record.setGroupFieldOpen('アンケート報告書', true);
 
         return event;
@@ -379,7 +443,8 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
             //グループの開閉
             kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
             kintone.app.record.setGroupFieldOpen('電話受付', true)
-            kintone.app.record.setGroupFieldOpen('メール・ネットアンケート・口コミサイト受付', true);
+            kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', true);
+            kintone.app.record.setGroupFieldOpen('口コミサイト受付', true);
             kintone.app.record.setGroupFieldOpen('アンケート報告書_グループ', true);
 
             //グループの表示
@@ -390,7 +455,8 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
             //グループの開閉
             kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
             kintone.app.record.setGroupFieldOpen('電話受付', false)
-            kintone.app.record.setGroupFieldOpen('メール・ネットアンケート・口コミサイト受付', false);
+            kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', false);
+            kintone.app.record.setGroupFieldOpen('口コミサイト受付', false);
             kintone.app.record.setGroupFieldOpen('お客様とのご連絡詳細_2回目_', true);
 
             //グループの表示
@@ -402,7 +468,8 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
             //グループの開閉
             kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
             kintone.app.record.setGroupFieldOpen('電話受付', false);
-            kintone.app.record.setGroupFieldOpen('メール・ネットアンケート・口コミサイト受付', false);
+            kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', false);
+            kintone.app.record.setGroupFieldOpen('口コミサイト受付', false);
             kintone.app.record.setGroupFieldOpen('お客様とのご連絡詳細_2回目_', false);
             kintone.app.record.setGroupFieldOpen('お客様とのご連絡詳細_3回目_', true);
 
