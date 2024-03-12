@@ -23,8 +23,36 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
         kintone.app.record.setFieldShown('アンケート報告書_グループ',false);
     }
 
-    //システム管理者用を非表示にする
+    //システム管理者用グループを非表示にする
     kintone.app.record.setFieldShown('システム管理者用',false); 
+
+    //電話対応の時、顛末を表示する
+    if(record.受付方法.value == "電話"){
+        // スペースフィールド
+        const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
+        tenmatsu_field.innerHTML = '顛末';
+        tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(255, 242, 204);';
+
+        // スペースフィールド
+        const manager_field = kintone.app.record.getSpaceElement('manager');
+        manager_field.innerHTML = '部長';
+        manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
+
+        // スペースフィールド
+        const call_center_field = kintone.app.record.getSpaceElement('call_center');
+        call_center_field.innerHTML = 'コールセンター';
+        call_center_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
+    }else{
+        //顛末を表示
+        kintone.app.record.setFieldShown('顛末', false);
+        //部長顛末確認を表示
+        kintone.app.record.setFieldShown('顛末確認_部長', false);
+        //コールセンター顛末確認、確認日時を表示
+        kintone.app.record.setFieldShown('顛末確認者', false);
+        kintone.app.record.setFieldShown('確認日時_顛末', false);
+    }
+
+    return event;
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //以下、共通処理(新規・編集)
@@ -430,6 +458,13 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         record.受付方法.disabled = true;
 
         // button_click();//追加
+
+        if(record.受付方法.value == "電話"){
+            // スペースフィールド
+            const caution_statement = kintone.app.record.getSpaceElement('caution_statement');
+            caution_statement.innerHTML = '▼追加報告';
+            caution_statement.style.cssText = 'color:red; font-size: 18px; font-weight: bold; position: relative; left: 1128px; top: 100px;';
+        }
 
         return event;
     });
