@@ -27,7 +27,7 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
     kintone.app.record.setFieldShown('システム管理者用',false); 
 
     //電話対応の時、顛末を表示する
-    if(record.受付方法.value == "電話"){
+    if(record.受付方法.value == "電話" || record.受付方法.value == "メール・ネットアンケート" || record.受付方法.value == "口コミサイト"){
         // スペースフィールド
         const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
         tenmatsu_field.innerHTML = '顛末';
@@ -459,7 +459,7 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
 
         // button_click();//追加
 
-        if(record.受付方法.value == "電話"){
+        if(record.受付方法.value == "電話" || record.受付方法.value == "メール・ネットアンケート" ||record.受付方法.value == "口コミサイト"){
             // スペースフィールド
             const caution_statement = kintone.app.record.getSpaceElement('caution_statement');
             caution_statement.innerHTML = '▼追加報告';
