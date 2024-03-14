@@ -15,34 +15,12 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
         kintone.app.record.setFieldShown('Garoon送信メッセージ内容', false);
         kintone.app.record.setFieldShown('Garoon送信履歴', false);
     }
+
     //アンケート報告書
     if(record.アンケート報告書.value == "要"){
         kintone.app.record.setFieldShown('アンケート報告書_グループ',true);
         kintone.app.record.setGroupFieldOpen('アンケート報告書_グループ', true);
-    }else{
-        kintone.app.record.setFieldShown('アンケート報告書_グループ',false);
-    }
 
-    //システム管理者用グループを非表示にする
-    kintone.app.record.setFieldShown('システム管理者用',false); 
-
-    //電話対応の時、顛末を表示する
-    if(record.受付方法.value == "電話" || record.受付方法.value == "メール・ネットアンケート" || record.受付方法.value == "口コミサイト"){
-        // スペースフィールド
-        const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
-        tenmatsu_field.innerHTML = '顛末';
-        tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(255, 242, 204);';
-
-        // スペースフィールド
-        const manager_field = kintone.app.record.getSpaceElement('manager');
-        manager_field.innerHTML = '部長';
-        manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
-
-        // スペースフィールド
-        const call_center_field = kintone.app.record.getSpaceElement('call_center');
-        call_center_field.innerHTML = 'コールセンター';
-        call_center_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
-    }else{
         //顛末を表示
         kintone.app.record.setFieldShown('顛末', false);
         //部長顛末確認を表示
@@ -50,7 +28,99 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
         //コールセンター顛末確認、確認日時を表示
         kintone.app.record.setFieldShown('顛末確認者', false);
         kintone.app.record.setFieldShown('確認日時_顛末', false);
+
+        //顛末という文字を削除
+        const tenmatsuField = kintone.app.record.getSpaceElement('tenmatsu');
+        if (tenmatsuField) {
+            tenmatsuField.style.display = 'none';
+        }
+
+        //顛末の部長という文字を削除
+        const managerField = kintone.app.record.getSpaceElement('manager');
+        if (managerField) {
+            managerField.style.display = 'none';
+        }
+        
+
+        //顛末のコールセンターという文字を削除
+        const callCenterField = kintone.app.record.getSpaceElement('call_center');
+        if (callCenterField) {
+            callCenterField.style.display = 'none';
+        }
+    }else{
+        //アンケート報告書のグループを非表示
+        kintone.app.record.setFieldShown('アンケート報告書_グループ',false);
+
+        //顛末を表示
+        kintone.app.record.setFieldShown('顛末', true);
+        //部長顛末確認を表示
+        kintone.app.record.setFieldShown('顛末確認_部長', true);
+        //コールセンター顛末確認、確認日時を表示
+        kintone.app.record.setFieldShown('顛末確認者', true);
+        kintone.app.record.setFieldShown('確認日時_顛末', true);
+        // スペースフィールド
+        const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
+        if (tenmatsu_field) {
+            tenmatsu_field.innerHTML = '顛末';
+            tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(255, 242, 204);';
+        }
+        // スペースフィールド
+        const manager_field = kintone.app.record.getSpaceElement('manager');
+        if (manager_field) {
+            manager_field.innerHTML = '部長';
+            manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
+        }
+        // スペースフィールド
+        const call_center_field = kintone.app.record.getSpaceElement('call_center');
+        if (call_center_field) {
+            call_center_field.innerHTML = 'コールセンター';
+            call_center_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
+        } 
     }
+
+    //システム管理者用グループを非表示にする
+    kintone.app.record.setFieldShown('システム管理者用',false); 
+
+    // //電話対応の時、顛末を表示する
+    // if(record.受付方法.value == "電話" || record.受付方法.value == "メール・ネットアンケート" || record.受付方法.value == "口コミサイト"){
+    //     // スペースフィールド
+    //     const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
+    //     tenmatsu_field.innerHTML = '顛末';
+    //     tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(255, 242, 204);';
+
+    //     // スペースフィールド
+    //     const manager_field = kintone.app.record.getSpaceElement('manager');
+    //     manager_field.innerHTML = '部長';
+    //     manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
+
+    //     // スペースフィールド
+    //     const call_center_field = kintone.app.record.getSpaceElement('call_center');
+    //     call_center_field.innerHTML = 'コールセンター';
+    //     call_center_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
+    // }else{
+    //     //顛末を非表示
+    //     kintone.app.record.setFieldShown('顛末', false);
+    //     //部長顛末確認を非表示
+    //     kintone.app.record.setFieldShown('顛末確認_部長', false);
+    //     //コールセンター顛末確認、確認日時を非表示
+    //     kintone.app.record.setFieldShown('顛末確認者', false);
+    //     kintone.app.record.setFieldShown('確認日時_顛末', false);
+
+    //     //顛末という文字を削除
+    //     const tenmatsuField = kintone.app.record.getSpaceElement('tenmatsu');
+    //     const parenttenmatsuElement = tenmatsuField.parentElement;
+    //     parenttenmatsuElement.removeChild(tenmatsuField)
+
+    //     //顛末の部長という文字を削除
+    //     const managerField = kintone.app.record.getSpaceElement('manager');
+    //     const parentmanagerFieldElement = managerField.parentElement;
+    //     parentmanagerFieldElement.removeChild(managerField);
+
+    //     //顛末のコールセンターという文字を削除
+    //     const callCenterField = kintone.app.record.getSpaceElement('call_center');
+    //     const parentElement = callCenterField.parentElement;
+    //     parentElement.removeChild(callCenterField);
+    // }
 
     return event;
 });
@@ -131,13 +201,81 @@ kintone.events.on(["app.record.create.change.受付方法","app.record.edit.chan
 //(グループ)
 kintone.events.on(["app.record.create.change.アンケート報告書","app.record.edit.change.アンケート報告書"], event => {
     const record = event.record;
+
     //アンケート報告書
     if(record.アンケート報告書.value == "要"){
         kintone.app.record.setFieldShown('アンケート報告書_グループ',true);
         kintone.app.record.setGroupFieldOpen('アンケート報告書_グループ', true);
+
+        //顛末を表示
+        kintone.app.record.setFieldShown('顛末', false);
+        //部長顛末確認を表示
+        kintone.app.record.setFieldShown('顛末確認_部長', false);
+        //コールセンター顛末確認、確認日時を表示
+        kintone.app.record.setFieldShown('顛末確認者', false);
+        kintone.app.record.setFieldShown('確認日時_顛末', false);
+
+        //顛末という文字を削除
+        const tenmatsuField = kintone.app.record.getSpaceElement('tenmatsu');
+        if (tenmatsuField) {
+            tenmatsuField.style.display = 'none';
+        }
+
+        //顛末の部長という文字を削除
+        const managerField = kintone.app.record.getSpaceElement('manager');
+        if (managerField) {
+            managerField.style.display = 'none';
+        }
+
+        //顛末のコールセンターという文字を削除
+        const callCenterField = kintone.app.record.getSpaceElement('call_center');
+        if (callCenterField) {
+            callCenterField.style.display = 'none';
+        }
+
+        const cautionStatementField = kintone.app.record.getSpaceElement('caution_statement');
+        if(cautionStatementField){
+            cautionStatementField.style.display = 'none';
+        }
+
     }else{
+        //アンケート報告書のグループを非表示
         kintone.app.record.setFieldShown('アンケート報告書_グループ',false);
+
+        //顛末を表示
+        kintone.app.record.setFieldShown('顛末', true);
+        //部長顛末確認を表示
+        kintone.app.record.setFieldShown('顛末確認_部長', true);
+        //コールセンター顛末確認、確認日時を表示
+        kintone.app.record.setFieldShown('顛末確認者', true);
+        kintone.app.record.setFieldShown('確認日時_顛末', true);
+        // スペースフィールド
+        const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
+        if (tenmatsu_field) {
+            tenmatsu_field.innerHTML = '顛末';
+            tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(255, 242, 204);';
+        }
+        // スペースフィールド
+        const manager_field = kintone.app.record.getSpaceElement('manager');
+        if (manager_field) {
+            manager_field.innerHTML = '部長';
+            manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
+        }
+        // スペースフィールド
+        const call_center_field = kintone.app.record.getSpaceElement('call_center');
+        if (call_center_field) {
+            call_center_field.innerHTML = 'コールセンター';
+            call_center_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
+        } 
+
+        // スペースフィールド
+        const caution_statement = kintone.app.record.getSpaceElement('caution_statement');
+        if(caution_statement){
+            caution_statement.innerHTML = '▼追加報告';
+            caution_statement.style.cssText = 'color:red; font-size: 18px; font-weight: bold; position: relative; left: 1128px; top: 100px;';
+        }
     }
+
     return event;
 });
 
@@ -417,6 +555,38 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
 
     });
 
+    // //(新規画面)(グループ)
+    // kintone.events.on("app.record.create.change.受付方法", event => {
+    //     const record = event.record;
+
+    //     //電話対応の時、顛末を表示する
+    //     if(record.受付方法.value == "電話" || record.受付方法.value == "メール・ネットアンケート" || record.受付方法.value == "口コミサイト"){
+    //         // スペースフィールド
+    //         const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
+    //         tenmatsu_field.innerHTML = '顛末';
+    //         tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(255, 242, 204);';
+
+    //         // スペースフィールド
+    //         const manager_field = kintone.app.record.getSpaceElement('manager');
+    //         manager_field.innerHTML = '部長';
+    //         manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
+
+    //         // スペースフィールド
+    //         const call_center_field = kintone.app.record.getSpaceElement('call_center');
+    //         call_center_field.innerHTML = 'コールセンター';
+    //         call_center_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
+    //     }else{
+    //         //顛末を表示
+    //         kintone.app.record.setFieldShown('顛末', false);
+    //         //部長顛末確認を表示
+    //         kintone.app.record.setFieldShown('顛末確認_部長', false);
+    //         //コールセンター顛末確認、確認日時を表示
+    //         kintone.app.record.setFieldShown('顛末確認者', false);
+    //         kintone.app.record.setFieldShown('確認日時_顛末', false);
+    //     }
+
+    // });
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //以下、詳細画面のみの処理
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -459,12 +629,12 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
 
         // button_click();//追加
 
-        if(record.受付方法.value == "電話" || record.受付方法.value == "メール・ネットアンケート" ||record.受付方法.value == "口コミサイト"){
-            // スペースフィールド
-            const caution_statement = kintone.app.record.getSpaceElement('caution_statement');
-            caution_statement.innerHTML = '▼追加報告';
-            caution_statement.style.cssText = 'color:red; font-size: 18px; font-weight: bold; position: relative; left: 1128px; top: 100px;';
-        }
+        // if(record.受付方法.value == "電話" || record.受付方法.value == "メール・ネットアンケート" ||record.受付方法.value == "口コミサイト"){
+        //     // スペースフィールド
+        //     const caution_statement = kintone.app.record.getSpaceElement('caution_statement');
+        //     caution_statement.innerHTML = '▼追加報告';
+        //     caution_statement.style.cssText = 'color:red; font-size: 18px; font-weight: bold; position: relative; left: 1128px; top: 100px;';
+        // }
 
         return event;
     });
