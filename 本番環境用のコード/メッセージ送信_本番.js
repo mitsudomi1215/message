@@ -878,7 +878,42 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 
           //業態
           if(record.業態.value){
-            var industry = record.業態.value;
+            if (record.業態.value.Contains("ミライザカ")){
+              var industry = 'ミ';
+            }else if(record.業態.value.Contains("鳥メロ")){
+              var industry = 'メ';
+            }else if(record.業態.value.Contains("炭旬")){
+              var industry = '炭旬';
+            }else if(record.業態.value.Contains("のれん街")){
+              var industry = 'のれん';
+            }else if(record.業態.value.Contains("しろくまストア")){
+              var industry = 'しろくま';
+            }else if(record.業態.value.Contains("WANG'SGARDEN")){
+              var industry = 'ワンズ';
+            }else if(record.業態.value.Contains("TGIFRIDAYS")){
+              var industry = 'TGI';
+            }else if(record.業態.value.Contains("TEXMEXFACTORY")){
+              var industry = 'TEX';
+            }else if(record.業態.value.Contains("bb.qオリーブチキンカフェ")){
+              var industry = 'bb.q';
+            }else if(record.業態.value.Contains("かみむら牧場")){
+              var industry = 'かみむら';
+            }else if(record.業態.value.Contains("焼肉の和民")){
+              var industry = '焼肉';
+            }else if(record.業態.value.Contains("うしメロ")){
+              var industry = 'うしメロ';
+            }else if(record.業態.value.Contains("から揚げの天才")){
+              var industry = 'から揚げ';
+            }else if(record.業態.value.Contains("のり弁の天才")){
+              var industry = 'のり弁';
+            }else if(record.業態.value.Contains("すしの和")){
+              var industry = 'すし';
+            }else if(record.業態.value.Contains("牛武")){
+              var industry = '牛武';
+            }else{
+              var industry = record.業態.value;
+            }
+
           }else{
             var industry = '';
           }
@@ -898,7 +933,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           }
 
           //Garoonメッセージのタイトル
-          const content = formattedDate + ":" + industry + ')' + store_name+ "　" + record.受付方法.value + comprehensive_evaluation + "【kintone】" + record.$id.value;
+          const content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + record.受付方法.value + comprehensive_evaluation + "【kintone】" + record.$id.value;
 
           performCommonAction('申請', userCodes, content, body)
             .then(function () {
@@ -908,7 +943,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
               setTimeout(() => {
                 //新規タブ(今はあきらめた)
                 // window.open(`${record.Garoonリンク.value}`, '_blank');
-                window.location.reload();
+                // window.location.reload();
               }, 1200);  
           })
         }
@@ -1011,53 +1046,58 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             Object.keys(subjectThreadIds).forEach(subject => {
               //同じメッセージが2つ以上見つかった時
               if (subjectThreadIds[subject].length >= 2) {
-                //1通目のメッセージIDを取得
-                let firstID = subjectThreadIds[subject][0];
+                  //1通目のメッセージIDを取得
+                  let firstID = subjectThreadIds[subject][0];
 
-                //宛先を保持
-                //1通目の情報を取得
-                let FirstTargetThread = threadsArray.find(thread => thread.getAttribute('id') == firstID);
+                  //宛先を保持
+                  //1通目の情報を取得
+                  let FirstTargetThread = threadsArray.find(thread => thread.getAttribute('id') == firstID);
 
-                //1通目のDocumentオブジェクトを得る
-                const FirstXMLparser = new DOMParser();
-                const FirstXMLparserxmlDoc = FirstXMLparser.parseFromString(FirstTargetThread.outerHTML, "application/xml");
+                  //1通目のDocumentオブジェクトを得る
+                  const FirstXMLparser = new DOMParser();
+                  const FirstXMLparserxmlDoc = FirstXMLparser.parseFromString(FirstTargetThread.outerHTML, "application/xml");
 
-                 //1通目のsubjectタグ情報を抜き取る
-                 const threadElementGet= FirstXMLparserxmlDoc.getElementsByTagName('thread');
-                 var subjectGet = Array.from(threadElementGet).map(thread => thread.getAttribute('subject'));
+                  //1通目のsubjectタグ情報を抜き取る
+                  const threadElementGet= FirstXMLparserxmlDoc.getElementsByTagName('thread');
+                  var subjectGet = Array.from(threadElementGet).map(thread => thread.getAttribute('subject'));
 
-                //最新メッセージのID
-                let finalArray = subjectThreadIds[subject][subjectThreadIds[subject].length - 1];
+                  //最新メッセージのID
+                  let finalArray = subjectThreadIds[subject][subjectThreadIds[subject].length - 1];
 
-                //最終メッセージの情報を取得
-                let FinalTargetThread = threadsArray.find(thread => thread.getAttribute('id') == finalArray);
+                  //最終メッセージの情報を取得
+                  let FinalTargetThread = threadsArray.find(thread => thread.getAttribute('id') == finalArray);
 
-                //最後メッセージののDocumentオブジェクトを得る
-                const FinalXMLparser = new DOMParser();
-                const FinalXMLparserxmlDoc = FinalXMLparser.parseFromString(FinalTargetThread.outerHTML, "application/xml");
-                console.warn("テスト",FinalXMLparserxmlDoc);
-                
-                // 名前空間を指定してaddresseeタグのユーザーIDを抜き取る
-                const addresseeElements = FinalXMLparserxmlDoc.getElementsByTagName('th:addressee');
-                const addresseeUserIds = Array.from(addresseeElements).map(addressee => addressee.getAttribute('user_id'));
+                  //最後メッセージののDocumentオブジェクトを得る
+                  const FinalXMLparser = new DOMParser();
+                  const FinalXMLparserxmlDoc = FinalXMLparser.parseFromString(FinalTargetThread.outerHTML, "application/xml");
+                  console.warn("テスト",FinalXMLparserxmlDoc);
+                  
+                  // 名前空間を指定してaddresseeタグのユーザーIDを抜き取る
+                  const addresseeElements = FinalXMLparserxmlDoc.getElementsByTagName('th:addressee');
+                  const addresseeUserIds = Array.from(addresseeElements).map(addressee => addressee.getAttribute('user_id'));
 
-                const subjectElements = FinalXMLparserxmlDoc.getElementsByTagName('thread');
-                const subjectFinalMessageArray  = Array.from(subjectElements).map(thread => thread.getAttribute('subject'));
-                // 配列を文字列に結合
-                const subjectFinalMessage = subjectFinalMessageArray.join(' '); 
-                //::より左側の文字を取得(年月日)
-                var new_send_date = subjectFinalMessage.split(":")[0];
+                  const subjectElements = FinalXMLparserxmlDoc.getElementsByTagName('thread');
+                  const subjectFinalMessageArray  = Array.from(subjectElements).map(thread => thread.getAttribute('subject'));
+                  // 配列を文字列に結合
+                  const subjectFinalMessage = subjectFinalMessageArray.join(' '); 
+                  //::より左側の文字を取得(年月日)
+                  var new_send_date = subjectFinalMessage.split(":")[0];
 
-                // subjectGetを文字列に変換
-                var subjectGetMessage = subjectGet.join(' '); 
-                // 数字と"再更新"という文字列を含むパターンを正規表現で検索して削除
-                var subjectGetMessage = subjectGetMessage.replace(/(\d*再更新:)/, '');
-
-
-                const send_subject = new_send_date + '再更新' + ':' + subjectGetMessage;
-
-
-                // 名前空間を指定して「」タグのタイトルを抜き取る
+                  // タイトルの編集
+                  // subjectGetを文字列に変換
+                  var subjectGetMessage = subjectGet.join(' '); 
+                  // 数字と"再更新"という文字列を含むパターンを正規表現で検索して削除
+                  var subjectGetMessage = subjectGetMessage.replace(/(\d*再更新:)/, '');
+                  if (!/(\d+報告済)/.test(subjectGetMessage) && !/(\d+顛末済)/.test(subjectGetMessage)) {
+                    //　新しく更新日時を追加してタイトルを更新する
+                    var send_subject = new_send_date + '再更新' + ':' + subjectGetMessage;
+                  }else if (/(\d+顛末済)/.test(subjectGetMessage) || record.総括部長コメント欄.value || record.顛末確認_部長.value == '〇'){
+                    var subjectGetMessage = subjectGetMessage.replace(/(\d*顛末済:)/, '');
+                    var send_subject = new_send_date + '顛末済' + ':' + subjectGetMessage;
+                  }else if (/(\d+報告済)/.test(subjectGetMessage) ||  record.AM報告欄.value || record.内容_顛末.value){
+                    var subjectGetMessage = subjectGetMessage.replace(/(\d*報告済:)/, '');
+                    var send_subject = new_send_date + '報告済' + ':' + subjectGetMessage;
+                  }
 
                   // タイトルごとに繰り返し
                   subjectThreadIds[subject].forEach(id => {
@@ -1076,7 +1116,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   if (bodyContent) {
                     newArray.unshift(bodyContent);
                   }
-                });
+                  });
 
                   // newArrayを1つの文字列にまとめる
                   let resultString = '';
@@ -1182,7 +1222,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   }, 300);
                 }  
               });
-          });
+            });
         } catch (error) {
           console.error("エラーが発生しました:", error);
       }
