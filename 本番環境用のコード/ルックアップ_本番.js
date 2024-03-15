@@ -54,7 +54,6 @@
             
                 return kintone.api(kintone.api.url('/k/v1/records', true), 'GET', params).then((resp) => {
                     const records = resp.records;
-                    console.warn(records);
                     if(record.受付方法.value == '電話'){
                         record.営業部連絡先.value = records[0].AM電話番号.value;
                     }
@@ -65,20 +64,9 @@
         }
     });
 
-    kintone.events.on("app.record.edit.show", function(event) {
-        const record = event.record;
-        if(record.ガルーン宛先に店舗を入れるor入れない.value == '入れない'){
-            console.warn("どうなってる");
-            record.店舗名.value = [];
-        }
-        return event;
-
-    });
-
     //アンケート報告書の時間を自動的に入れる処理
     kintone.events.on(['app.record.create.change._1','app.record.edit.change._1'], function(event) {
         const record = event.record;
-        console.log("処理開始");
         
         let _1Value = parseInt(record._1.value); // _1フィールドの値を整数に変換
         if (!isNaN(_1Value)) {

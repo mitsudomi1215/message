@@ -650,7 +650,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             userCodes.push(top_userfield[0]['code']);
           }
           //店舗名
-          if(record.店舗名.value.length != 0){
+          if(record.店舗名.value.length != 0 && record.ガルーン宛先に店舗を入れるor入れない.value != '入れない'){
             let store_name_field = record.店舗名.value;
             userCodes.push(store_name_field[0]['code']);
           }
@@ -878,37 +878,37 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 
           //業態
           if(record.業態.value){
-            if (record.業態.value.Contains("ミライザカ")){
+            if (record.業態.value.includes("ミライザカ")){
               var industry = 'ミ';
-            }else if(record.業態.value.Contains("鳥メロ")){
+            }else if(record.業態.value.includes("鳥メロ")){
               var industry = 'メ';
-            }else if(record.業態.value.Contains("炭旬")){
+            }else if(record.業態.value.includes("炭旬")){
               var industry = '炭旬';
-            }else if(record.業態.value.Contains("のれん街")){
+            }else if(record.業態.value.includes("のれん街")){
               var industry = 'のれん';
-            }else if(record.業態.value.Contains("しろくまストア")){
+            }else if(record.業態.value.includes("しろくまストア")){
               var industry = 'しろくま';
-            }else if(record.業態.value.Contains("WANG'SGARDEN")){
+            }else if(record.業態.value.includes("WANG'SGARDEN")){
               var industry = 'ワンズ';
-            }else if(record.業態.value.Contains("TGIFRIDAYS")){
+            }else if(record.業態.value.includes("TGIFRIDAYS")){
               var industry = 'TGI';
-            }else if(record.業態.value.Contains("TEXMEXFACTORY")){
+            }else if(record.業態.value.includes("TEXMEXFACTORY")){
               var industry = 'TEX';
-            }else if(record.業態.value.Contains("bb.qオリーブチキンカフェ")){
+            }else if(record.業態.value.includes("bb.qオリーブチキンカフェ")){
               var industry = 'bb.q';
-            }else if(record.業態.value.Contains("かみむら牧場")){
+            }else if(record.業態.value.includes("かみむら牧場")){
               var industry = 'かみむら';
-            }else if(record.業態.value.Contains("焼肉の和民")){
+            }else if(record.業態.value.includes("焼肉の和民")){
               var industry = '焼肉';
-            }else if(record.業態.value.Contains("うしメロ")){
+            }else if(record.業態.value.includes("うしメロ")){
               var industry = 'うしメロ';
-            }else if(record.業態.value.Contains("から揚げの天才")){
+            }else if(record.業態.value.includes("から揚げの天才")){
               var industry = 'から揚げ';
-            }else if(record.業態.value.Contains("のり弁の天才")){
+            }else if(record.業態.value.includes("のり弁の天才")){
               var industry = 'のり弁';
-            }else if(record.業態.value.Contains("すしの和")){
+            }else if(record.業態.value.includes("すしの和")){
               var industry = 'すし';
-            }else if(record.業態.value.Contains("牛武")){
+            }else if(record.業態.value.includes("牛武")){
               var industry = '牛武';
             }else{
               var industry = record.業態.value;
@@ -943,7 +943,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
               setTimeout(() => {
                 //新規タブ(今はあきらめた)
                 // window.open(`${record.Garoonリンク.value}`, '_blank');
-                // window.location.reload();
+                window.location.reload();
               }, 1200);  
           })
         }
@@ -1070,7 +1070,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   //最後メッセージののDocumentオブジェクトを得る
                   const FinalXMLparser = new DOMParser();
                   const FinalXMLparserxmlDoc = FinalXMLparser.parseFromString(FinalTargetThread.outerHTML, "application/xml");
-                  console.warn("テスト",FinalXMLparserxmlDoc);
+                  // console.warn("テスト",FinalXMLparserxmlDoc);
                   
                   // 名前空間を指定してaddresseeタグのユーザーIDを抜き取る
                   const addresseeElements = FinalXMLparserxmlDoc.getElementsByTagName('th:addressee');
@@ -1083,20 +1083,25 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   //::より左側の文字を取得(年月日)
                   var new_send_date = subjectFinalMessage.split(":")[0];
 
+                  // 正規表現を使用して数字+顛末の文字列を検知する
+                  var pattern_tenmatsu = /\d+顛末済/;
+                  var pattern_reupdate = /\d+報告済/;
+
                   // タイトルの編集
                   // subjectGetを文字列に変換
                   var subjectGetMessage = subjectGet.join(' '); 
                   // 数字と"再更新"という文字列を含むパターンを正規表現で検索して削除
                   var subjectGetMessage = subjectGetMessage.replace(/(\d*再更新:)/, '');
-                  if (!/(\d+報告済)/.test(subjectGetMessage) && !/(\d+顛末済)/.test(subjectGetMessage)) {
-                    //　新しく更新日時を追加してタイトルを更新する
-                    var send_subject = new_send_date + '再更新' + ':' + subjectGetMessage;
-                  }else if (/(\d+顛末済)/.test(subjectGetMessage) || record.総括部長コメント欄.value || record.顛末確認_部長.value == '〇'){
+                  if (pattern_tenmatsu.test(subjectGetMessage) || record.総括部長コメント欄.value || record.顛末確認_部長.value == '〇'){
+                    var subjectGetMessage = subjectGetMessage.replace(/(\d*報告済:)/, '');
                     var subjectGetMessage = subjectGetMessage.replace(/(\d*顛末済:)/, '');
                     var send_subject = new_send_date + '顛末済' + ':' + subjectGetMessage;
-                  }else if (/(\d+報告済)/.test(subjectGetMessage) ||  record.AM報告欄.value || record.内容_顛末.value){
+                  }else if (pattern_reupdate.test(subjectGetMessage) || record.AM報告欄.value || record.顛末.value[0].value.内容_顛末.value){
                     var subjectGetMessage = subjectGetMessage.replace(/(\d*報告済:)/, '');
                     var send_subject = new_send_date + '報告済' + ':' + subjectGetMessage;
+                  }else if (!pattern_reupdate.test(subjectGetMessage) && !pattern_reupdate.test(subjectGetMessage)) {
+                    //　新しく更新日時を追加してタイトルを更新する
+                    var send_subject = new_send_date + '再更新' + ':' + subjectGetMessage;
                   }
 
                   // タイトルごとに繰り返し
@@ -1371,7 +1376,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {
-          console.warn("削除に成功"); // レスポンスデータをコンソールに表示
+          // console.warn("削除に成功"); // レスポンスデータをコンソールに表示
         });
       } catch (error) {
         console.error("エラーが発生しました:", error);
