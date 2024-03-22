@@ -85,17 +85,18 @@
     const performCommonAction = async (action, code, content , URL ) => {
       try {
 
-        // //空の配列を作成
-        // let test = [];
-        // for(let iz =0;iz <code.length; iz++){
-        //   test.push( await fetchGaroonUserByCode(code[iz]));
-        // }
+        //空の配列を作成
+        let test = [];
+        for(let iz =0;iz <code.length; iz++){
+          test.push( await fetchGaroonUserByCode(code[iz]));
+        }
 
         // 複数人への送信内容をまとめる配列
         const userParams = [];
-        for (let i = 0; i < code.length; i++) {
-          userParams.push(ADDRESSEE_TEMPLATE.replace('${USER_ID}', code[i]));
+        for (let i = 0; i < test.length; i++) {
+          userParams.push(ADDRESSEE_TEMPLATE.replace('${USER_ID}', test[i].id));
         }
+
         // let targetUser = await fetchGaroonUserByCode(code);
         let requestToken = await getRequestToken();
 
@@ -118,7 +119,7 @@
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           async: false,
           data: msgAddRequest,
@@ -132,10 +133,75 @@
       }
     };
 
+      // メッセージ実行の共通処理(特約店ユーザー)
+      const performCommonAction_fc = async (action, code, content , URL ) => {
+        try {
+          let requestToken = await getRequestToken();
+      
+          // 送信するメッセージパラメータを作成
+          let msgAddParam = MSG_ADD_TEMPLATE;
+          msgAddParam = msgAddParam.replace('${REQUEST_TOKEN}', escapeHtml(requestToken));
+          msgAddParam = msgAddParam.replace('${TITTLE}', content);
+          msgAddParam = msgAddParam.replace('${USER_ID}', code); // targetUserのidを使用,targetUser.id
+          msgAddParam = msgAddParam.replace('${MAIN_TEXT}', URL); 
+      
+          let msgAddRequest = SOAP_TEMPLATE;
+          // SOAPパラメータを完成させる
+          msgAddRequest = msgAddRequest.replace('${PARAMETERS}', msgAddParam);
+          // 実行処理を指定
+          msgAddRequest = msgAddRequest.split('${ACTION}').join('MessageCreateThreads');
+    
+          // メッセージ登録の実行
+          await $.ajax({
+            type: 'post',
+            url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+            cache: false,
+            async: false,
+            data: msgAddRequest,
+          }).then(function(responseData) {
+            console.log(responseData); // レスポンスデータをコンソールに表示
+          });
+        } catch (error) {
+          console.error("エラーが発生しました:", error);
+        }
+      };
+    
+    // //ワークフロー時のメッセージ送信処理
+    // kintone.events.on(['app.record.detail.process.proceed'], async (event) => {
+    //   let rec = event.record;
+    //   //お試し版URL【変更】
+    //   const kntAppURL = 'https://vlqus5oxxg9s.cybozu.com/k/8/';//【変更】
+    //   //URLを作成
+    //   let URL =  kntAppURL + 'show#record=' + rec.$id.value;
+    //   //ユーザー情報を格納する変数
+    //   let userCodes = [];
+    //   //FCのユーザー情報を編集する変数
+    //   let userCodes_fc = [];
+    //   //宛先まとめる処理-----------------------------------
+    //   // ユーザー選択のコードを変数に代入
+    //   if(rec.コールセンター上長.value.length !== 0){
+    //     let top_userfield = rec.コールセンター上長.value;
+    //     userCodes.push(top_userfield[0]['code']);
+    //   }
+    //   if(rec.AM.value.length !== 0){
+    //     let userfield = rec.AM.value;
+    //     userCodes.push(userfield[0]['code']);
+    //   }
+    //   if(rec.部長.value.length !== 0){
+    //     let userfield1 = rec.部長.value;
+    //     userCodes.push(userfield1[0]['code']);
+    //   }
+    //   if(rec.本部長.value.length !== 0){
+    //     let userfield2 = rec.本部長.value;
+    //     userCodes.push(userfield2[0]['code']);
+    //   }
+
+    //   return event;
+    // });
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //kintoneユーザーコードからGaroonのユーザー情報を取得
       const fetchGaroonUserByCode = async (code) => {
-        console.warn("codeの情報",code);
         const response = await fetch("/g/api/v1/base/users?name=" + code, {
           method: "GET",
           headers: {
@@ -144,9 +210,7 @@
           },
         });
         const body = await response.json();
-        console.warn("Garoonの情報",body);
         const targetUser =  body.users.filter((user) => user.code === code)[0];
-        // console.warn("ターゲットユーザー",targetUser);
       return targetUser;
     };
 
@@ -278,7 +342,7 @@
             // メッセージ検索の実行
             $.ajax({
                 type: 'post',
-                url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+                url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
                 cache: false,
                 data: msgSearchRequest,
             }).then(function(responseData) {
@@ -348,7 +412,7 @@
                             if (key == record.$id.value) {
                                 
                                 // record.Garoonリンク.value = "https://io8f1l5axfqn.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";
-                                let GaroonLink = "https://watami.s.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
+                                let GaroonLink = "https://watami.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
                                 
                                     // レコード更新のパラメータ設定
                                 let body = {
@@ -543,7 +607,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     const recordId = event.recordId;
     
     //お試し版URL【変更】
-    const kntAppURL = 'https://watami.s.cybozu.com/k/822/';
+    const kntAppURL = 'https://watami.cybozu.com/k/822/';
     //URLを作成
     let URL =  kntAppURL + 'show#record=' + record.$id.value;
     
@@ -559,12 +623,12 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         confirmButtonText: '送信する',
         cancelButtonText: '送信しない',
         closeOnConfirm: false},
-        async () => {
+        () => {
           //モーダルを閉じる
           window.swal.close();
           //メッセージを送信する処理
           // お試し版URL【変更】URLとアプリID
-          const kntAppURL = 'https://watami.s.cybozu.com/k/822/';
+          const kntAppURL = 'https://watami.cybozu.com/k/822/';
           // URLを作成
           let URL = kntAppURL + 'show#record=' + record.$id.value;
           // ユーザー情報を格納する変数
@@ -578,416 +642,98 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           //コールセンター
           if (record.コールセンター.value.length != 0) {
             let call_center = record.コールセンター.value;
-            let call_center_garoon_user_id = await fetchGaroonUserByCode(call_center[0]['code']);
-            userCodes.push(call_center_garoon_user_id['id']);
+            userCodes.push(call_center[0]['code']);
+          }
+          //コールセンター上長
+          if (record.コールセンター上長.value.length != 0) {
+            let top_userfield = record.コールセンター上長.value;
+            userCodes.push(top_userfield[0]['code']);
           }
           //店舗名
           if(record.店舗名.value.length != 0 && record.ガルーン宛先に店舗を入れるor入れない.value != '入れない'){
             let store_name_field = record.店舗名.value;
-            let store_name_field_garoon_user_id = await fetchGaroonUserByCode(store_name_field[0]['code']);
-            userCodes.push(store_name_field_garoon_user_id['id']);
-          }
-          //FCオーナー
-          if(record.FCオーナー.value.length != 0){
-            let fc_owner_field = record.FCオーナー.value;
-            let fc_owner_field_garoon_user_id  =  await fetchGaroonUserByCode(fc_owner_field[0]['code']);
-            userCodes.push(fc_owner_field_garoon_user_id['id']);
-          }
-          //AM
-          if (record.AM.value.length != 0) {
-            let AM_field = record.AM.value;
-            let AM_field_garoon_user_id = await fetchGaroonUserByCode(AM_field[0]['code']);
-            userCodes.push(AM_field_garoon_user_id['id']);
+            userCodes.push(store_name_field[0]['code']);
           }
           //本部長
           if (record.本部長.value.length != 0) {
             let general_manager_field = record.本部長.value;
-            let general_manager_field_garoon_user_id = await fetchGaroonUserByCode(general_manager_field[0]['code']);
-            userCodes.push(general_manager_field_garoon_user_id['id']);
+            userCodes.push(general_manager_field[0]['code']);
           }
           //部長
           if (record.部長.value.length != 0) {
             let department_chief_field = record.部長.value;
-            let department_chief_field_garoon_user_id = await fetchGaroonUserByCode(department_chief_field[0]['code']);
-            userCodes.push(department_chief_field_garoon_user_id['id']);
+            userCodes.push(department_chief_field[0]['code']);
+          }
+          //AM
+          if (record.AM.value.length != 0) {
+            let AM_field = record.AM.value;
+            userCodes.push(AM_field[0]['code']);
+          }
+          //FCオーナー
+          if(record.FCオーナー.value.length != 0){
+            let fc_owner_field = record.FCオーナー.value;
+            userCodes.push(fc_owner_field[0]['code']);
+          }
+          //閲覧権限追加ユーザー1
+          if(record.閲覧権限ユーザー1.value.length != 0){
+            let view_authority_user_1 = record.閲覧権限ユーザー1.value;
+            userCodes.push(view_authority_user_1[0]['code']);
+          }
+          //閲覧権限追加ユーザー2
+          if(record.閲覧権限ユーザー2.value.length != 0){
+            let view_authority_user_2 = record.閲覧権限ユーザー2.value;
+            userCodes.push(view_authority_user_2[0]['code']);
+          }
+          //閲覧権限追加ユーザー3
+          if(record.閲覧権限ユーザー3.value.length != 0){
+            let view_authority_user_3 = record.閲覧権限ユーザー3.value;
+            userCodes.push(view_authority_user_3[0]['code']);
+          }
+          //閲覧権限追加ユーザー4
+          if(record.閲覧権限ユーザー4.value.length != 0){
+            let view_authority_user_4 = record.閲覧権限ユーザー4.value;
+            userCodes.push(view_authority_user_4[0]['code']);
+          }
+          //閲覧権限追加ユーザー5
+          if(record.閲覧権限ユーザー5.value.length != 0){
+            let view_authority_user_5 = record.閲覧権限ユーザー5.value;
+            userCodes.push(view_authority_user_5[0]['code']);
+          }
+          //閲覧権限追加ユーザー6
+          if(record.閲覧権限ユーザー6.value.length != 0){
+            let view_authority_user_6 = record.閲覧権限ユーザー6.value;
+            userCodes.push(view_authority_user_6[0]['code']);
+          }
+          //閲覧権限追加ユーザー7
+          if(record.閲覧権限ユーザー7.value.length != 0){
+            let view_authority_user_7 = record.閲覧権限ユーザー7.value;
+            userCodes.push(view_authority_user_7[0]['code']);
+          }
+          //閲覧権限追加ユーザー8
+          if(record.閲覧権限ユーザー8.value.length != 0){
+            let view_authority_user_8 = record.閲覧権限ユーザー8.value;
+            userCodes.push(view_authority_user_8[0]['code']);
+          }
+          //閲覧権限追加ユーザー9
+          if(record.閲覧権限ユーザー9.value.length != 0){
+            let view_authority_user_9 = record.閲覧権限ユーザー9.value;
+            userCodes.push(view_authority_user_9[0]['code']);
+          }
+          //閲覧権限追加ユーザー10
+          if(record.閲覧権限ユーザー10.value.length != 0){
+            let view_authority_user_10 = record.閲覧権限ユーザー10.value;
+            userCodes.push(view_authority_user_10[0]['code']);
+          }
+          //閲覧権限追加ユーザー11
+          if(record.閲覧権限ユーザー11.value.length != 0){
+            let view_authority_user_11 = record.閲覧権限ユーザー11.value;
+            userCodes.push(view_authority_user_11[0]['code']);
+          }
+          //閲覧権限追加ユーザー12
+          if(record.閲覧権限ユーザー12.value.length != 0){
+            let view_authority_user_12 = record.閲覧権限ユーザー12.value;
+            userCodes.push(view_authority_user_12[0]['code']);
           }
-          //権限追加ユーザー1
-          if(record.権限追加ユーザー1.value.length != 0){
-            let view_authority_user_1 = record.権限追加ユーザー1.value;
-            let view_authority_user_1_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_1[0]['code']);
-            userCodes.push(view_authority_user_1_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー1
-          if(record.Garoon宛先追加ユーザー1.value){
-            userCodes.push(record.Garoon宛先追加ユーザー1.value);
-          }
-
-          //権限追加ユーザー2
-          if(record.権限追加ユーザー2.value.length != 0){
-            let view_authority_user_2 = record.権限追加ユーザー2.value;
-            let view_authority_user_2_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_2[0]['code']);
-            userCodes.push(view_authority_user_2_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー2
-          if(record.Garoon宛先追加ユーザー2.value){
-            userCodes.push(record.Garoon宛先追加ユーザー2.value);
-          }
-
-          //権限追加ユーザー3
-          if(record.権限追加ユーザー3.value.length != 0){
-            let view_authority_user_3 = record.権限追加ユーザー3.value;
-            let view_authority_user3_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_3[0]['code']);
-            userCodes.push(view_authority_user3_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー3
-          if(record.Garoon宛先追加ユーザー3.value){
-            userCodes.push(record.Garoon宛先追加ユーザー3.value);
-          }
-
-          //権限追加ユーザー4
-          if(record.権限追加ユーザー4.value.length != 0){
-            let view_authority_user_4 = record.権限追加ユーザー4.value;
-            let view_authority_user4_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_4[0]['code']);
-            userCodes.push(view_authority_user4_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー4
-          if(record.Garoon宛先追加ユーザー4.value){
-            userCodes.push(record.Garoon宛先追加ユーザー4.value);
-          }
-
-          //権限追加ユーザー5
-          if(record.権限追加ユーザー5.value.length != 0){
-            let view_authority_user_5 = record.権限追加ユーザー5.value;
-            let view_authority_user5_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_5[0]['code']);
-            userCodes.push(view_authority_user5_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー5
-          if(record.Garoon宛先追加ユーザー5.value){
-            userCodes.push(record.Garoon宛先追加ユーザー5.value);
-          }
-
-          //権限追加ユーザー6
-          if(record.権限追加ユーザー6.value.length != 0){
-            let view_authority_user_6 = record.権限追加ユーザー6.value;
-            let view_authority_user6_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_6[0]['code']);
-            userCodes.push(view_authority_user6_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー6
-          if(record.Garoon宛先追加ユーザー6.value){
-            userCodes.push(record.Garoon宛先追加ユーザー6.value);
-          }
-
-          //権限追加ユーザー7
-          if(record.権限追加ユーザー7.value.length != 0){
-            let view_authority_user_7 = record.権限追加ユーザー7.value;
-            let view_authority_user7_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_7[0]['code']);
-            userCodes.push(view_authority_user7_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー7
-          if(record.Garoon宛先追加ユーザー7.value){
-            userCodes.push(record.Garoon宛先追加ユーザー7.value);
-          }
-
-          //権限追加ユーザー8
-          if(record.権限追加ユーザー8.value.length != 0){
-            let view_authority_user_8 = record.権限追加ユーザー8.value;
-            let view_authority_user8_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_8[0]['code']);
-            userCodes.push(view_authority_user8_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー8
-          if(record.Garoon宛先追加ユーザー8.value){
-            userCodes.push(record.Garoon宛先追加ユーザー8.value);
-          }
-
-          //権限追加追加ユーザー9
-          if(record.権限追加ユーザー9.value.length != 0){
-            let view_authority_user_9 = record権限追加ユーザー9.value;
-            let view_authority_user9_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_9[0]['code']);
-            userCodes.push(view_authority_user9_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー9
-          if(record.Garoon宛先追加ユーザー9.value){
-            userCodes.push(record.Garoon宛先追加ユーザー9.value);
-          }
-          
-          //権限追加追加ユーザー10
-          if(record.権限追加ユーザー10.value.length != 0){
-            let view_authority_user_10 = record.権限追加ユーザー10.value;
-            let view_authority_user10_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_10[0]['code']);
-            userCodes.push(view_authority_user10_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー10
-          if(record.Garoon宛先追加ユーザー10.value){
-            userCodes.push(record.Garoon宛先追加ユーザー10.value);
-          }
-          
-          //権限追加ユーザー11
-          if(record.権限追加ユーザー11.value.length != 0){
-            let view_authority_user_11 = record.権限追加ユーザー11.value;
-            let view_authority_user11_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_11[0]['code']);
-            userCodes.push(view_authority_user11_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー11
-          if(record.Garoon宛先追加ユーザー11.value){
-            userCodes.push(record.Garoon宛先追加ユーザー11.value);
-          }
-          
-          //権限追加ユーザー12
-          if(record.権限追加ユーザー12.value.length != 0){
-            let view_authority_user_12 = record.権限追加ユーザー12.value;
-            let view_authority_user12_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_12[0]['code']);
-            userCodes.push(view_authority_user12_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー12
-          if(record.Garoon宛先追加ユーザー12.value){
-            userCodes.push(record.Garoon宛先追加ユーザー12.value);
-          }
-          
-          //権限追加ユーザー13
-          if(record.権限追加ユーザー13.value.length != 0){
-            let view_authority_user_13 = record.権限追加ユーザー13.value;
-            let view_authority_user13_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_13[0]['code']);
-            userCodes.push(view_authority_user13_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー12
-          if(record.Garoon宛先追加ユーザー13.value){
-            userCodes.push(record.Garoon宛先追加ユーザー13.value);
-          }
-          
-          //権限追加ユーザー14
-          if(record.権限追加ユーザー14.value.length != 0){
-            let view_authority_user_14 = record.権限追加ユーザー14.value;
-            let view_authority_user14_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_14[0]['code']);
-            userCodes.push(view_authority_user14_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー14
-          if(record.Garoon宛先追加ユーザー14.value){
-            userCodes.push(record.Garoon宛先追加ユーザー14.value);
-          }
-          
-          //権限追加ユーザー15
-          if(record.権限追加ユーザー15.value.length != 0){
-            let view_authority_user_15 = record.権限追加ユーザー15.value;
-            let view_authority_user15_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_15[0]['code']);
-            userCodes.push(view_authority_user15_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー15
-          if(record.Garoon宛先追加ユーザー15.value){
-            userCodes.push(record.Garoon宛先追加ユーザー15.value);
-          }
-
-          //権限追加ユーザー16
-          if(record.権限追加ユーザー16.value.length != 0){
-            let view_authority_user_16 = record.権限追加ユーザー16.value;
-            let view_authority_user16_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_16[0]['code']);
-            userCodes.push(view_authority_user16_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー16
-          if(record.Garoon宛先追加ユーザー16.value){
-            userCodes.push(record.Garoon宛先追加ユーザー16.value);
-          }
-
-          //権限追加ユーザー17
-          if(record.権限追加ユーザー17.value.length != 0){
-            let view_authority_user_17 = record.権限追加ユーザー17.value;
-            let view_authority_user17_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_17[0]['code']);
-            userCodes.push(view_authority_user17_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー17
-          if(record.Garoon宛先追加ユーザー17.value){
-            userCodes.push(record.Garoon宛先追加ユーザー17.value);
-          }
-
-          //権限追加ユーザー18
-          if(record.権限追加ユーザー18.value.length != 0){
-            let view_authority_user_18 = record.権限追加ユーザー18.value;
-            let view_authority_user18_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_18[0]['code']);
-            userCodes.push(view_authority_user18_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー18
-          if(record.Garoon宛先追加ユーザー18.value){
-            userCodes.push(record.Garoon宛先追加ユーザー18.value);
-          }
-
-          //権限追加ユーザー19
-          if(record.権限追加ユーザー19.value.length != 0){
-            let view_authority_user_19 = record.権限追加ユーザー19.value;
-            let view_authority_user19_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_19[0]['code']);
-            userCodes.push(view_authority_user19_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー19
-          if(record.Garoon宛先追加ユーザー19.value){
-            userCodes.push(record.Garoon宛先追加ユーザー19.value);
-          }
-
-          //権限追加ユーザー20
-          if(record.権限追加ユーザー20.value.length != 0){
-            let view_authority_user_20 = record.権限追加ユーザー20.value;
-            let view_authority_user20_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_20[0]['code']);
-            userCodes.push(view_authority_user20_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー20
-          if(record.Garoon宛先追加ユーザー20.value){
-            userCodes.push(record.Garoon宛先追加ユーザー20.value);
-          }
-
-          //権限追加ユーザー21
-          if(record.権限追加ユーザー21.value.length != 0){
-            let view_authority_user_21 = record.権限追加ユーザー21.value;
-            let view_authority_user21_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_21[0]['code']);
-            userCodes.push(view_authority_user21_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー21
-          if(record.Garoon宛先追加ユーザー21.value){
-            userCodes.push(record.Garoon宛先追加ユーザー21.value);
-          }
-
-          //権限追加ユーザー22
-          if(record.権限追加ユーザー22.value.length != 0){
-            let view_authority_user_22 = record.権限追加ユーザー22.value;
-            let view_authority_user22_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_22[0]['code']);
-            userCodes.push(view_authority_user22_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー22
-          if(record.Garoon宛先追加ユーザー22.value){
-            userCodes.push(record.Garoon宛先追加ユーザー22.value);
-          }
-
-          //権限追加ユーザー23
-          if(record.権限追加ユーザー23.value.length != 0){
-            let view_authority_user_23 = record.権限追加ユーザー23.value;
-            let view_authority_user23_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_23[0]['code']);
-            userCodes.push(view_authority_user23_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー23
-          if(record.Garoon宛先追加ユーザー23.value){
-            userCodes.push(record.Garoon宛先追加ユーザー23.value);
-          }
-
-          //権限追加ユーザー24
-          if(record.権限追加ユーザー24.value.length != 0){
-            let view_authority_user_24 = record.権限追加ユーザー24.value;
-            let view_authority_user24_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_24[0]['code']);
-            userCodes.push(view_authority_user24_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー24
-          if(record.Garoon宛先追加ユーザー24.value){
-            userCodes.push(record.Garoon宛先追加ユーザー24.value);
-          }
-
-          //権限追加ユーザー25
-          if(record.権限追加ユーザー25.value.length != 0){
-            let view_authority_user_25 = record.権限追加ユーザー25.value;
-            let view_authority_user25_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_25[0]['code']);
-            userCodes.push(view_authority_user25_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー25
-          if(record.Garoon宛先追加ユーザー25.value){
-            userCodes.push(record.Garoon宛先追加ユーザー25.value);
-          }
-
-          //権限追加ユーザー26
-          if(record.権限追加ユーザー26.value.length != 0){
-            let view_authority_user_26 = record.権限追加ユーザー26.value;
-            let view_authority_user26_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_26[0]['code']);
-            userCodes.push(view_authority_user26_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー26
-          if(record.Garoon宛先追加ユーザー26.value){
-            userCodes.push(record.Garoon宛先追加ユーザー26.value);
-          }
-
-          //権限追加ユーザー27
-          if(record.権限追加ユーザー27.value.length != 0){
-            let view_authority_user_27 = record.権限追加ユーザー27.value;
-            let view_authority_user27_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_27[0]['code']);
-            userCodes.push(view_authority_user27_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー27
-          if(record.Garoon宛先追加ユーザー27.value){
-            userCodes.push(record.Garoon宛先追加ユーザー27.value);
-          }
-
-          //権限追加ユーザー28
-          if(record.権限追加ユーザー28.value.length != 0){
-            let view_authority_user_28 = record.権限追加ユーザー28.value;
-            let view_authority_user28_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_28[0]['code']);
-            userCodes.push(view_authority_user28_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー28
-          if(record.Garoon宛先追加ユーザー28.value){
-            userCodes.push(record.Garoon宛先追加ユーザー28.value);
-          }
-
-          //権限追加追加ユーザー29
-          if(record.権限追加ユーザー29.value.length != 0){
-            let view_authority_user_29 = record.権限追加ユーザー29.value;
-            let view_authority_user29_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_29[0]['code']);
-            userCodes.push(view_authority_user29_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー29
-          if(record.Garoon宛先追加ユーザー29.value){
-            userCodes.push(record.Garoon宛先追加ユーザー29.value);
-          }
-
-          //権限追加ユーザー30
-          if(record.権限追加ユーザー30.value.length != 0){
-            let view_authority_user_30 = record.権限追加ユーザー30.value;
-            let view_authority_user30_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_30[0]['code']);
-            userCodes.push(view_authority_user30_garoon_user_id['id']);
-          }
-          //Garoon宛先追加ユーザー30
-          if(record.Garoon宛先追加ユーザー30.value){
-            userCodes.push(record.Garoon宛先追加ユーザー30.value);
-          }
-
-          //権限追加ユーザー31
-          if(record.権限追加ユーザー31.value.length != 0){
-            let view_authority_user_31 = record.権限追加ユーザー31.value;
-            let view_authority_user31_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_31[0]['code']);
-            userCodes.push(view_authority_user31_garoon_user_id['id']);
-          }
-           //Garoon宛先追加ユーザー31
-           if(record.Garoon宛先追加ユーザー31.value){
-            userCodes.push(record.Garoon宛先追加ユーザー31.value);
-          }
-
-          //権限追加ユーザー32
-          if(record.権限追加ユーザー32.value.length != 0){
-            let view_authority_user_32 = record.権限追加ユーザー32.value;
-            let view_authority_user32_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_32[0]['code']);
-            userCodes.push(view_authority_user32_garoon_user_id['id']);
-          }
-           //Garoon宛先追加ユーザー32
-           if(record.Garoon宛先追加ユーザー32.value){
-            userCodes.push(record.Garoon宛先追加ユーザー32.value);
-          }
-
-          //権限追加ユーザー33
-          if(record.権限追加ユーザー33.value.length != 0){
-            let view_authority_user_33 = record.権限追加ユーザー33.value;
-            let view_authority_user33_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_33[0]['code']);
-            userCodes.push(view_authority_user33_garoon_user_id['id']);
-          }
-           //Garoon宛先追加ユーザー33
-           if(record.Garoon宛先追加ユーザー33.value){
-            userCodes.push(record.Garoon宛先追加ユーザー33.value);
-          }
-
-          //権限追加ユーザー34
-          if(record.権限追加ユーザー34.value.length != 0){
-            let view_authority_user_34 = record.権限追加ユーザー34.value;
-            let view_authority_user34_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_34[0]['code']);
-            userCodes.push(view_authority_user34_garoon_user_id['id']);
-          }
-           //Garoon宛先追加ユーザー34
-           if(record.Garoon宛先追加ユーザー34.value){
-            userCodes.push(record.Garoon宛先追加ユーザー34.value);
-          }
-
-
-          //userCodes変数から重複を削除
-          let uniqueUserCodes = [...new Set(userCodes)];
 
           //-----------------------------------------------------
           //メッセージ送信時、区分の変更
@@ -1193,18 +939,17 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           //Garoonメッセージのタイトル
           const content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + record.受付方法.value + comprehensive_evaluation + "【kintone】" + record.$id.value;
 
-          //Garoonへメッセージ送信処理
-          // performCommonAction('申請', uniqueUserCodes, content, body)
-          //   .then(function () {
-          //     //Garoonのメッセージが2通以上ある場合、1通目を更新して,2通目以降を削除
-          //     GaroonMessageUpdateDelete(record);
-          //     //送信履歴フィールドを更新
-          //     send_content_update(record);
-          //     setTimeout(() => {
-          //       //リロード
-          //       window.location.reload();
-          //     }, 1200);  
-          // })
+          performCommonAction('申請', userCodes, content, body)
+            .then(function () {
+              GaroonMessageUpdateDelete(record);
+              //送信履歴フィールドを更新
+              send_content_update(record);
+              setTimeout(() => {
+                //新規タブ(今はあきらめた)
+                // window.open(`${record.Garoonリンク.value}`, '_blank');
+                // window.location.reload();
+              }, 1200);  
+          })
         }
       );
   }
@@ -1253,7 +998,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           // メッセージ検索の実行
           await $.ajax({
             type: 'post',
-            url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+            url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
             cache: false,
             data: msgSearchRequest,
           }).then(function(responseData) {
@@ -1575,7 +1320,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       // メッセージ登録の実行
       await $.ajax({
         type: 'post',
-        url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+        url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
         cache: false,
         async: false,
         data: msgUpdateRequest
@@ -1637,7 +1382,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {

@@ -30,9 +30,9 @@
         
     // });
 
-        // ルックアップによる制御
+    // 後で新規の時だけに変更しよう
+    // アンケートユーザー情報アプリのデータを自動取得
     kintone.events.on(['app.record.create.submit','app.record.edit.submit'], function(event) {
-
         const record = event.record;
 
         if(record.受付方法.value == '電話'){
@@ -41,23 +41,45 @@
             // 【変更】アプリのIDに書き換えてください
             const APP_ID = 827;
             const store_id = record.店番.value;
-        
-            // const params = {
-            //     'app': APP_ID,
-            //     'query': `店番 = "${store_id}" and 日付="${date}"`
-            // };
+    
             if(store_id){
                 const params = {
                     'app': APP_ID,
                     'query': `店番 = "${store_id}"`
                 };
+                // const params = {
+                //     'app': APP_ID,
+                //     'query': `店番 = "${store_id}" and 日付="${date}"`
+                // };
             
                 return kintone.api(kintone.api.url('/k/v1/records', true), 'GET', params).then((resp) => {
                     const records = resp.records;
+
+                    console.warn("レコーズ",records);
+                    console.warn("record",record);
                     if(record.受付方法.value == '電話'){
                         record.営業部連絡先.value = records[0].AM電話番号.value;
                     }
                     record.ガルーン宛先に店舗を入れるor入れない.value = records[0].ガルーン宛先に店舗を入れるor入れない.value;
+
+                    // console.warn("recordの中身を確認",record);
+                    // console.warn("権限追加ユーザー1",record['権限追加ユーザー' + 1].value)
+                    //権限追加ユーザー1~34まで代入していく
+
+                    // record.権限追加ユーザー1.value = records[0].ユーザー1.value;
+
+                    for (let i = 1; i <= 34; i++) {
+                        // ここに繰り返し処理したいコードを記述します
+                        // record['権限追加ユーザー' + i].value = records[0]['ユーザー' + i].value;
+                        // record['Garoon宛先追加ユーザー' + i].value = records[0]['Garoonユーザー' + i].value;
+                    }
+                    // record.コールセンター1.value = records[0].コールセンター1.value;
+                    // record.コールセンター2.value = records[0].コールセンター2.value;
+                    // record.コールセンター上長1.value = records[0].コールセンター上長1.value;
+                    // record.コールセンター上長2.value = records[0].コールセンター上長2.value;
+                    // record.コールセンター上長3.value = records[0].コールセンター上長3.value;
+                    // record.コールセンター上長4.value = records[0].コールセンター上長4.value;
+                    
                     return event;
                 });
             }

@@ -81,47 +81,6 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
     //システム管理者用グループを非表示にする
     kintone.app.record.setFieldShown('システム管理者用',false); 
 
-    // //電話対応の時、顛末を表示する
-    // if(record.受付方法.value == "電話" || record.受付方法.value == "メール・ネットアンケート" || record.受付方法.value == "口コミサイト"){
-    //     // スペースフィールド
-    //     const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
-    //     tenmatsu_field.innerHTML = '顛末';
-    //     tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(255, 242, 204);';
-
-    //     // スペースフィールド
-    //     const manager_field = kintone.app.record.getSpaceElement('manager');
-    //     manager_field.innerHTML = '部長';
-    //     manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
-
-    //     // スペースフィールド
-    //     const call_center_field = kintone.app.record.getSpaceElement('call_center');
-    //     call_center_field.innerHTML = 'コールセンター';
-    //     call_center_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
-    // }else{
-    //     //顛末を非表示
-    //     kintone.app.record.setFieldShown('顛末', false);
-    //     //部長顛末確認を非表示
-    //     kintone.app.record.setFieldShown('顛末確認_部長', false);
-    //     //コールセンター顛末確認、確認日時を非表示
-    //     kintone.app.record.setFieldShown('顛末確認者', false);
-    //     kintone.app.record.setFieldShown('確認日時_顛末', false);
-
-    //     //顛末という文字を削除
-    //     const tenmatsuField = kintone.app.record.getSpaceElement('tenmatsu');
-    //     const parenttenmatsuElement = tenmatsuField.parentElement;
-    //     parenttenmatsuElement.removeChild(tenmatsuField)
-
-    //     //顛末の部長という文字を削除
-    //     const managerField = kintone.app.record.getSpaceElement('manager');
-    //     const parentmanagerFieldElement = managerField.parentElement;
-    //     parentmanagerFieldElement.removeChild(managerField);
-
-    //     //顛末のコールセンターという文字を削除
-    //     const callCenterField = kintone.app.record.getSpaceElement('call_center');
-    //     const parentElement = callCenterField.parentElement;
-    //     parentElement.removeChild(callCenterField);
-    // }
-
     return event;
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -151,7 +110,7 @@ kintone.events.on(["app.record.create.show","app.record.edit.show"], event => {
 });
 
     //(編集画面)(グループ)
-kintone.events.on(["app.record.create.change.受付日時_電話","app.record.edit.change.受付日時_電話","app.record.create.change.受付日時_メール","app.record.edit.change.受付日時_メール"], event => {
+kintone.events.on(["app.record.create.change.受付日時_電話","app.record.edit.change.受付日時_電話","app.record.create.change.受付日時_メール_ネットアンケート","app.record.edit.change.受付日時_メール_ネットアンケート"], event => {
     const record = event.record;
     if(record.受付方法.value == "電話"){
         if(record.受付日時_電話.value == undefined || record.受付日時_電話.value == ''){
@@ -166,10 +125,10 @@ kintone.events.on(["app.record.create.change.受付日時_電話","app.record.ed
             record.受付日時_まとめ.value  = record.受付日時_口コミ.value;
         }
     }else{
-        if(record.受付日時_メール.value == undefined || record.受付日時_メール.value == ''){
+        if(record.受付日時_メール_ネットアンケート.value == undefined || record.受付日時_メール_ネットアンケート.value == ''){
 
         }else{
-            record.受付日時_まとめ.value  = record.受付日時_メール.value;
+            record.受付日時_まとめ.value  = record.受付日時_メール_ネットアンケート.value;
         }
     }        
     return event;
@@ -182,7 +141,7 @@ kintone.events.on(["app.record.create.change.受付方法","app.record.edit.chan
         kintone.app.record.setFieldShown('口コミサイト受付', false);
         kintone.app.record.setFieldShown('メール・ネットアンケート受付', false);
         kintone.app.record.setFieldShown('電話受付', true);
-    }else if(record.受付方法.value == "メール・ネットアンケート"){
+    }else if(record.受付方法.value == "メール"||record.受付方法.value == "ネットアンケート"){
         kintone.app.record.setFieldShown('口コミサイト受付', false);
         kintone.app.record.setFieldShown('メール・ネットアンケート受付', true);
         kintone.app.record.setFieldShown('電話受付', false);
@@ -289,27 +248,27 @@ kintone.events.on([ 'app.record.edit.change.ご来店人数_電話', 'app.record
 });
 
 //(メール・ネットアンケート)ご利用人数変更時
-kintone.events.on([ 'app.record.edit.change.ご利用人数_メール_ネット', 'app.record.create.change.ご利用人数_メール_ネット'], event => {
+kintone.events.on([ 'app.record.edit.change.ご利用人数_メール_ネットアンケート', 'app.record.create.change.ご利用人数_メール_ネットアンケート'], event => {
     const rec = event.record;
 
-    rec.ご利用人数.value = rec.ご利用人数_メール_ネット.value;
+    rec.ご利用人数.value = rec.ご利用人数_メール_ネットアンケート.value;
 
     return event;
 });
 
 //メール・ネットアンケートの総合評価が利用したくないの時
-kintone.events.on([ 'app.record.edit.change.総合評価_メール', 'app.record.create.change.総合評価_メール'], event => {
+kintone.events.on([ 'app.record.edit.change.総合評価_メール_ネットアンケート', 'app.record.create.change.総合評価_メール_ネットアンケート'], event => {
     const rec = event.record;
-    if (rec.総合評価_メール.value == '利用したくない') {
-        rec.アンケート報告書_メール.value = '要';
+    if (rec.総合評価_メール_ネットアンケート.value == '利用したくない') {
+        rec.アンケート報告書_メール_ネットアンケート.value = '要';
     }else{
-        rec.アンケート報告書_メール.value = '否';
+        rec.アンケート報告書_メール_ネットアンケート.value = '否';
     }
 
-    if(rec.総合評価_メール.value == 'ー' ){
+    if(rec.総合評価_メール_ネットアンケート.value == 'ー' ){
         rec.内容.value = '未記入、その他';
     }else{
-        rec.内容.value = rec.総合評価_メール.value;
+        rec.内容.value = rec.総合評価_メール_ネットアンケート.value;
     }
 
     return event;
@@ -454,7 +413,7 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         kintone.app.record.setFieldShown('口コミサイト受付',false );
         kintone.app.record.setFieldShown('メール・ネットアンケート受付', false);
         kintone.app.record.setFieldShown('電話受付', true);
-    }else if(record.受付方法.value == "メール・ネットアンケート"){
+    }else if(record.受付方法.value == "メール"||record.受付方法.value == "ネットアンケート"){
         kintone.app.record.setFieldShown('口コミサイト受付',false );
         kintone.app.record.setFieldShown('メール・ネットアンケート受付', true);
         kintone.app.record.setFieldShown('電話受付', false);
@@ -470,7 +429,6 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
     //お客様とのご連絡回数
     if(record.お客様とのご連絡回数.value == "1回目"){
         //グループの開閉
-        kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
         kintone.app.record.setGroupFieldOpen('電話受付', true);
         kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', true);
         kintone.app.record.setGroupFieldOpen('口コミサイト受付', true)
@@ -481,7 +439,6 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         kintone.app.record.setFieldShown('お客様とのご連絡詳細_3回目_',false);
     }else if(record.お客様とのご連絡回数.value == "2回目"){
         //グループの開閉
-        kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
         kintone.app.record.setGroupFieldOpen('電話受付', false)
         kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', false);
         kintone.app.record.setGroupFieldOpen('口コミサイト受付', false)
@@ -493,7 +450,6 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
     }else if(record.お客様とのご連絡回数.value == "3回目"){
 
         //グループの開閉
-        kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
         kintone.app.record.setGroupFieldOpen('電話受付', false);
         kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', false);
         kintone.app.record.setGroupFieldOpen('口コミサイト受付', false)
@@ -555,38 +511,6 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
 
     });
 
-    // //(新規画面)(グループ)
-    // kintone.events.on("app.record.create.change.受付方法", event => {
-    //     const record = event.record;
-
-    //     //電話対応の時、顛末を表示する
-    //     if(record.受付方法.value == "電話" || record.受付方法.value == "メール・ネットアンケート" || record.受付方法.value == "口コミサイト"){
-    //         // スペースフィールド
-    //         const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
-    //         tenmatsu_field.innerHTML = '顛末';
-    //         tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(255, 242, 204);';
-
-    //         // スペースフィールド
-    //         const manager_field = kintone.app.record.getSpaceElement('manager');
-    //         manager_field.innerHTML = '部長';
-    //         manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
-
-    //         // スペースフィールド
-    //         const call_center_field = kintone.app.record.getSpaceElement('call_center');
-    //         call_center_field.innerHTML = 'コールセンター';
-    //         call_center_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
-    //     }else{
-    //         //顛末を表示
-    //         kintone.app.record.setFieldShown('顛末', false);
-    //         //部長顛末確認を表示
-    //         kintone.app.record.setFieldShown('顛末確認_部長', false);
-    //         //コールセンター顛末確認、確認日時を表示
-    //         kintone.app.record.setFieldShown('顛末確認者', false);
-    //         kintone.app.record.setFieldShown('確認日時_顛末', false);
-    //     }
-
-    // });
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //以下、詳細画面のみの処理
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -646,7 +570,6 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
 
         if(record.お客様とのご連絡回数.value == "1回目"){
             //グループの開閉
-            kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
             kintone.app.record.setGroupFieldOpen('電話受付', true)
             kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', true);
             kintone.app.record.setGroupFieldOpen('口コミサイト受付', true);
@@ -658,7 +581,6 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
 
         }else if(record.お客様とのご連絡回数.value == "2回目"){
             //グループの開閉
-            kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
             kintone.app.record.setGroupFieldOpen('電話受付', false)
             kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', false);
             kintone.app.record.setGroupFieldOpen('口コミサイト受付', false);
@@ -671,7 +593,6 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         }else if(record.お客様とのご連絡回数.value == "3回目"){
 
             //グループの開閉
-            kintone.app.record.setGroupFieldOpen('店舗情報詳細',false );
             kintone.app.record.setGroupFieldOpen('電話受付', false);
             kintone.app.record.setGroupFieldOpen('メール・ネットアンケート受付', false);
             kintone.app.record.setGroupFieldOpen('口コミサイト受付', false);
@@ -711,6 +632,456 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
     
         //システム管理者用を非表示にする
         kintone.app.record.setFieldShown('システム管理者用',false); 
+        return event;
+    });
+
+
+    //----------------------------------------------------------------------------------
+    // 宛先に関する処理
+    //----------------------------------------------------------------------------------
+    //ページを表示させた時
+    kintone.events.on(["app.record.create.show","app.record.detail.show","app.record.edit.show","app.record.print.show","app.record.create.change.グループカテゴリ_いくつ_","app.record.edit.change.グループカテゴリ_いくつ_"], event => {
+        const record = event.record;
+        if(record.グループカテゴリ_いくつ_.value == '1つ'){
+
+            //2つ目のカテゴリーを非表示にする時 second
+            kintone.app.record.setFieldShown('本部関連_商品関連の宛先を取得2',false);//非表示
+            const category_second_field_none = kintone.app.record.getSpaceElement('category_second');
+            category_second_field_none.style.display = 'none';
+
+            //3つ目のカテゴリーを非表示にする時 third
+            kintone.app.record.setFieldShown('本部関連_商品関連の宛先を取得3',false);//非表示
+            const category_third_field_none = kintone.app.record.getSpaceElement('category_third');
+            category_third_field_none.style.display = 'none';
+
+            kintone.app.record.setFieldShown('_2権限追加ユーザー1',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー2',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー3',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー4',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー5',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー6',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー7',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー8',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー9',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー10',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー11',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー12',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー13',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー14',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー15',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー16',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー17',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー18',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー19',false);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー20',false);
+            //Garoonのみユーザー
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー1',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー2',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー3',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー4',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー5',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー6',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー7',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー8',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー9',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー10',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー11',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー12',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー13',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー14',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー15',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー16',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー17',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー18',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー19',false);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー20',false);
+
+            //3つめ
+            kintone.app.record.setFieldShown('_3権限追加ユーザー1',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー2',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー3',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー4',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー5',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー6',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー7',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー8',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー9',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー10',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー11',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー12',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー13',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー14',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー15',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー16',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー17',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー18',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー19',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー20',false);
+            //Garoonのみユーザー
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー1',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー2',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー3',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー4',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー5',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー6',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー7',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー8',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー9',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー10',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー11',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー12',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー13',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー14',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー15',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー16',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー17',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー18',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー19',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー20',false);
+
+        }else if(record.グループカテゴリ_いくつ_.value == '2つ'){
+            //2つ目のカテゴリーを表示
+            kintone.app.record.setFieldShown('本部関連_商品関連の宛先を取得2',true);//表示
+            const category_second_field = kintone.app.record.getSpaceElement('category_second');   //スペースを取得
+            category_second_field.innerHTML = '■カテゴリー2つ目のユーザーグループ';      //文字を挿入
+            category_second_field.style.cssText = 'font-size: xx-large; color: rgb(180, 95, 6); font-weight: bold;';
+
+            //3つ目のカテゴリーを非表示
+            kintone.app.record.setFieldShown('本部関連_商品関連の宛先を取得3',false);//非表示
+            const category_third_field_none = kintone.app.record.getSpaceElement('category_third');
+            category_third_field_none.style.display = 'none';
+
+
+            kintone.app.record.setFieldShown('_2権限追加ユーザー1',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー2',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー3',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー4',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー5',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー6',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー7',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー8',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー9',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー10',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー11',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー12',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー13',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー14',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー15',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー16',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー17',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー18',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー19',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー20',true);
+            //Garoonのみユーザー
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー1',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー2',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー3',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー4',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー5',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー6',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー7',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー8',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー9',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー10',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー11',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー12',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー13',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー14',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー15',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー16',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー17',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー18',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー19',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー20',true);
+
+            //3つめ
+            kintone.app.record.setFieldShown('_3権限追加ユーザー1',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー2',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー3',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー4',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー5',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー6',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー7',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー8',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー9',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー10',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー11',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー12',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー13',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー14',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー15',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー16',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー17',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー18',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー19',false);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー20',false);
+            //Garoonのみユーザー
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー1',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー2',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー3',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー4',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー5',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー6',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー7',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー8',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー9',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー10',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー11',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー12',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー13',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー14',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー15',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー16',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー17',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー18',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー19',false);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー20',false);
+        }else if(record.グループカテゴリ_いくつ_.value == '3つ'){
+
+            //2つ目のカテゴリーを表示
+            kintone.app.record.setFieldShown('本部関連_商品関連の宛先を取得2',true);//表示
+            const category_second_field = kintone.app.record.getSpaceElement('category_second');   //スペースを取得
+            category_second_field.innerHTML = '■カテゴリー2つ目のユーザーグループ';      //文字を挿入
+            category_second_field.style.cssText = 'font-size: xx-large; color: rgb(180, 95, 6); font-weight: bold;';
+            
+            //3つ目のカテゴリーを表示
+            kintone.app.record.setFieldShown('本部関連_商品関連の宛先を取得3',true);//表示
+            const category_third_field = kintone.app.record.getSpaceElement('category_third');   //スペースを取得
+            category_third_field.innerHTML = '■カテゴリー3つ目のユーザーグループ';      //文字を挿入
+            category_third_field.style.cssText = 'font-size: xx-large; color: rgb(180, 95, 6); font-weight: bold;';
+
+            //2つ目のカテゴリー
+            kintone.app.record.setFieldShown('_2権限追加ユーザー1',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー2',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー3',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー4',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー5',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー6',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー7',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー8',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー9',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー10',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー11',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー12',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー13',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー14',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー15',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー16',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー17',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー18',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー19',true);
+            kintone.app.record.setFieldShown('_2権限追加ユーザー20',true);
+            //Garoonのみユーザー
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー1',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー2',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー3',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー4',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー5',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー6',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー7',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー8',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー9',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー10',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー11',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー12',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー13',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー14',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー15',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー16',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー17',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー18',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー19',true);
+            kintone.app.record.setFieldShown('_2Garoon宛先追加ユーザー20',true);
+
+            //3つ目のカテゴリー
+            kintone.app.record.setFieldShown('_3権限追加ユーザー1',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー2',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー3',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー4',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー5',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー6',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー7',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー8',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー9',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー10',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー11',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー12',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー13',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー14',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー15',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー16',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー17',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー18',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー19',true);
+            kintone.app.record.setFieldShown('_3権限追加ユーザー20',true);
+            //Garoonのみユーザー
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー1',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー2',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー3',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー4',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー5',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー6',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー7',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー8',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー9',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー10',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー11',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー12',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー13',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー14',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー15',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー16',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー17',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー18',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー19',true);
+            kintone.app.record.setFieldShown('_3Garoon宛先追加ユーザー20',true);
+        }
+
+        return event;
+    });
+
+    kintone.events.on(["app.record.create.show","app.record.edit.show"], event => {
+        const record = event.record;
+
+        //カテゴリーつ目のグループ
+        //コールセンター関連
+        event.record["_コールセンター1"].disabled = false;
+        event.record["_コールセンター2"].disabled = false;
+        event.record["_コールセンター上長1"].disabled = false;
+        event.record["_コールセンター上長2"].disabled = false;
+        event.record["_コールセンター上長3"].disabled = false;
+        event.record["_コールセンター上長4"].disabled = false;
+        //kintoneとGaroonに宛先があるユーザー(1つめ)
+        event.record["_1権限追加ユーザー1"].disabled = false;
+        event.record["_1権限追加ユーザー2"].disabled = false;
+        event.record["_1権限追加ユーザー3"].disabled = false;
+        event.record["_1権限追加ユーザー4"].disabled = false;
+        event.record["_1権限追加ユーザー5"].disabled = false;
+        event.record["_1権限追加ユーザー6"].disabled = false;
+        event.record["_1権限追加ユーザー7"].disabled = false;
+        event.record["_1権限追加ユーザー8"].disabled = false;
+        event.record["_1権限追加ユーザー9"].disabled = false;
+        event.record["_1権限追加ユーザー10"].disabled = false;
+        event.record["_1権限追加ユーザー11"].disabled = false;
+        event.record["_1権限追加ユーザー12"].disabled = false;
+        event.record["_1権限追加ユーザー13"].disabled = false;
+        event.record["_1権限追加ユーザー14"].disabled = false;
+        event.record["_1権限追加ユーザー15"].disabled = false;
+        event.record["_1権限追加ユーザー16"].disabled = false;
+        event.record["_1権限追加ユーザー17"].disabled = false;
+        event.record["_1権限追加ユーザー18"].disabled = false;
+        event.record["_1権限追加ユーザー19"].disabled = false;
+        event.record["_1権限追加ユーザー20"].disabled = false;
+        //Garoonに宛先があるユーザー(1つめ)
+        event.record["_1Garoon宛先追加ユーザー1"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー2"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー3"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー4"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー5"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー6"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー7"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー8"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー9"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー10"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー11"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー12"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー13"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー14"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー15"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー16"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー17"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー18"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー19"].disabled = false;
+        event.record["_1Garoon宛先追加ユーザー20"].disabled = false;
+
+        //カテゴリ二つ目のグループ
+        //kintoneとGaroonに宛先があるユーザー(2つめ)
+        event.record["_2権限追加ユーザー1"].disabled = false;
+        event.record["_2権限追加ユーザー2"].disabled = false;
+        event.record["_2権限追加ユーザー3"].disabled = false;
+        event.record["_2権限追加ユーザー4"].disabled = false;
+        event.record["_2権限追加ユーザー5"].disabled = false;
+        event.record["_2権限追加ユーザー6"].disabled = false;
+        event.record["_2権限追加ユーザー7"].disabled = false;
+        event.record["_2権限追加ユーザー8"].disabled = false;
+        event.record["_2権限追加ユーザー9"].disabled = false;
+        event.record["_2権限追加ユーザー10"].disabled = false;
+        event.record["_2権限追加ユーザー11"].disabled = false;
+        event.record["_2権限追加ユーザー12"].disabled = false;
+        event.record["_2権限追加ユーザー13"].disabled = false;
+        event.record["_2権限追加ユーザー14"].disabled = false;
+        event.record["_2権限追加ユーザー15"].disabled = false;
+        event.record["_2権限追加ユーザー16"].disabled = false;
+        event.record["_2権限追加ユーザー17"].disabled = false;
+        event.record["_2権限追加ユーザー18"].disabled = false;
+        event.record["_2権限追加ユーザー19"].disabled = false;
+        event.record["_2権限追加ユーザー20"].disabled = false;
+        //Garoonに宛先があるユーザー(2つめ)
+        event.record["_2Garoon宛先追加ユーザー1"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー2"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー3"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー4"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー5"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー6"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー7"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー8"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー9"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー10"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー11"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー12"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー13"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー14"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー15"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー16"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー17"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー18"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー19"].disabled = false;
+        event.record["_2Garoon宛先追加ユーザー20"].disabled = false;
+
+        //カテゴリ三つ目のグループ
+        //kintoneとGaroonに宛先があるユーザー(3つめ)
+        event.record["_3権限追加ユーザー1"].disabled = false;
+        event.record["_3権限追加ユーザー2"].disabled = false;
+        event.record["_3権限追加ユーザー3"].disabled = false;
+        event.record["_3権限追加ユーザー4"].disabled = false;
+        event.record["_3権限追加ユーザー5"].disabled = false;
+        event.record["_3権限追加ユーザー6"].disabled = false;
+        event.record["_3権限追加ユーザー7"].disabled = false;
+        event.record["_3権限追加ユーザー8"].disabled = false;
+        event.record["_3権限追加ユーザー9"].disabled = false;
+        event.record["_3権限追加ユーザー10"].disabled = false;
+        event.record["_3権限追加ユーザー11"].disabled = false;
+        event.record["_3権限追加ユーザー12"].disabled = false;
+        event.record["_3権限追加ユーザー13"].disabled = false;
+        event.record["_3権限追加ユーザー14"].disabled = false;
+        event.record["_3権限追加ユーザー15"].disabled = false;
+        event.record["_3権限追加ユーザー16"].disabled = false;
+        event.record["_3権限追加ユーザー17"].disabled = false;
+        event.record["_3権限追加ユーザー18"].disabled = false;
+        event.record["_3権限追加ユーザー19"].disabled = false;
+        event.record["_3権限追加ユーザー20"].disabled = false;
+        //Garoonに宛先があるユーザー(3つめ)
+        event.record["_3Garoon宛先追加ユーザー1"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー2"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー3"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー4"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー5"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー6"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー7"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー8"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー9"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー10"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー11"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー12"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー13"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー14"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー15"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー16"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー17"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー18"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー19"].disabled = false;
+        event.record["_3Garoon宛先追加ユーザー20"].disabled = false;
+
         return event;
     });
 
