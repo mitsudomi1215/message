@@ -984,7 +984,338 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
            if(record.Garoon宛先追加ユーザー34.value){
             userCodes.push(record.Garoon宛先追加ユーザー34.value);
           }
+          
+          //-----------------------------------------------------------------------------------
+          // 本部関連・宛先関連の情報を取得(手動取得)
+          //-----------------------------------------------------------------------------------
 
+          //_1権限追加ユーザー1
+          if(record._1権限追加ユーザー1.value.length != 0){
+            let authority_additional_user_1 = record._1権限追加ユーザー1.value;
+            let authority_additional_user_1_user_id = await fetchGaroonUserByCode(authority_additional_user_1[0]['code']);
+            userCodes.push(authority_additional_user_1_user_id['id']);
+          }
+          //_2権限追加ユーザー1
+          if(record._2権限追加ユーザー1.value.length != 0){
+            let two_authority_additional_user_1 = record._2権限追加ユーザー1.value;
+            let two_authority_additional_user_1_user_id = await fetchGaroonUserByCode(two_authority_additional_user_1[0]['code']);
+            userCodes.push(two_authority_additional_user_1_user_id['id']);
+          }
+
+          //_1権限追加ユーザー2
+          if(record._1権限追加ユーザー2.value.length != 0){
+            let authority_additional_user_2 = record._1権限追加ユーザー2.value;
+            let authority_additional_user_2_user_id = await fetchGaroonUserByCode(authority_additional_user_2[0]['code']);
+            userCodes.push(authority_additional_user_2_user_id['id']);
+          }
+          //_2権限追加ユーザー2
+          if(record._2権限追加ユーザー2.value.length != 0){
+            let two_authority_additional_user_2 = record._2権限追加ユーザー2.value;
+            let two_authority_additional_user_2_user_id = await fetchGaroonUserByCode(two_authority_additional_user_2[0]['code']);
+            userCodes.push(two_authority_additional_user_2_user_id['id']);
+          }
+
+          //_1権限追加ユーザー3
+          if(record._1権限追加ユーザー3.value.length != 0){
+            let authority_additional_user_3 = record._1権限追加ユーザー3.value;
+            let authority_additional_user_3_user_id = await fetchGaroonUserByCode(authority_additional_user_3[0]['code']);
+            userCodes.push(authority_additional_user_3_user_id['id']);
+          }
+          //_2権限追加ユーザー3
+          if(record._2権限追加ユーザー3.value.length != 0){
+            let two_authority_additional_user_3 = record._2権限追加ユーザー3.value;
+            let two_authority_additional_user_3_user_id = await fetchGaroonUserByCode(two_authority_additional_user_3[0]['code']);
+            userCodes.push(two_authority_additional_user_3_user_id['id']);
+          }
+
+          
+          //_1権限追加ユーザー4
+          if(record._1権限追加ユーザー4.value.length != 0){
+            let authority_additional_user_4 = record._1権限追加ユーザー4.value;
+            let authority_additional_user_4_user_id = await fetchGaroonUserByCode(authority_additional_user_4[0]['code']);
+            userCodes.push(authority_additional_user_4_user_id['id']);
+          }
+          //_2権限追加ユーザー4
+          if(record._2権限追加ユーザー4.value.length != 0){
+            let two_authority_additional_user_4 = record._2権限追加ユーザー4.value;
+            let two_authority_additional_user_4_user_id = await fetchGaroonUserByCode(two_authority_additional_user_4[0]['code']);
+            userCodes.push(two_authority_additional_user_4_user_id['id']);
+          }
+
+
+          //_1権限追加ユーザー5
+          if(record._1権限追加ユーザー5.value.length != 0){
+            let authority_additional_user_5 = record._1権限追加ユーザー5.value;
+            let authority_additional_user_5_user_id = await fetchGaroonUserByCode(authority_additional_user_5[0]['code']);
+            userCodes.push(authority_additional_user_5_user_id['id']);
+          }
+          //_2権限追加ユーザー5
+          if(record._2権限追加ユーザー5.value.length != 0){
+            let two_authority_additional_user_5 = record._2権限追加ユーザー2.value;
+            let two_authority_additional_user_5_user_id = await fetchGaroonUserByCode(two_authority_additional_user_5[0]['code']);
+            userCodes.push(two_authority_additional_user_5_user_id['id']);
+          }
+
+          //_1権限追加ユーザー6
+          if(record._1権限追加ユーザー6.value.length != 0){
+            let authority_additional_user_6 = record._1権限追加ユーザー4.value;
+            let authority_additional_user_6_user_id = await fetchGaroonUserByCode(authority_additional_user_6[0]['code']);
+            userCodes.push(authority_additional_user_6_user_id['id']);
+          }
+          //_2権限追加ユーザー6
+          if(record._2権限追加ユーザー6.value.length != 0){
+            let two_authority_additional_user_6 = record._2権限追加ユーザー6.value;
+            let two_authority_additional_user_6_user_id = await fetchGaroonUserByCode(two_authority_additional_user_6[0]['code']);
+            userCodes.push(two_authority_additional_user_6_user_id['id']);
+          }
+
+          //_1権限追加ユーザー7
+          if(record._1権限追加ユーザー7.value.length != 0){
+            let authority_additional_user_7 = record._1権限追加ユーザー7.value;
+            let authority_additional_user_7_user_id = await fetchGaroonUserByCode(authority_additional_user_7[0]['code']);
+            userCodes.push(authority_additional_user_7_user_id['id']);
+          }
+          //_2権限追加ユーザー7
+          if(record._2権限追加ユーザー7.value.length != 0){
+            let two_authority_additional_user_7 = record._2権限追加ユーザー7.value;
+            let two_authority_additional_user_7_user_id = await fetchGaroonUserByCode(two_authority_additional_user_7[0]['code']);
+            userCodes.push(two_authority_additional_user_7_user_id['id']);
+          }
+
+          //_1権限追加ユーザー8
+          if(record._1権限追加ユーザー8.value.length != 0){
+            let authority_additional_user_8 = record._1権限追加ユーザー8.value;
+            let authority_additional_user_8_user_id = await fetchGaroonUserByCode(authority_additional_user_8[0]['code']);
+            userCodes.push(authority_additional_user_8_user_id['id']);
+          }
+          //_2権限追加ユーザー8
+          if(record._2権限追加ユーザー8.value.length != 0){
+            let two_authority_additional_user_8 = record._2権限追加ユーザー8.value;
+            let two_authority_additional_user_8_user_id = await fetchGaroonUserByCode(two_authority_additional_user_8[0]['code']);
+            userCodes.push(two_authority_additional_user_8_user_id['id']);
+          }
+
+          //_1権限追加ユーザー9
+          if(record._1権限追加ユーザー9.value.length != 0){
+            let authority_additional_user_9 = record._1権限追加ユーザー9.value;
+            let authority_additional_user_9_user_id = await fetchGaroonUserByCode(authority_additional_user_9[0]['code']);
+            userCodes.push(authority_additional_user_9_user_id['id']);
+          }
+          //_2権限追加ユーザー9
+          if(record._2権限追加ユーザー9.value.length != 0){
+            let two_authority_additional_user_9 = record._2権限追加ユーザー9.value;
+            let two_authority_additional_user_9_user_id = await fetchGaroonUserByCode(two_authority_additional_user_9[0]['code']);
+            userCodes.push(two_authority_additional_user_9_user_id['id']);
+          }
+
+          //_1権限追加ユーザー10
+          if(record._1権限追加ユーザー10.value.length != 0){
+            let authority_additional_user_10 = record._1権限追加ユーザー10.value;
+            let authority_additional_user_10_user_id = await fetchGaroonUserByCode(authority_additional_user_10[0]['code']);
+            userCodes.push(authority_additional_user_10_user_id['id']);
+          }
+          //_2権限追加ユーザー1
+          if(record._2権限追加ユーザー10.value.length != 0){
+            let two_authority_additional_user_10 = record._2権限追加ユーザー10.value;
+            let two_authority_additional_user_10_user_id = await fetchGaroonUserByCode(two_authority_additional_user_10[0]['code']);
+            userCodes.push(two_authority_additional_user_10_user_id['id']);
+          }
+
+           //_1権限追加ユーザー11
+           if(record._1権限追加ユーザー11.value.length != 0){
+            let authority_additional_user_11 = record._1権限追加ユーザー11.value;
+            let authority_additional_user_11_user_id = await fetchGaroonUserByCode(authority_additional_user_11[0]['code']);
+            userCodes.push(authority_additional_user_11_user_id['id']);
+          }
+          //_2権限追加ユーザー11
+          if(record._2権限追加ユーザー11.value.length != 0){
+            let two_authority_additional_user_11 = record._2権限追加ユーザー11.value;
+            let two_authority_additional_user_11_user_id = await fetchGaroonUserByCode(two_authority_additional_user_11[0]['code']);
+            userCodes.push(two_authority_additional_user_11_user_id['id']);
+          }
+
+           //_1権限追加ユーザー12
+           if(record._1権限追加ユーザー12.value.length != 0){
+            let authority_additional_user_12 = record._1権限追加ユーザー12.value;
+            let authority_additional_user_12_user_id = await fetchGaroonUserByCode(authority_additional_user_12[0]['code']);
+            userCodes.push(authority_additional_user_12_user_id['id']);
+          }
+          //_2権限追加ユーザー12
+          if(record._2権限追加ユーザー12.value.length != 0){
+            let two_authority_additional_user_12 = record._2権限追加ユーザー12.value;
+            let two_authority_additional_user_12_user_id = await fetchGaroonUserByCode(two_authority_additional_user_12[0]['code']);
+            userCodes.push(two_authority_additional_user_12_user_id['id']);
+          }
+           //_1権限追加ユーザー13
+           if(record._1権限追加ユーザー13.value.length != 0){
+            let authority_additional_user_13 = record._1権限追加ユーザー13.value;
+            let authority_additional_user_13_user_id = await fetchGaroonUserByCode(authority_additional_user_13[0]['code']);
+            userCodes.push(authority_additional_user_13_user_id['id']);
+          }
+          //_2権限追加ユーザー13
+          if(record._2権限追加ユーザー13.value.length != 0){
+            let two_authority_additional_user_13 = record._2権限追加ユーザー13.value;
+            let two_authority_additional_user_13_user_id = await fetchGaroonUserByCode(two_authority_additional_user_13[0]['code']);
+            userCodes.push(two_authority_additional_user_13_user_id['id']);
+          }
+
+           //_1権限追加ユーザー14
+           if(record._1権限追加ユーザー14.value.length != 0){
+            let authority_additional_user_14 = record._1権限追加ユーザー14.value;
+            let authority_additional_user_14_user_id = await fetchGaroonUserByCode(authority_additional_user_14[0]['code']);
+            userCodes.push(authority_additional_user_14_user_id['id']);
+          }
+          //_2権限追加ユーザー14
+          if(record._2権限追加ユーザー14.value.length != 0){
+            let two_authority_additional_user_14 = record._2権限追加ユーザー14.value;
+            let two_authority_additional_user_14_user_id = await fetchGaroonUserByCode(two_authority_additional_user_14[0]['code']);
+            userCodes.push(two_authority_additional_user_14_user_id['id']);
+          }
+
+           //_1権限追加ユーザー15
+           if(record._1権限追加ユーザー15.value.length != 0){
+            let authority_additional_user_15 = record._1権限追加ユーザー15.value;
+            let authority_additional_user_15_user_id = await fetchGaroonUserByCode(authority_additional_user_15[0]['code']);
+            userCodes.push(authority_additional_user_15_user_id['id']);
+          }
+          //_2権限追加ユーザー15
+          if(record._2権限追加ユーザー15.value.length != 0){
+            let two_authority_additional_user_15 = record._2権限追加ユーザー15.value;
+            let two_authority_additional_user_15_user_id = await fetchGaroonUserByCode(two_authority_additional_user_15[0]['code']);
+            userCodes.push(two_authority_additional_user_15_user_id['id']);
+          }
+
+           //_1権限追加ユーザー16
+           if(record._1権限追加ユーザー16.value.length != 0){
+            let authority_additional_user_16 = record._1権限追加ユーザー16.value;
+            let authority_additional_user_16_user_id = await fetchGaroonUserByCode(authority_additional_user_16[0]['code']);
+            userCodes.push(authority_additional_user_16_user_id['id']);
+          }
+          //_2権限追加ユーザー16
+          if(record._2権限追加ユーザー16.value.length != 0){
+            let two_authority_additional_user_16 = record._2権限追加ユーザー16.value;
+            let two_authority_additional_user_16_user_id = await fetchGaroonUserByCode(two_authority_additional_user_16[0]['code']);
+            userCodes.push(two_authority_additional_user_16_user_id['id']);
+          }
+          
+           //_1権限追加ユーザー17
+           if(record._1権限追加ユーザー17.value.length != 0){
+            let authority_additional_user_17 = record._1権限追加ユーザー17.value;
+            let authority_additional_user_17_user_id = await fetchGaroonUserByCode(authority_additional_user_17[0]['code']);
+            userCodes.push(authority_additional_user_17_user_id['id']);
+          }
+          //_2権限追加ユーザー17
+          if(record._2権限追加ユーザー17.value.length != 0){
+            let two_authority_additional_user_17 = record._2権限追加ユーザー17.value;
+            let two_authority_additional_user_17_user_id = await fetchGaroonUserByCode(two_authority_additional_user_17[0]['code']);
+            userCodes.push(two_authority_additional_user_17_user_id['id']);
+          }
+
+           //_1権限追加ユーザー18
+           if(record._1権限追加ユーザー18.value.length != 0){
+            let authority_additional_user_18 = record._1権限追加ユーザー18.value;
+            let authority_additional_user_18_user_id = await fetchGaroonUserByCode(authority_additional_user_18[0]['code']);
+            userCodes.push(authority_additional_user_18_user_id['id']);
+          }
+          //_2権限追加ユーザー18
+          if(record._2権限追加ユーザー18.value.length != 0){
+            let two_authority_additional_user_18 = record._2権限追加ユーザー18.value;
+            let two_authority_additional_user_18_user_id = await fetchGaroonUserByCode(two_authority_additional_user_18[0]['code']);
+            userCodes.push(two_authority_additional_user_18_user_id['id']);
+          }
+           //_1権限追加ユーザー19
+           if(record._1権限追加ユーザー19.value.length != 0){
+            let authority_additional_user_19 = record._1権限追加ユーザー19.value;
+            let authority_additional_user_19_user_id = await fetchGaroonUserByCode(authority_additional_user_19[0]['code']);
+            userCodes.push(authority_additional_user_19_user_id['id']);
+          }
+          //_2権限追加ユーザー19
+          if(record._2権限追加ユーザー19.value.length != 0){
+            let two_authority_additional_user_19 = record._2権限追加ユーザー19.value;
+            let two_authority_additional_user_19_user_id = await fetchGaroonUserByCode(two_authority_additional_user_19[0]['code']);
+            userCodes.push(two_authority_additional_user_19_user_id['id']);
+          }
+           //_1権限追加ユーザー20
+           if(record._1権限追加ユーザー20.value.length != 0){
+            let authority_additional_user_20 = record._1権限追加ユーザー20.value;
+            let authority_additional_user_20_user_id = await fetchGaroonUserByCode(authority_additional_user_20[0]['code']);
+            userCodes.push(authority_additional_user_20_user_id['id']);
+          }
+          //_2権限追加ユーザー20
+          if(record._2権限追加ユーザー20.value.length != 0){
+            let two_authority_additional_user_20 = record._2権限追加ユーザー20.value;
+            let two_authority_additional_user_20_user_id = await fetchGaroonUserByCode(two_authority_additional_user_20[0]['code']);
+            userCodes.push(two_authority_additional_user_20_user_id['id']);
+          }
+
+          
+
+          //コールセンター1
+          if(record.コールセンター1.value.length != 0){
+            let call_center_destination_1 = record.コールセンター1.value;
+            let call_center_destination_1_user_id = await fetchGaroonUserByCode(call_center_destination_1[0]['code']);
+            userCodes.push(call_center_destination_1_user_id['id']);
+          }
+          //_コールセンター_カテゴリー1
+          if(record._コールセンター1.value.length != 0){
+            let call_center_category_destination_1 = record._コールセンター1.value;
+            let call_center_category_destination_1_user_id = await fetchGaroonUserByCode(call_center_category_destination_1[0]['code']);
+            userCodes.push(call_center_category_destination_1_user_id['id']);
+          }
+          //コールセンター2
+          if(record.コールセンター2.value.length != 0){
+            let call_center_destination_2 = record.コールセンター2.value;
+            let call_center_destination_2_user_id = await fetchGaroonUserByCode(call_center_destination_2[0]['code']);
+            userCodes.push(call_center_destination_2_user_id['id']);
+          }
+          //_コールセンター_カテゴリー2
+          if(record._コールセンター2.value.length != 0){
+            let call_center_category_destination_2 = record._コールセンター2.value;
+            let call_center_category_destination_2_user_id = await fetchGaroonUserByCode(call_center_category_destination_2[0]['code']);
+            userCodes.push(call_center_category_destination_2_user_id['id']);
+          }
+          //コールセンター上長1
+          if(record.コールセンター上長1.value.length != 0){
+            let call_center_superiordestination_1 = record.コールセンター上長1.value;
+            let call_center_superiordestination_1_user_id = await fetchGaroonUserByCode(call_center_superiordestination_1[0]['code']);
+            userCodes.push(call_center_superiordestination_1_user_id['id']);
+          }
+          //_コールセンター上長_カテゴリー1
+          if(record._コールセンター上長1.value.length != 0){
+            let call_center_superiordestination_category_1 = record._コールセンター上長1.value;
+            let call_center_superiordestination_category_1_user_id = await fetchGaroonUserByCode(call_center_superiordestination_category_1[0]['code']);
+            userCodes.push(call_center_superiordestination_category_1_user_id['id']);
+          }
+          //コールセンター上長2
+          if(record.コールセンター上長2.value.length != 0){
+            let call_center_superiordestination_2 = record.コールセンター上長2.value;
+            let call_center_superiordestination_2_user_id = await fetchGaroonUserByCode(call_center_superiordestination_2[0]['code']);
+            userCodes.push(call_center_superiordestination_2_user_id['id']);
+          }
+          //_コールセンター上長_カテゴリー2
+          if(record._コールセンター上長2.value.length != 0){
+            let call_center_superiordestination_category_2 = record._コールセンター上長2.value;
+            let call_center_superiordestination_category_2_user_id = await fetchGaroonUserByCode(call_center_superiordestination_category_2[0]['code']);
+            userCodes.push(call_center_superiordestination_category_2_user_id['id']);
+          }
+          //コールセンター上長3
+          if(record.コールセンター上長3.value.length != 0){
+            let call_center_superiordestination_3 = record.コールセンター上長3.value;
+            let call_center_superiordestination_3_user_id = await fetchGaroonUserByCode(call_center_superiordestination_3[0]['code']);
+            userCodes.push(call_center_superiordestination_3_user_id['id']);
+          }
+          //_コールセンター上長_カテゴリー3
+          if(record._コールセンター上長3.value.length != 0){
+            let call_center_superiordestination_category_3 = record._コールセンター上長2.value;
+            let call_center_superiordestination_category_3_user_id = await fetchGaroonUserByCode(call_center_superiordestination_category_3[0]['code']);
+            userCodes.push(call_center_superiordestination_category_3_user_id['id']);
+          }
+          //コールセンター上長4
+          if(record.コールセンター上長4.value.length != 0){
+            let call_center_superiordestination_4 = record.コールセンター上長4.value;
+            let call_center_superiordestination_4_user_id = await fetchGaroonUserByCode(call_center_superiordestination_4[0]['code']);
+            userCodes.push(call_center_superiordestination_4_user_id['id']);
+          }
 
           //userCodes変数から重複を削除
           let uniqueUserCodes = [...new Set(userCodes)];
