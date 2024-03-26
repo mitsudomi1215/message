@@ -1665,7 +1665,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           //-----------------------------------------------------
 
           if(record.アンケート報告書.value == '要'){
-            if(record.区分2.value == 'A報保存済'){
+            if(record.区分3.value == 'A報保存済'){
               var enquete_result = 'A報保存済';
             }else{
               var enquete_result = 'A報請求済中';
@@ -1760,7 +1760,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
               顛末済みフラグ: {
                 value: ending_flag
               },
-              区分2: {
+              区分3: {
                 value: enquete_result
               },
               Garoonメッセージ送信制御 :{

@@ -24,11 +24,13 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
 
         //顛末を表示
         kintone.app.record.setFieldShown('顛末', false);
-        //部長顛末確認を表示
+        //部長顛末確認を非表示
         kintone.app.record.setFieldShown('顛末確認_部長', false);
-        //コールセンター顛末確認、確認日時を表示
+        //コールセンター顛末確認、確認日時を非表示
         kintone.app.record.setFieldShown('顛末確認者_顛末', false);
         kintone.app.record.setFieldShown('確認日時_顛末', false);
+        //コールセンターメモ_顛末を表示
+        kintone.app.record.setFieldShown('コールセンターメモ_顛末', false);
 
         //顛末という文字を削除
         const tenmatsuField = kintone.app.record.getSpaceElement('tenmatsu');
@@ -42,7 +44,6 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
             managerField.style.display = 'none';
         }
         
-
         //顛末のコールセンターという文字を削除
         const callCenterField = kintone.app.record.getSpaceElement('call_center');
         if (callCenterField) {
@@ -59,6 +60,8 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
         //コールセンター顛末確認、確認日時を表示
         kintone.app.record.setFieldShown('顛末確認者_顛末', true);
         kintone.app.record.setFieldShown('確認日時_顛末', true);
+        //コールセンターメモ_顛末を表示
+        kintone.app.record.setFieldShown('コールセンターメモ_顛末', true);
         // スペースフィールド
         const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
         if (tenmatsu_field) {
@@ -178,6 +181,8 @@ kintone.events.on(["app.record.create.change.アンケート報告書","app.reco
         //コールセンター顛末確認、確認日時を表示
         kintone.app.record.setFieldShown('顛末確認者_顛末', false);
         kintone.app.record.setFieldShown('確認日時_顛末', false);
+        //コールセンターメモ_顛末を表示
+        kintone.app.record.setFieldShown('コールセンターメモ_顛末', false);
 
         //顛末という文字を削除
         const tenmatsuField = kintone.app.record.getSpaceElement('tenmatsu');
@@ -212,7 +217,10 @@ kintone.events.on(["app.record.create.change.アンケート報告書","app.reco
         kintone.app.record.setFieldShown('顛末確認_部長', true);
         //コールセンター顛末確認、確認日時を表示
         kintone.app.record.setFieldShown('顛末確認者_顛末', true);
+        //コールセンターメモを表示
         kintone.app.record.setFieldShown('確認日時_顛末', true);
+        //コールセンターメモ_顛末を表示
+        kintone.app.record.setFieldShown('コールセンターメモ_顛末', true);
         // スペースフィールド
         const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
         if (tenmatsu_field) {
@@ -553,7 +561,6 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         //入力不可設定
         record.Garoonメッセージ送信制御.value = '送信しない';
         record.Garoon送信履歴.disabled = true;
-
         record.受付方法.disabled = true;
 
         // button_click();//追加
@@ -573,12 +580,23 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
     
         // 
         if((record.顛末済みフラグ.value == '未送信' && record.総括部長コメント欄.value) || (record.顛末済みフラグ.value == '未送信' && record.顛末確認_部長.value == '〇')){
-            record.顛末メッセージ送信状況.value = "顛末承認済みのため、メッセージ送信が必要";
+            record.顛末報告状況.value = "顛末承認済みのため、メッセージ送信が必要";
         }else if((record.報告済みフラグ.value == '未送信' && record.AM報告欄.value) || (record.報告済みフラグ.value == '未送信' && record.顛末.value[0].value.内容_顛末.value)){
-            record.顛末メッセージ送信状況.value = "顛末記入済みのため、メッセージ送信が必要";
+            record.顛末報告状況.value = "顛末記入済みのため、メッセージ送信が必要";
     
         }else{
-            record.顛末メッセージ送信状況.value = '';
+            record.顛末報告状況.value = '';
+        }
+
+        //コールセンターメモ_まとめ
+        if(record.コールセンターメモ_顛末.value){
+            record.コールセンターメモ_まとめ.value = record.コールセンターメモ_顛末.value;
+
+        }else if(record.コールセンターメモ_アンケート.value){
+            record.コールセンターメモ_まとめ.value = record.コールセンターメモ_アンケート.value;
+
+        }else{
+            record.コールセンターメモ_まとめ.value = '';
         }
     
         return event;
