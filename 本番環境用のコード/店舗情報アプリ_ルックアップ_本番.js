@@ -301,10 +301,12 @@
     {to: 'エリア', from: 'エリア'},//変更
     {to: '業態', from: '業態'},//変更
     {to: '区分', from: '区分'},//変更
-    // {to: 'AM', from: 'AM'},
-    // {to: 'FCオーナー', from: 'FCオーナー'},
-    // {to: '部長', from: '部長'},
-    // {to: '本部長', from: '本部長'},
+    {to: '店舗名', from: '店舗名'},
+    {to: '店舗名_ワークフロー_権限用', from: '店舗名'},
+    {to: 'AM', from: 'AM'},
+    {to: 'FCオーナー', from: 'FCオーナー'},
+    {to: '部長', from: '部長'},
+    {to: '本部長', from: '本部長'},
     ],
     viewFields: ['店番', '店名'], //modalに表示するフィールド
     companyNameFieldName : '店番',

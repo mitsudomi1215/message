@@ -118,7 +118,7 @@
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           async: false,
           data: msgAddRequest,
@@ -135,7 +135,6 @@
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //kintoneユーザーコードからGaroonのユーザー情報を取得
       const fetchGaroonUserByCode = async (code) => {
-        console.warn("codeの情報",code);
         const response = await fetch("/g/api/v1/base/users?name=" + code, {
           method: "GET",
           headers: {
@@ -144,7 +143,6 @@
           },
         });
         const body = await response.json();
-        console.warn("Garoonの情報",body);
         const targetUser =  body.users.filter((user) => user.code === code)[0];
         // console.warn("ターゲットユーザー",targetUser);
       return targetUser;
@@ -278,7 +276,7 @@
             // メッセージ検索の実行
             $.ajax({
                 type: 'post',
-                url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+                url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
                 cache: false,
                 data: msgSearchRequest,
             }).then(function(responseData) {
@@ -348,7 +346,7 @@
                             if (key == record.$id.value) {
                                 
                                 // record.Garoonリンク.value = "https://io8f1l5axfqn.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";
-                                let GaroonLink = "https://watami.s.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
+                                let GaroonLink = "https://watami.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
                                 
                                     // レコード更新のパラメータ設定
                                 let body = {
@@ -543,7 +541,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     const recordId = event.recordId;
     
     //お試し版URL【変更】
-    const kntAppURL = 'https://watami.s.cybozu.com/k/822/';
+    const kntAppURL = 'https://watami.cybozu.com/k/822/';
     //URLを作成
     let URL =  kntAppURL + 'show#record=' + record.$id.value;
     
@@ -564,7 +562,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           window.swal.close();
           //メッセージを送信する処理
           // お試し版URL【変更】URLとアプリID
-          const kntAppURL = 'https://watami.s.cybozu.com/k/822/';
+          const kntAppURL = 'https://watami.cybozu.com/k/822/';
           // URLを作成
           let URL = kntAppURL + 'show#record=' + record.$id.value;
           // ユーザー情報を格納する変数
@@ -575,24 +573,24 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           // 宛先まとめる処理
           //-----------------------------------------------------
           // ユーザー選択のコードを変数に代入
-          //コールセンター
-          if (record.コールセンター.value.length != 0) {
-            let call_center = record.コールセンター.value;
-            let call_center_garoon_user_id = await fetchGaroonUserByCode(call_center[0]['code']);
-            userCodes.push(call_center_garoon_user_id['id']);
-          }
+          // //管理者(今だけ)
+          // if (record.コールセンター.value.length != 0) {
+          //   let call_center = record.コールセンター.value;
+          //   let call_center_garoon_user_id = await fetchGaroonUserByCode(call_center[0]['code']);
+          //   userCodes.push(call_center_garoon_user_id['id']);
+          // }
           //店舗名
           if(record.店舗名.value.length != 0 && record.ガルーン宛先に店舗を入れるor入れない.value != '入れない'){
             let store_name_field = record.店舗名.value;
             let store_name_field_garoon_user_id = await fetchGaroonUserByCode(store_name_field[0]['code']);
             userCodes.push(store_name_field_garoon_user_id['id']);
           }
-          //FCオーナー
-          if(record.FCオーナー.value.length != 0){
-            let fc_owner_field = record.FCオーナー.value;
-            let fc_owner_field_garoon_user_id  =  await fetchGaroonUserByCode(fc_owner_field[0]['code']);
-            userCodes.push(fc_owner_field_garoon_user_id['id']);
-          }
+          // //FCオーナー
+          // if(record.FCオーナー.value.length != 0){
+          //   let fc_owner_field = record.FCオーナー.value;
+          //   let fc_owner_field_garoon_user_id  =  await fetchGaroonUserByCode(fc_owner_field[0]['code']);
+          //   userCodes.push(fc_owner_field_garoon_user_id['id']);
+          // }
           //AM
           if (record.AM.value.length != 0) {
             let AM_field = record.AM.value;
@@ -701,7 +699,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 
           //権限追加追加ユーザー9
           if(record.権限追加ユーザー9.value.length != 0){
-            let view_authority_user_9 = record権限追加ユーザー9.value;
+            let view_authority_user_9 = record.権限追加ユーザー9.value;
             let view_authority_user9_garoon_user_id = await fetchGaroonUserByCode(view_authority_user_9[0]['code']);
             userCodes.push(view_authority_user9_garoon_user_id['id']);
           }
@@ -985,9 +983,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             userCodes.push(record.Garoon宛先追加ユーザー34.value);
           }
           
-          //-----------------------------------------------------------------------------------
+          //-------------------------------------------------------------------------------------------------------------------------
           // 本部関連・宛先関連の情報を取得(手動取得)
-          //-----------------------------------------------------------------------------------
+          //-------------------------------------------------------------------------------------------------------------------------
 
           //_1権限追加ユーザー1
           if(record._1権限追加ユーザー1.value.length != 0){
@@ -995,18 +993,210 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let authority_additional_user_1_user_id = await fetchGaroonUserByCode(authority_additional_user_1[0]['code']);
             userCodes.push(authority_additional_user_1_user_id['id']);
           }
+          //_1Garoon宛先追加ユーザー1
+          if(record._1Garoon宛先追加ユーザー1.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー1.value)
+          }
+          //_1権限追加ユーザー2
+          if(record._1権限追加ユーザー2.value.length != 0){
+            let authority_additional_user_2 = record._1権限追加ユーザー2.value;
+            let authority_additional_user_2_user_id = await fetchGaroonUserByCode(authority_additional_user_2[0]['code']);
+            userCodes.push(authority_additional_user_2_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー2
+          if(record._1Garoon宛先追加ユーザー2.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー2.value)
+          }
+          //_1権限追加ユーザー3
+          if(record._1権限追加ユーザー3.value.length != 0){
+            let authority_additional_user_3 = record._1権限追加ユーザー3.value;
+            let authority_additional_user_3_user_id = await fetchGaroonUserByCode(authority_additional_user_3[0]['code']);
+            userCodes.push(authority_additional_user_3_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー3
+          if(record._1Garoon宛先追加ユーザー3.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー3.value)
+          }
+           //_1権限追加ユーザー4
+           if(record._1権限追加ユーザー4.value.length != 0){
+            let authority_additional_user_4 = record._1権限追加ユーザー4.value;
+            let authority_additional_user_4_user_id = await fetchGaroonUserByCode(authority_additional_user_4[0]['code']);
+            userCodes.push(authority_additional_user_4_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー4
+          if(record._1Garoon宛先追加ユーザー4.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー4.value)
+          }
+          //_1権限追加ユーザー5
+          if(record._1権限追加ユーザー5.value.length != 0){
+            let authority_additional_user_5 = record._1権限追加ユーザー5.value;
+            let authority_additional_user_5_user_id = await fetchGaroonUserByCode(authority_additional_user_5[0]['code']);
+            userCodes.push(authority_additional_user_5_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー5
+          if(record._1Garoon宛先追加ユーザー5.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー5.value)
+          }
+          //_1権限追加ユーザー6
+          if(record._1権限追加ユーザー6.value.length != 0){
+            let authority_additional_user_6 = record._1権限追加ユーザー6.value;
+            let authority_additional_user_6_user_id = await fetchGaroonUserByCode(authority_additional_user_6[0]['code']);
+            userCodes.push(authority_additional_user_6_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー6
+          if(record._1Garoon宛先追加ユーザー6.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー6.value)
+          }
+          //_1権限追加ユーザー7
+          if(record._1権限追加ユーザー7.value.length != 0){
+            let authority_additional_user_7 = record._1権限追加ユーザー7.value;
+            let authority_additional_user_7_user_id = await fetchGaroonUserByCode(authority_additional_user_7[0]['code']);
+            userCodes.push(authority_additional_user_7_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー7
+          if(record._1Garoon宛先追加ユーザー7.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー7.value)
+          }
+          //_1権限追加ユーザー8
+          if(record._1権限追加ユーザー8.value.length != 0){
+            let authority_additional_user_8 = record._1権限追加ユーザー8.value;
+            let authority_additional_user_8_user_id = await fetchGaroonUserByCode(authority_additional_user_8[0]['code']);
+            userCodes.push(authority_additional_user_8_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー8
+          if(record._1Garoon宛先追加ユーザー8.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー8.value)
+          }
+          //_1権限追加ユーザー9
+          if(record._1権限追加ユーザー9.value.length != 0){
+            let authority_additional_user_9 = record._1権限追加ユーザー9.value;
+            let authority_additional_user_9_user_id = await fetchGaroonUserByCode(authority_additional_user_9[0]['code']);
+            userCodes.push(authority_additional_user_9_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー9
+          if(record._1Garoon宛先追加ユーザー9.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー9.value)
+          }
+          //_1権限追加ユーザー10
+          if(record._1権限追加ユーザー10.value.length != 0){
+            let authority_additional_user_10 = record._1権限追加ユーザー10.value;
+            let authority_additional_user_10_user_id = await fetchGaroonUserByCode(authority_additional_user_10[0]['code']);
+            userCodes.push(authority_additional_user_10_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー10
+          if(record._1Garoon宛先追加ユーザー10.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー10.value)
+          }
+          //_1権限追加ユーザー11
+          if(record._1権限追加ユーザー11.value.length != 0){
+            let authority_additional_user_11 = record._1権限追加ユーザー11.value;
+            let authority_additional_user_11_user_id = await fetchGaroonUserByCode(authority_additional_user_11[0]['code']);
+            userCodes.push(authority_additional_user_11_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー11
+          if(record._1Garoon宛先追加ユーザー11.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー11.value)
+          }
+          //_1権限追加ユーザー12
+          if(record._1権限追加ユーザー12.value.length != 0){
+            let authority_additional_user_12 = record._1権限追加ユーザー12.value;
+            let authority_additional_user_12_user_id = await fetchGaroonUserByCode(authority_additional_user_12[0]['code']);
+            userCodes.push(authority_additional_user_12_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー12
+          if(record._1Garoon宛先追加ユーザー12.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー12.value)
+          }
+          //_1権限追加ユーザー13
+          if(record._1権限追加ユーザー13.value.length != 0){
+            let authority_additional_user_13 = record._1権限追加ユーザー13.value;
+            let authority_additional_user_13_user_id = await fetchGaroonUserByCode(authority_additional_user_13[0]['code']);
+            userCodes.push(authority_additional_user_13_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー13
+          if(record._1Garoon宛先追加ユーザー13.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー13.value)
+          }
+          //_1権限追加ユーザー14
+          if(record._1権限追加ユーザー14.value.length != 0){
+            let authority_additional_user_14 = record._1権限追加ユーザー14.value;
+            let authority_additional_user_14_user_id = await fetchGaroonUserByCode(authority_additional_user_14[0]['code']);
+            userCodes.push(authority_additional_user_14_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー14
+          if(record._1Garoon宛先追加ユーザー14.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー14.value)
+          }
+          //_1権限追加ユーザー15
+          if(record._1権限追加ユーザー15.value.length != 0){
+            let authority_additional_user_15 = record._1権限追加ユーザー15.value;
+            let authority_additional_user_15_user_id = await fetchGaroonUserByCode(authority_additional_user_15[0]['code']);
+            userCodes.push(authority_additional_user_15_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー15
+          if(record._1Garoon宛先追加ユーザー15.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー15.value)
+          }
+          //_1権限追加ユーザー16
+          if(record._1権限追加ユーザー16.value.length != 0){
+            let authority_additional_user_16 = record._1権限追加ユーザー16.value;
+            let authority_additional_user_16_user_id = await fetchGaroonUserByCode(authority_additional_user_16[0]['code']);
+            userCodes.push(authority_additional_user_16_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー16
+          if(record._1Garoon宛先追加ユーザー16.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー16.value)
+          }
+          //_1権限追加ユーザー17
+          if(record._1権限追加ユーザー17.value.length != 0){
+            let authority_additional_user_17 = record._1権限追加ユーザー17.value;
+            let authority_additional_user_17_user_id = await fetchGaroonUserByCode(authority_additional_user_17[0]['code']);
+            userCodes.push(authority_additional_user_17_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー17
+          if(record._1Garoon宛先追加ユーザー17.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー17.value)
+          }
+          //_1権限追加ユーザー18
+          if(record._1権限追加ユーザー18.value.length != 0){
+            let authority_additional_user_18 = record._1権限追加ユーザー18.value;
+            let authority_additional_user_18_user_id = await fetchGaroonUserByCode(authority_additional_user_18[0]['code']);
+            userCodes.push(authority_additional_user_18_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー18
+          if(record._1Garoon宛先追加ユーザー18.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー18.value)
+          }
+          //_1権限追加ユーザー19
+          if(record._1権限追加ユーザー19.value.length != 0){
+            let authority_additional_user_19 = record._1権限追加ユーザー19.value;
+            let authority_additional_user_19_user_id = await fetchGaroonUserByCode(authority_additional_user_19[0]['code']);
+            userCodes.push(authority_additional_user_19_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー19
+          if(record._1Garoon宛先追加ユーザー19.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー19.value)
+          }
+          //_1権限追加ユーザー20
+          if(record._1権限追加ユーザー20.value.length != 0){
+            let authority_additional_user_20 = record._1権限追加ユーザー20.value;
+            let authority_additional_user_20_user_id = await fetchGaroonUserByCode(authority_additional_user_20[0]['code']);
+            userCodes.push(authority_additional_user_20_user_id['id']);
+          }
+          //_1Garoon宛先追加ユーザー20
+          if(record._1Garoon宛先追加ユーザー20.value){
+            userCodes.push(record._1Garoon宛先追加ユーザー20.value)
+          }
+
           //_2権限追加ユーザー1
           if(record._2権限追加ユーザー1.value.length != 0){
             let two_authority_additional_user_1 = record._2権限追加ユーザー1.value;
             let two_authority_additional_user_1_user_id = await fetchGaroonUserByCode(two_authority_additional_user_1[0]['code']);
             userCodes.push(two_authority_additional_user_1_user_id['id']);
           }
-
-          //_1権限追加ユーザー2
-          if(record._1権限追加ユーザー2.value.length != 0){
-            let authority_additional_user_2 = record._1権限追加ユーザー2.value;
-            let authority_additional_user_2_user_id = await fetchGaroonUserByCode(authority_additional_user_2[0]['code']);
-            userCodes.push(authority_additional_user_2_user_id['id']);
+          //_2Garoon宛先追加ユーザー1
+          if(record._2Garoon宛先追加ユーザー1.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー1.value)
           }
           //_2権限追加ユーザー2
           if(record._2権限追加ユーザー2.value.length != 0){
@@ -1014,12 +1204,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_2_user_id = await fetchGaroonUserByCode(two_authority_additional_user_2[0]['code']);
             userCodes.push(two_authority_additional_user_2_user_id['id']);
           }
-
-          //_1権限追加ユーザー3
-          if(record._1権限追加ユーザー3.value.length != 0){
-            let authority_additional_user_3 = record._1権限追加ユーザー3.value;
-            let authority_additional_user_3_user_id = await fetchGaroonUserByCode(authority_additional_user_3[0]['code']);
-            userCodes.push(authority_additional_user_3_user_id['id']);
+          //_2Garoon宛先追加ユーザー2
+          if(record._2Garoon宛先追加ユーザー2.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー2.value)
           }
           //_2権限追加ユーザー3
           if(record._2権限追加ユーザー3.value.length != 0){
@@ -1027,13 +1214,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_3_user_id = await fetchGaroonUserByCode(two_authority_additional_user_3[0]['code']);
             userCodes.push(two_authority_additional_user_3_user_id['id']);
           }
-
-          
-          //_1権限追加ユーザー4
-          if(record._1権限追加ユーザー4.value.length != 0){
-            let authority_additional_user_4 = record._1権限追加ユーザー4.value;
-            let authority_additional_user_4_user_id = await fetchGaroonUserByCode(authority_additional_user_4[0]['code']);
-            userCodes.push(authority_additional_user_4_user_id['id']);
+          //_2Garoon宛先追加ユーザー3
+          if(record._2Garoon宛先追加ユーザー3.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー3.value)
           }
           //_2権限追加ユーザー4
           if(record._2権限追加ユーザー4.value.length != 0){
@@ -1041,26 +1224,19 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_4_user_id = await fetchGaroonUserByCode(two_authority_additional_user_4[0]['code']);
             userCodes.push(two_authority_additional_user_4_user_id['id']);
           }
-
-
-          //_1権限追加ユーザー5
-          if(record._1権限追加ユーザー5.value.length != 0){
-            let authority_additional_user_5 = record._1権限追加ユーザー5.value;
-            let authority_additional_user_5_user_id = await fetchGaroonUserByCode(authority_additional_user_5[0]['code']);
-            userCodes.push(authority_additional_user_5_user_id['id']);
+          //_2Garoon宛先追加ユーザー4
+          if(record._2Garoon宛先追加ユーザー4.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー4.value)
           }
           //_2権限追加ユーザー5
           if(record._2権限追加ユーザー5.value.length != 0){
-            let two_authority_additional_user_5 = record._2権限追加ユーザー2.value;
+            let two_authority_additional_user_5 = record._2権限追加ユーザー5.value;
             let two_authority_additional_user_5_user_id = await fetchGaroonUserByCode(two_authority_additional_user_5[0]['code']);
             userCodes.push(two_authority_additional_user_5_user_id['id']);
           }
-
-          //_1権限追加ユーザー6
-          if(record._1権限追加ユーザー6.value.length != 0){
-            let authority_additional_user_6 = record._1権限追加ユーザー4.value;
-            let authority_additional_user_6_user_id = await fetchGaroonUserByCode(authority_additional_user_6[0]['code']);
-            userCodes.push(authority_additional_user_6_user_id['id']);
+          //_2Garoon宛先追加ユーザー5
+          if(record._2Garoon宛先追加ユーザー5.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー5.value)
           }
           //_2権限追加ユーザー6
           if(record._2権限追加ユーザー6.value.length != 0){
@@ -1068,12 +1244,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_6_user_id = await fetchGaroonUserByCode(two_authority_additional_user_6[0]['code']);
             userCodes.push(two_authority_additional_user_6_user_id['id']);
           }
-
-          //_1権限追加ユーザー7
-          if(record._1権限追加ユーザー7.value.length != 0){
-            let authority_additional_user_7 = record._1権限追加ユーザー7.value;
-            let authority_additional_user_7_user_id = await fetchGaroonUserByCode(authority_additional_user_7[0]['code']);
-            userCodes.push(authority_additional_user_7_user_id['id']);
+          //_2Garoon宛先追加ユーザー6
+          if(record._2Garoon宛先追加ユーザー6.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー6.value)
           }
           //_2権限追加ユーザー7
           if(record._2権限追加ユーザー7.value.length != 0){
@@ -1081,12 +1254,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_7_user_id = await fetchGaroonUserByCode(two_authority_additional_user_7[0]['code']);
             userCodes.push(two_authority_additional_user_7_user_id['id']);
           }
-
-          //_1権限追加ユーザー8
-          if(record._1権限追加ユーザー8.value.length != 0){
-            let authority_additional_user_8 = record._1権限追加ユーザー8.value;
-            let authority_additional_user_8_user_id = await fetchGaroonUserByCode(authority_additional_user_8[0]['code']);
-            userCodes.push(authority_additional_user_8_user_id['id']);
+          //_2Garoon宛先追加ユーザー7
+          if(record._2Garoon宛先追加ユーザー7.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー7.value)
           }
           //_2権限追加ユーザー8
           if(record._2権限追加ユーザー8.value.length != 0){
@@ -1094,12 +1264,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_8_user_id = await fetchGaroonUserByCode(two_authority_additional_user_8[0]['code']);
             userCodes.push(two_authority_additional_user_8_user_id['id']);
           }
-
-          //_1権限追加ユーザー9
-          if(record._1権限追加ユーザー9.value.length != 0){
-            let authority_additional_user_9 = record._1権限追加ユーザー9.value;
-            let authority_additional_user_9_user_id = await fetchGaroonUserByCode(authority_additional_user_9[0]['code']);
-            userCodes.push(authority_additional_user_9_user_id['id']);
+          //_2Garoon宛先追加ユーザー8
+          if(record._2Garoon宛先追加ユーザー8.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー8.value)
           }
           //_2権限追加ユーザー9
           if(record._2権限追加ユーザー9.value.length != 0){
@@ -1107,25 +1274,19 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_9_user_id = await fetchGaroonUserByCode(two_authority_additional_user_9[0]['code']);
             userCodes.push(two_authority_additional_user_9_user_id['id']);
           }
-
-          //_1権限追加ユーザー10
-          if(record._1権限追加ユーザー10.value.length != 0){
-            let authority_additional_user_10 = record._1権限追加ユーザー10.value;
-            let authority_additional_user_10_user_id = await fetchGaroonUserByCode(authority_additional_user_10[0]['code']);
-            userCodes.push(authority_additional_user_10_user_id['id']);
+          //_2Garoon宛先追加ユーザー9
+          if(record._2Garoon宛先追加ユーザー9.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー9.value)
           }
-          //_2権限追加ユーザー1
+          //_2権限追加ユーザー10
           if(record._2権限追加ユーザー10.value.length != 0){
             let two_authority_additional_user_10 = record._2権限追加ユーザー10.value;
             let two_authority_additional_user_10_user_id = await fetchGaroonUserByCode(two_authority_additional_user_10[0]['code']);
             userCodes.push(two_authority_additional_user_10_user_id['id']);
           }
-
-           //_1権限追加ユーザー11
-           if(record._1権限追加ユーザー11.value.length != 0){
-            let authority_additional_user_11 = record._1権限追加ユーザー11.value;
-            let authority_additional_user_11_user_id = await fetchGaroonUserByCode(authority_additional_user_11[0]['code']);
-            userCodes.push(authority_additional_user_11_user_id['id']);
+          //_2Garoon宛先追加ユーザー10
+          if(record._2Garoon宛先追加ユーザー10.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー10.value)
           }
           //_2権限追加ユーザー11
           if(record._2権限追加ユーザー11.value.length != 0){
@@ -1133,24 +1294,19 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_11_user_id = await fetchGaroonUserByCode(two_authority_additional_user_11[0]['code']);
             userCodes.push(two_authority_additional_user_11_user_id['id']);
           }
-
-           //_1権限追加ユーザー12
-           if(record._1権限追加ユーザー12.value.length != 0){
-            let authority_additional_user_12 = record._1権限追加ユーザー12.value;
-            let authority_additional_user_12_user_id = await fetchGaroonUserByCode(authority_additional_user_12[0]['code']);
-            userCodes.push(authority_additional_user_12_user_id['id']);
+          //_2Garoon宛先追加ユーザー11
+          if(record._2Garoon宛先追加ユーザー11.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー11.value)
           }
-          //_2権限追加ユーザー12
-          if(record._2権限追加ユーザー12.value.length != 0){
+           //_2権限追加ユーザー12
+           if(record._2権限追加ユーザー12.value.length != 0){
             let two_authority_additional_user_12 = record._2権限追加ユーザー12.value;
             let two_authority_additional_user_12_user_id = await fetchGaroonUserByCode(two_authority_additional_user_12[0]['code']);
             userCodes.push(two_authority_additional_user_12_user_id['id']);
           }
-           //_1権限追加ユーザー13
-           if(record._1権限追加ユーザー13.value.length != 0){
-            let authority_additional_user_13 = record._1権限追加ユーザー13.value;
-            let authority_additional_user_13_user_id = await fetchGaroonUserByCode(authority_additional_user_13[0]['code']);
-            userCodes.push(authority_additional_user_13_user_id['id']);
+          //_2Garoon宛先追加ユーザー12
+          if(record._2Garoon宛先追加ユーザー12.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー12.value)
           }
           //_2権限追加ユーザー13
           if(record._2権限追加ユーザー13.value.length != 0){
@@ -1158,12 +1314,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_13_user_id = await fetchGaroonUserByCode(two_authority_additional_user_13[0]['code']);
             userCodes.push(two_authority_additional_user_13_user_id['id']);
           }
-
-           //_1権限追加ユーザー14
-           if(record._1権限追加ユーザー14.value.length != 0){
-            let authority_additional_user_14 = record._1権限追加ユーザー14.value;
-            let authority_additional_user_14_user_id = await fetchGaroonUserByCode(authority_additional_user_14[0]['code']);
-            userCodes.push(authority_additional_user_14_user_id['id']);
+          //_2Garoon宛先追加ユーザー13
+          if(record._2Garoon宛先追加ユーザー13.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー13.value)
           }
           //_2権限追加ユーザー14
           if(record._2権限追加ユーザー14.value.length != 0){
@@ -1171,12 +1324,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_14_user_id = await fetchGaroonUserByCode(two_authority_additional_user_14[0]['code']);
             userCodes.push(two_authority_additional_user_14_user_id['id']);
           }
-
-           //_1権限追加ユーザー15
-           if(record._1権限追加ユーザー15.value.length != 0){
-            let authority_additional_user_15 = record._1権限追加ユーザー15.value;
-            let authority_additional_user_15_user_id = await fetchGaroonUserByCode(authority_additional_user_15[0]['code']);
-            userCodes.push(authority_additional_user_15_user_id['id']);
+          //_2Garoon宛先追加ユーザー14
+          if(record._2Garoon宛先追加ユーザー14.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー14.value)
           }
           //_2権限追加ユーザー15
           if(record._2権限追加ユーザー15.value.length != 0){
@@ -1184,12 +1334,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_15_user_id = await fetchGaroonUserByCode(two_authority_additional_user_15[0]['code']);
             userCodes.push(two_authority_additional_user_15_user_id['id']);
           }
-
-           //_1権限追加ユーザー16
-           if(record._1権限追加ユーザー16.value.length != 0){
-            let authority_additional_user_16 = record._1権限追加ユーザー16.value;
-            let authority_additional_user_16_user_id = await fetchGaroonUserByCode(authority_additional_user_16[0]['code']);
-            userCodes.push(authority_additional_user_16_user_id['id']);
+          //_2Garoon宛先追加ユーザー15
+          if(record._2Garoon宛先追加ユーザー15.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー15.value)
           }
           //_2権限追加ユーザー16
           if(record._2権限追加ユーザー16.value.length != 0){
@@ -1197,12 +1344,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_16_user_id = await fetchGaroonUserByCode(two_authority_additional_user_16[0]['code']);
             userCodes.push(two_authority_additional_user_16_user_id['id']);
           }
-          
-           //_1権限追加ユーザー17
-           if(record._1権限追加ユーザー17.value.length != 0){
-            let authority_additional_user_17 = record._1権限追加ユーザー17.value;
-            let authority_additional_user_17_user_id = await fetchGaroonUserByCode(authority_additional_user_17[0]['code']);
-            userCodes.push(authority_additional_user_17_user_id['id']);
+          //_2Garoon宛先追加ユーザー16
+          if(record._2Garoon宛先追加ユーザー16.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー16.value)
           }
           //_2権限追加ユーザー17
           if(record._2権限追加ユーザー17.value.length != 0){
@@ -1210,12 +1354,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_17_user_id = await fetchGaroonUserByCode(two_authority_additional_user_17[0]['code']);
             userCodes.push(two_authority_additional_user_17_user_id['id']);
           }
-
-           //_1権限追加ユーザー18
-           if(record._1権限追加ユーザー18.value.length != 0){
-            let authority_additional_user_18 = record._1権限追加ユーザー18.value;
-            let authority_additional_user_18_user_id = await fetchGaroonUserByCode(authority_additional_user_18[0]['code']);
-            userCodes.push(authority_additional_user_18_user_id['id']);
+          //_2Garoon宛先追加ユーザー17
+          if(record._2Garoon宛先追加ユーザー17.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー17.value)
           }
           //_2権限追加ユーザー18
           if(record._2権限追加ユーザー18.value.length != 0){
@@ -1223,11 +1364,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_18_user_id = await fetchGaroonUserByCode(two_authority_additional_user_18[0]['code']);
             userCodes.push(two_authority_additional_user_18_user_id['id']);
           }
-           //_1権限追加ユーザー19
-           if(record._1権限追加ユーザー19.value.length != 0){
-            let authority_additional_user_19 = record._1権限追加ユーザー19.value;
-            let authority_additional_user_19_user_id = await fetchGaroonUserByCode(authority_additional_user_19[0]['code']);
-            userCodes.push(authority_additional_user_19_user_id['id']);
+          //_2Garoon宛先追加ユーザー18
+          if(record._2Garoon宛先追加ユーザー18.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー18.value)
           }
           //_2権限追加ユーザー19
           if(record._2権限追加ユーザー19.value.length != 0){
@@ -1235,11 +1374,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_19_user_id = await fetchGaroonUserByCode(two_authority_additional_user_19[0]['code']);
             userCodes.push(two_authority_additional_user_19_user_id['id']);
           }
-           //_1権限追加ユーザー20
-           if(record._1権限追加ユーザー20.value.length != 0){
-            let authority_additional_user_20 = record._1権限追加ユーザー20.value;
-            let authority_additional_user_20_user_id = await fetchGaroonUserByCode(authority_additional_user_20[0]['code']);
-            userCodes.push(authority_additional_user_20_user_id['id']);
+          //_2Garoon宛先追加ユーザー19
+          if(record._2Garoon宛先追加ユーザー19.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー19.value)
           }
           //_2権限追加ユーザー20
           if(record._2権限追加ユーザー20.value.length != 0){
@@ -1247,9 +1384,212 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             let two_authority_additional_user_20_user_id = await fetchGaroonUserByCode(two_authority_additional_user_20[0]['code']);
             userCodes.push(two_authority_additional_user_20_user_id['id']);
           }
+          //_2Garoon宛先追加ユーザー20
+          if(record._2Garoon宛先追加ユーザー20.value){
+            userCodes.push(record._2Garoon宛先追加ユーザー20.value)
+          }
 
-          
+          //_3権限追加ユーザー1
+          if(record._3権限追加ユーザー1.value.length != 0){
+            let three_authority_additional_user_1 = record._3権限追加ユーザー1.value;
+            let three_authority_additional_user_1_user_id = await fetchGaroonUserByCode(three_authority_additional_user_1[0]['code']);
+            userCodes.push(three_authority_additional_user_1_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー1
+          if(record._3Garoon宛先追加ユーザー1.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー1.value)
+          }
+          //_3権限追加ユーザー2
+          if(record._3権限追加ユーザー2.value.length != 0){
+            let three_authority_additional_user_2 = record._3権限追加ユーザー2.value;
+            let three_authority_additional_user_2_user_id = await fetchGaroonUserByCode(three_authority_additional_user_2[0]['code']);
+            userCodes.push(three_authority_additional_user_2_user_id['id']);
+          }  
+          //_3Garoon宛先追加ユーザー2
+          if(record._3Garoon宛先追加ユーザー2.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー2.value)
+          }
+          //_3権限追加ユーザー3
+          if(record._3権限追加ユーザー3.value.length != 0){
+            let three_authority_additional_user_3 = record._3権限追加ユーザー3.value;
+            let three_authority_additional_user_3_user_id = await fetchGaroonUserByCode(three_authority_additional_user_3[0]['code']);
+            userCodes.push(three_authority_additional_user_3_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー3
+          if(record._3Garoon宛先追加ユーザー3.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー3.value)
+          }
+          //_3権限追加ユーザー4
+          if(record._3権限追加ユーザー4.value.length != 0){
+            let three_authority_additional_user_4 = record._3権限追加ユーザー4.value;
+            let three_authority_additional_user_4_user_id = await fetchGaroonUserByCode(three_authority_additional_user_4[0]['code']);
+            userCodes.push(three_authority_additional_user_4_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー4
+          if(record._3Garoon宛先追加ユーザー4.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー4.value)
+          }    
+          //_3権限追加ユーザー5
+          if(record._3権限追加ユーザー5.value.length != 0){
+            let three_authority_additional_user_5 = record._3権限追加ユーザー5.value;
+            let three_authority_additional_user_5_user_id = await fetchGaroonUserByCode(three_authority_additional_user_5[0]['code']);
+            userCodes.push(three_authority_additional_user_5_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー5
+          if(record._3Garoon宛先追加ユーザー5.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー5.value)
+          }
+          //_3権限追加ユーザー6
+          if(record._3権限追加ユーザー6.value.length != 0){
+            let three_authority_additional_user_6 = record._3権限追加ユーザー6.value;
+            let three_authority_additional_user_6_user_id = await fetchGaroonUserByCode(three_authority_additional_user_6[0]['code']);
+            userCodes.push(three_authority_additional_user_6_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー6
+          if(record._3Garoon宛先追加ユーザー6.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー6.value)
+          }
 
+          //_3権限追加ユーザー7
+          if(record._3権限追加ユーザー7.value.length != 0){
+            let three_authority_additional_user_7 = record._3権限追加ユーザー7.value;
+            let three_authority_additional_user_7_user_id = await fetchGaroonUserByCode(three_authority_additional_user_7[0]['code']);
+            userCodes.push(three_authority_additional_user_7_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー7
+          if(record._3Garoon宛先追加ユーザー7.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー7.value)
+          }
+          //_3権限追加ユーザー8
+          if(record._3権限追加ユーザー8.value.length != 0){
+            let three_authority_additional_user_8 = record._3権限追加ユーザー8.value;
+            let three_authority_additional_user_8_user_id = await fetchGaroonUserByCode(three_authority_additional_user_8[0]['code']);
+            userCodes.push(three_authority_additional_user_8_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー1
+          if(record._3Garoon宛先追加ユーザー8.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー8.value)
+          }
+          //_3権限追加ユーザー9
+          if(record._3権限追加ユーザー9.value.length != 0){
+            let three_authority_additional_user_9 = record._3権限追加ユーザー9.value;
+            let three_authority_additional_user_9_user_id = await fetchGaroonUserByCode(three_authority_additional_user_9[0]['code']);
+            userCodes.push(three_authority_additional_user_9_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー9
+          if(record._3Garoon宛先追加ユーザー9.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー9.value)
+          }
+          //_3権限追加ユーザー10
+          if(record._3権限追加ユーザー10.value.length != 0){
+            let three_authority_additional_user_10 = record._3権限追加ユーザー10.value;
+            let three_authority_additional_user_10_user_id = await fetchGaroonUserByCode(three_authority_additional_user_10[0]['code']);
+            userCodes.push(three_authority_additional_user_10_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー10
+          if(record._3Garoon宛先追加ユーザー10.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー10.value)
+          }
+          //_3権限追加ユーザー11
+          if(record._3権限追加ユーザー11.value.length != 0){
+            let three_authority_additional_user_11 = record._3権限追加ユーザー11.value;
+            let three_authority_additional_user_11_user_id = await fetchGaroonUserByCode(three_authority_additional_user_11[0]['code']);
+            userCodes.push(three_authority_additional_user_11_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー11
+          if(record._3Garoon宛先追加ユーザー11.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー11.value)
+          }
+          //_3権限追加ユーザー12
+          if(record._3権限追加ユーザー12.value.length != 0){
+            let three_authority_additional_user_12 = record._3権限追加ユーザー12.value;
+            let three_authority_additional_user_12_user_id = await fetchGaroonUserByCode(three_authority_additional_user_12[0]['code']);
+            userCodes.push(three_authority_additional_user_12_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー12
+          if(record._3Garoon宛先追加ユーザー12.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー12.value)
+          }
+          //_3権限追加ユーザー13
+          if(record._3権限追加ユーザー13.value.length != 0){
+            let three_authority_additional_user_13 = record._3権限追加ユーザー13.value;
+            let three_authority_additional_user_13_user_id = await fetchGaroonUserByCode(three_authority_additional_user_13[0]['code']);
+            userCodes.push(three_authority_additional_user_13_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー13
+          if(record._3Garoon宛先追加ユーザー13.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー13.value)
+          }
+          //_3権限追加ユーザー14
+          if(record._3権限追加ユーザー14.value.length != 0){
+            let three_authority_additional_user_14 = record._3権限追加ユーザー14.value;
+            let three_authority_additional_user_14_user_id = await fetchGaroonUserByCode(three_authority_additional_user_14[0]['code']);
+            userCodes.push(three_authority_additional_user_14_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー14
+          if(record._3Garoon宛先追加ユーザー14.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー14.value)
+          }
+          //_3権限追加ユーザー15
+          if(record._3権限追加ユーザー15.value.length != 0){
+            let three_authority_additional_user_15 = record._3権限追加ユーザー15.value;
+            let three_authority_additional_user_15_user_id = await fetchGaroonUserByCode(three_authority_additional_user_15[0]['code']);
+            userCodes.push(three_authority_additional_user_15_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー15
+          if(record._3Garoon宛先追加ユーザー15.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー15.value)
+          }
+          //_3権限追加ユーザー16
+          if(record._3権限追加ユーザー16.value.length != 0){
+            let three_authority_additional_user_16 = record._3権限追加ユーザー16.value;
+            let three_authority_additional_user_16_user_id = await fetchGaroonUserByCode(three_authority_additional_user_16[0]['code']);
+            userCodes.push(three_authority_additional_user_16_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー16
+          if(record._3Garoon宛先追加ユーザー16.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー16.value)
+          }
+          //_3権限追加ユーザー17
+          if(record._3権限追加ユーザー17.value.length != 0){
+            let three_authority_additional_user_17 = record._3権限追加ユーザー17.value;
+            let three_authority_additional_user_17_user_id = await fetchGaroonUserByCode(three_authority_additional_user_17[0]['code']);
+            userCodes.push(three_authority_additional_user_17_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー17
+          if(record._3Garoon宛先追加ユーザー17.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー17.value)
+          }
+          //_3権限追加ユーザー18
+          if(record._3権限追加ユーザー18.value.length != 0){
+            let three_authority_additional_user_18 = record._3権限追加ユーザー18.value;
+            let three_authority_additional_user_18_user_id = await fetchGaroonUserByCode(three_authority_additional_user_18[0]['code']);
+            userCodes.push(three_authority_additional_user_18_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー18
+          if(record._3Garoon宛先追加ユーザー18.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー18.value)
+          }
+          //_3権限追加ユーザー19
+          if(record._3権限追加ユーザー19.value.length != 0){
+            let three_authority_additional_user_19 = record._3権限追加ユーザー19.value;
+            let three_authority_additional_user_19_user_id = await fetchGaroonUserByCode(three_authority_additional_user_19[0]['code']);
+            userCodes.push(three_authority_additional_user_19_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー19
+          if(record._3Garoon宛先追加ユーザー19.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー19.value)
+          }
+          //_3権限追加ユーザー20
+          if(record._3権限追加ユーザー20.value.length != 0){
+            let three_authority_additional_user_20 = record._3権限追加ユーザー20.value;
+            let three_authority_additional_user_20_user_id = await fetchGaroonUserByCode(three_authority_additional_user_20[0]['code']);
+            userCodes.push(three_authority_additional_user_20_user_id['id']);
+          }
+          //_3Garoon宛先追加ユーザー20
+          if(record._3Garoon宛先追加ユーザー20.value){
+            userCodes.push(record._3Garoon宛先追加ユーザー20.value)
+          }
           //コールセンター1
           if(record.コールセンター1.value.length != 0){
             let call_center_destination_1 = record.コールセンター1.value;
@@ -1306,7 +1646,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           }
           //_コールセンター上長_カテゴリー3
           if(record._コールセンター上長3.value.length != 0){
-            let call_center_superiordestination_category_3 = record._コールセンター上長2.value;
+            let call_center_superiordestination_category_3 = record._コールセンター上長3.value;
             let call_center_superiordestination_category_3_user_id = await fetchGaroonUserByCode(call_center_superiordestination_category_3[0]['code']);
             userCodes.push(call_center_superiordestination_category_3_user_id['id']);
           }
@@ -1319,7 +1659,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 
           //userCodes変数から重複を削除
           let uniqueUserCodes = [...new Set(userCodes)];
-
+          
           //-----------------------------------------------------
           //メッセージ送信時、区分の変更
           //-----------------------------------------------------
@@ -1370,15 +1710,27 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           }else{
             var send_flag_six = '未送信';
           }
-
-          //【アンケート報告書送信フラグ】
-          if(record.アンケート報告書送信フラグ.value == '送信済み'){
-            var send_flag_enquete_report = '送信済み';
-          }else if(record.お客様対応の状況.value || record.原因.value || record.改善策_内容1.value ){
-            var send_flag_enquete_report = '送信済み';
+          //【報告済みフラグ】
+          if( record.報告済みフラグ.value == '報告済み' || record.顛末済みフラグ.value == '顛末済み' || record.AM報告欄.value || record.顛末.value[0].value.内容_顛末.value){
+            var reported_flag = '報告済み';
           }else{
-            var send_flag_enquete_report = '未送信'; 
+            var reported_flag = '未送信';
           }
+          //【顛末済みフラグ】
+          if(record.顛末済みフラグ.value == '顛末済み' || record.総括部長コメント欄.value || record.顛末確認_部長.value == '〇'){
+            var ending_flag = '顛末済み';
+          }else{
+            var ending_flag = '未送信';
+          }
+
+          // //【アンケート報告書送信フラグ】
+          // if(record.アンケート報告書送信フラグ.value == '送信済み'){
+          //   var send_flag_enquete_report = '送信済み';
+          // }else if(record.お客様対応の状況.value || record.原因.value || record.改善策_内容1.value ){
+          //   var send_flag_enquete_report = '送信済み';
+          // }else{
+          //   var send_flag_enquete_report = '未送信'; 
+          // }
 
           const params = {
             app: event.appId,		// アプリID
@@ -1402,8 +1754,11 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
               送信6回目フラグ: {
                 value: send_flag_six
               },
-              アンケート報告書送信フラグ: {
-                value: send_flag_enquete_report
+              報告済みフラグ: {
+                value: reported_flag
+              },
+              顛末済みフラグ: {
+                value: ending_flag
               },
               区分2: {
                 value: enquete_result
@@ -1431,7 +1786,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           if(record.お客様名_管理用.value == undefined || record.お客様名_管理用.value == '' ){
             var received =  'お客様' + '➝' + '担当者' + '\n' + '\n'; 
           }else{
-            var received = record.お客様名_管理用.value + '様' + '➝' + '担当者' + '\n' + '\n';
+            var received = record.お客様名_管理用.value + '様' + '(お客様)' + '➝' + '担当者' + '\n' + '\n';
           }
 
           //-------------------------------------------------------------------
@@ -1440,13 +1795,12 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 
           var body = [];
           if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信'){
-            body = '------------------------------------------------------------------' + '\n' + received + record.Garoon送信メッセージ内容.value + '\n' + '------------------------------------------------------------------' + '\n' + '\n' + 'kintoneリンク:' + URL ;
+            body = '------------------------------------------------------------------' + '\n' + record.Garoon送信メッセージ内容.value + '\n' + '------------------------------------------------------------------' + '\n' + '\n' + 'kintoneリンク:' + URL ;
           }else if((record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み' && record.送信2回目フラグ.value == '未送信' && record.ご返信内容_メール_ネットアンケート.value ) ||  (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み' && record.送信2回目フラグ.value == '未送信' && record.ご返信内容_口コミ.value ) || (record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '送信済み' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value)  ||   (record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '送信済み' && record.送信6回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_3回目.value )){//【修正後】【修正前】if((record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み' && record.送信2回目フラグ.value == '未送信') || (record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '送信済み' && record.送信4回目フラグ.value == '未送信'))
             body = '------------------------------------------------------------------' + '\n' +  sent + record.Garoon送信メッセージ内容.value + '\n' + '------------------------------------------------------------------';
           }else if((record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '未送信') || (record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '未送信') ){
             body = '------------------------------------------------------------------' + '\n' +  received + record.Garoon送信メッセージ内容.value + '\n' + '------------------------------------------------------------------';
-          }
-          else{
+          }else{
             body = '------------------------------------------------------------------' + '\n' +  record.Garoon送信メッセージ内容.value + '\n' + '------------------------------------------------------------------';
           }
 
@@ -1498,15 +1852,43 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             }else{
               var industry = record.業態.value;
             }
-
           }else{
             var industry = '';
           }
-          
+
+          // //店名
+          // if(record.店名.value){
+          //   if(record.店名.value.includes("ミライザカ")){
+          //     var store_name = record.店名.value.replace(/ミライザカ/, '');;
+          //   }else{
+          //     var store_name = record.店名.value;
+          //   }
+          // }else{
+          //   var store_name = '';
+          // }
+
           //店名
           if(record.店名.value){
             if(record.店名.value.includes("ミライザカ")){
-              var store_name = record.店名.value.replace(/ミライザカ/, '');;
+              var store_name = record.店名.value.replace(/ミライザカ/, '');
+            }else if(record.店名.value.includes("鳥メロ")){
+              var store_name = record.店名.value.replace(/鳥メロ/, '');
+            }else if(record.店名.value.includes("しろくまストア")){
+              var store_name = record.店名.value.replace(/しろくまストア/, '');
+            }else if(record.店名.value.includes("から揚げの天才")){
+              var store_name = record.店名.value.replace(/から揚げの天才/, '');
+            }else if(record.店名.value.includes("すしの和")){
+              var store_name = record.店名.value.replace(/すしの和/, '');
+            }else if(record.店名.value.includes("bb.q OLIVE CHICKEN caf'e")){
+              var store_name = record.店名.value.replace(/bb.q OLIVE CHICKEN caf'e/, '');
+            }else if(record.店名.value.includes("TGI")){
+              var store_name = record.店名.value.replace(/TGI/, '');
+            }else if(record.店名.value.includes("かみむら牧場")){
+              var store_name = record.店名.value.replace(/かみむら牧場/, '');
+            }else if(record.店名.value.includes("焼肉の和民")){
+              var store_name = record.店名.value.replace(/焼肉の和民/, '');
+            }else if(record.店名.value.includes("和民のこだわりのれん街")){
+              var store_name = record.店名.value.replace(/和民のこだわりのれん街/, '');
             }else{
               var store_name = record.店名.value;
             }
@@ -1522,34 +1904,25 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           }
 
           //Garoonメッセージのタイトル
-          const content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + record.受付方法.value + comprehensive_evaluation + "【kintone】" + record.$id.value;
+          // const content = formattedDate + ":"+ ')' + store_name+ "　" + record.受付方法.value + comprehensive_evaluation + "【kintone】" + record.$id.value; //業態省略バージョン
+          const content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + record.受付方法.value + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
 
-          //Garoonへメッセージ送信処理
-          // performCommonAction('申請', uniqueUserCodes, content, body)
-          //   .then(function () {
-          //     //Garoonのメッセージが2通以上ある場合、1通目を更新して,2通目以降を削除
-          //     GaroonMessageUpdateDelete(record);
-          //     //送信履歴フィールドを更新
-          //     send_content_update(record);
-          //     setTimeout(() => {
-          //       //リロード
-          //       window.location.reload();
-          //     }, 1200);  
-          // })
+          performCommonAction('申請', uniqueUserCodes, content, body)
+            .then(function () {
+              //Garoonのメッセージが2通以上ある場合、1通目を更新して,2通目以降を削除
+              GaroonMessageUpdateDelete(record);
+              //送信履歴フィールドを更新
+              send_content_update(record);
+              setTimeout(() => {
+                //リロード
+                window.location.reload();
+              }, 1200);  
+          })
         }
       );
   }
   return event;
 });
-
-                // //新規タブ
-                // window.open(`${record.Garoonリンク.value}`, '_blank');
-
-                // setTimeout(() => {
-                  // const urlToOpen = `${record.Garoonリンク.value}`; // ここに開きたいURLを指定
-                  // // 新しいタブを開く
-                  // window.open(urlToOpen, '_blank');
-                // }, 2000);
 
 //-------------------------------------------------------------------
 //Garoonのメッセージを検索➝更新➝削除する処理
@@ -1559,7 +1932,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
   * ${XXXX}の箇所は入力値等で置換して使用
   */
   const MSG_SEARCH_TEMPLATE =
-    '<parameters text="kintone" start="2010-07-01T00:00:00Z" end="2037-12-31T00:00:00Z" search_sub_folders="true" title_search="true" body_search="false" from_search="false" addressee_search="false" follow_search="false">' +
+    '<parameters text="【kintone】" start="2010-07-01T00:00:00Z" end="2037-12-31T00:00:00Z" search_sub_folders="true" title_search="true" body_search="false" from_search="false" addressee_search="false" follow_search="false">' +
     '<request_token>${REQUEST_TOKEN}</request_token>' +
     '<create_thread>' +
     '</create_thread>' + 
@@ -1584,7 +1957,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           // メッセージ検索の実行
           await $.ajax({
             type: 'post',
-            url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+            url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
             cache: false,
             data: msgSearchRequest,
           }).then(function(responseData) {
@@ -1640,6 +2013,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
               // console.warn("繰り返しのkey",subject);
               //同じメッセージが2つ以上見つかった時
               if (subjectThreadIds[subject].length >= 2) {
+                // console.warn("処理入ってきた?");
                   //1通目のメッセージIDを取得
                   let firstID = subjectThreadIds[subject][0];
                   // console.warn("1通目のメッセージを取得",firstID);
@@ -1651,6 +2025,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   //1通目のDocumentオブジェクトを得る
                   const FirstXMLparser = new DOMParser();
                   const FirstXMLparserxmlDoc = FirstXMLparser.parseFromString(FirstTargetThread.outerHTML, "application/xml");
+                  // console.warn("テスト2",FirstXMLparserxmlDoc);
 
                   //1通目のsubjectタグ情報を抜き取る
                   const threadElementGet= FirstXMLparserxmlDoc.getElementsByTagName('thread');
@@ -1662,7 +2037,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   //最終メッセージの情報を取得
                   let FinalTargetThread = threadsArray.find(thread => thread.getAttribute('id') == finalArray);
 
-                  //最後メッセージののDocumentオブジェクトを得る
+                  //最後メッセージのDocumentオブジェクトを得る
                   const FinalXMLparser = new DOMParser();
                   const FinalXMLparserxmlDoc = FinalXMLparser.parseFromString(FinalTargetThread.outerHTML, "application/xml");
 
@@ -1906,7 +2281,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       // メッセージ登録の実行
       await $.ajax({
         type: 'post',
-        url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+        url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
         cache: false,
         async: false,
         data: msgUpdateRequest
@@ -1934,8 +2309,8 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         '<Action>${ACTION}</Action>' + // この行を修正
         '<Security>' +
         '<UsernameToken>' +
-        '<Username>watami01</Username>' +
-        '<Password>wtmsus22</Password>' +
+        '<Username>100078</Username>' +
+        '<Password>w100078</Password>' +
         '</UsernameToken>' +
         '</Security>' +
         '<Timestamp>' +
@@ -1947,7 +2322,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         '<soap:Body>' +
         '<MessageRemoveThreads>' +
         '<parameters delete_all_inbox="true">' +
-        '<param xmlns="" folder_id="107564" thread_id="${DELETE_ID}"></param>' +
+        '<param xmlns="" folder_id="6403" thread_id="${DELETE_ID}"></param>' +
         '</parameters>' +
         '</MessageRemoveThreads>' +
         '</soap:Body>' +
@@ -1956,6 +2331,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     //メッセージ実行の共通処理(ユーザーフィールド)
     const MessageDelete = async (delete_id) => {
       try {
+        // console.warn("メッセージ削除処理に入ってきた");
         //リクエストのテンプレート
         let msgDeleteRequest = SOAP_DELETE_TEMPLATE;
         // console.warn("削除処理に入ってきた。");
@@ -1968,7 +2344,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {
@@ -1986,121 +2362,148 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       メッセージの1通目(電話)
     */
     function first_message_call(record){
-        //ご来店日時を編集
-        if(record.ご来店日時_電話.value == '' || record.ご来店日時_電話.value == undefined){
-            var visits_date_call = '' ;
-            var visits_time_call = '';
-        }else {
-            const dateTime = new Date(record.ご来店日時_電話.value);
-            // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split(' ')[0];
 
-            // 年月日の取得
-            const year = dateTime.getFullYear();
-            const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
-            const day = String(dateTime.getDate()).padStart(2, '0'); // 日も2桁に整形
+      //店名
+      if(record.店名.value == undefined || record.店名.value == ''){
+        var store_name = '';
+      }else{
+        var store_name = record.店名.value;
+      }
 
-            // 時分の取得
-            const hours = String(dateTime.getHours()).padStart(2, '0');
-            const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+      //ご来店日時を編集
+      if(record.ご来店日時_電話.value == '' || record.ご来店日時_電話.value == undefined){
+          var visits_date_call = '' ;
+          var visits_time_call = '';
+      }else {
+          var dateTime = new Date(record.ご来店日時_電話.value);
+          // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split(' ')[0];
 
-            // ご来店日
-            var visits_date_call = `${year}年${month}月${day}日`;
-            
-            // 来店時間
-            var visits_time_call = `${hours}時${minutes}分`;
-        }
+          // 年月日の取得
+          var year = dateTime.getFullYear();
+          var month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+          var day = String(dateTime.getDate()).padStart(2, '0'); // 日も2桁に整形
 
-        //ご来店人数
-        if(record.ご来店人数_電話.value == undefined || record.ご来店人数_電話.value == undefined ){
-            var visits_number = '' ;
-        }else{
-            var visits_number = record.ご来店人数_電話.value;
-        }
+          // 時分の取得
+          var hours = String(dateTime.getHours()).padStart(2, '0');
+          var minutes = String(dateTime.getMinutes()).padStart(2, '0');
 
-        //お気づきの内容
-        if(record.ご意見詳細.value == undefined || record.ご意見詳細.value == '' ){
-            var opinion_detail = '';
-        }else{
-            var opinion_detail = record.ご意見詳細.value;
-        }
+          var visits_date_call = '';
+          // ご来店日
+          var visits_date_call = `${year}年${month}月${day}日`;
+          
+          // 来店時間
+          var visits_time_call = `${hours}時${minutes}分`;
+      }
 
-        //総合評価
-        if(record.総合評価_電話.value == undefined || record.総合評価_電話.value == ''){
-            var evaluation_call = '';
-        }else{
-            var evaluation_call = record.総合評価_電話.value;
-        }
+      //ご来店人数
+      if(record.ご来店人数_電話.value == undefined || record.ご来店人数_電話.value == undefined ){
+          var visits_number = '' ;
+      }else{
+          var visits_number = record.ご来店人数_電話.value;
+      }
 
-        //性別(男性)
-        if(record.性別_男性_電話.value == undefined || record.性別_男性_電話.value == ''){
-            var sex_man_call = '';
-        }else{
-            var sex_man_call = '男性' + record.性別_男性_電話.value + '人';
-        }
-        //性別(女性)
-        if(record.性別_女性_電話.value == undefined || record.性別_女性_電話.value == ''){
-          var sex_woman_call = '';
-        }else{
-            var sex_woman_call = '女性' + record.性別_女性_電話.value + '人';
-        }
-        //性別
-        if(sex_man_call && sex_woman_call){
-          var sex_call = sex_man_call + '、' +sex_woman_call;
-        }else if(sex_man_call && sex_woman_call == ''){
-          var sex_call = sex_man_call;
-        }else if(sex_man_call == '' && sex_woman_call){
-          var sex_call = sex_woman_call;
-        }else{
-          var sex_call = '';
-        }
+      //お気づきの内容
+      if(record.ご意見詳細.value == undefined || record.ご意見詳細.value == '' ){
+          var opinion_detail = '';
+      }else{
+          var opinion_detail = record.ご意見詳細.value;
+      }
 
-        //名前
-        if(record.お名前_電話.value == undefined || record.お名前_電話.value == ''){
-            var name_call = '';
-        }else{
-            var name_call = record.お名前_電話.value;
-        }
+      //総合評価
+      if(record.総合評価_電話.value == undefined || record.総合評価_電話.value == ''){
+          var evaluation_call = '';
+      }else{
+          var evaluation_call = record.総合評価_電話.value;
+      }
 
-        //ご連絡先
-        if(record.ご連絡先_電話.value == undefined || record.ご連絡先_電話.value == ''){
-            var contact_address_call = '';
-        }else{ 
-            var contact_address_call = record.ご連絡先_電話.value;
-        }
+      //性別(男性)
+      if(record.性別_男性_電話.value == undefined || record.性別_男性_電話.value == ''){
+          var sex_man_call = '';
+      }else{
+          var sex_man_call = '男性' + record.性別_男性_電話.value + '人';
+      }
+      //性別(女性)
+      if(record.性別_女性_電話.value == undefined || record.性別_女性_電話.value == ''){
+        var sex_woman_call = '';
+      }else{
+          var sex_woman_call = '女性' + record.性別_女性_電話.value + '人';
+      }
+      //性別
+      if(sex_man_call && sex_woman_call){
+        var sex_call = sex_man_call + '、' +sex_woman_call;
+      }else if(sex_man_call && sex_woman_call == ''){
+        var sex_call = sex_man_call;
+      }else if(sex_man_call == '' && sex_woman_call){
+        var sex_call = sex_woman_call;
+      }else{
+        var sex_call = '';
+      }
 
-        var Garoon_message = '';
+      //名前
+      if(record.お名前_電話.value == undefined || record.お名前_電話.value == ''){
+          var name_call = '';
+      }else{
+          var name_call = record.お名前_電話.value;
+      }
 
-        //電話の場合、Garoonに送信するメッセージを作成
-        if(record.アンケート報告書.value == '要'){
-            Garoon_message = 
-            '【受付1(始)】' + '\n' +
-            'ご利用店舗　:' + record.店名.value+ '\n' + 
-            'ご来店日　　:' +  + visits_date_call + '\n' + 
-            '来店日時　　:' + visits_time_call +'\n' + 
-            '利用人数　　:' + visits_number + '\n' + 
-            'お気づきの内容:'+'\n'+ opinion_detail + '\n' + '\n' + 
-            '総合評価　　:' + evaluation_call + '\n' + 
-            '性別　　　　:' + sex_call + '\n' + 
-            '漢字氏名　　:' + name_call + '\n' + 
-            'ご連絡先　　:' + contact_address_call + '\n' +
-            'アンケート報告書：必要' + '\n'+
-            '【受付1(終)】';
-        }else if (record.アンケート報告書.value == '否'){
-            Garoon_message = 
-            '【受付1(始)】' + '\n' + 
-            'ご利用店舗　:' + record.店名.value+ '\n' + 
-            'ご来店日　　:' + visits_date_call + '\n' + 
-            '来店日時　　:' + visits_time_call +'\n' + 
-            '利用人数　　:' + visits_number + '\n' + 
-            'お気づきの内容:'+'\n'+ opinion_detail + '\n' + '\n' +
-            '総合評価　　:' + evaluation_call + '\n' + 
-            '性別　　　　:' + sex_call + '\n' + 
-            '漢字氏名　　:' + name_call + '\n' + 
-            'ご連絡先　　:' + contact_address_call + '\n' + 
-            '【受付1(終)】';
-        }
+      //ご連絡先
+      if(record.ご連絡先_電話.value == undefined || record.ご連絡先_電話.value == ''){
+          var contact_address_call = '';
+      }else{ 
+          var contact_address_call = record.ご連絡先_電話.value;
+      }
+      // //返信方法まとめ
+      // if(record.返信方法_まとめ.value == "電話"){
+      //   var reply_method = "お客様は電話での対応をご希望です。" + '\n' +'\n';
+      // }else if(record.返信方法_まとめ.value == "メールでの返信"){
+      //   var reply_method = "お客様はメールでの返信をご希望です。上長承認またはSV確認の上、お客様への返信文をコメントお願い致します。"+ '\n' +'\n';
+      // }else if(record.返信方法_まとめ.value == "返信不要"){
+      //   var reply_method = "お客様は返答をご希望されておりませんので、ご共有をお願いいたします。"+ '\n' +'\n';
+      // }else {
+      //   var reply_method = '';
+      // }
+      // //フォーム記入者まとめ
+      // if(record.フォーム記入者_まとめ.value && record.フォーム記入者_まとめ.value != "0"){
+      //   var form_entry_person = record.フォーム記入者_まとめ.value;
+      // }else if(record.フォーム記入者_まとめ.value=="0"){
+      //   var form_entry_person = '';
+      // }else{
+      //   var form_entry_person = '';
+      // }
 
-        return Garoon_message;
+      var Garoon_message = '';
+      //電話の場合、Garoonに送信するメッセージを作成
+      if(record.アンケート報告書.value == '要'){
+          Garoon_message = 
+          '【受付1(始)】' + '\n' + 
+          'ご利用店舗　:' + store_name + '\n' + 
+          'ご来店日　　:' + visits_date_call + '\n' + 
+          '来店日時　　:' + visits_time_call +'\n' + 
+          '利用人数　　:' + visits_number + '\n' + 
+          'お気づきの内容:'+'\n'+ opinion_detail + '\n' + '\n' + 
+          '総合評価　　:' + evaluation_call + '\n' + 
+          '性別　　　　:' + sex_call + '\n' + 
+          '漢字氏名　　:' + name_call + '\n' + 
+          'ご連絡先　　:' + contact_address_call + '\n' + '\n' +
+          '※アンケート報告書は、アプリへ記入し「ガルーン送信」を選択し保存をお願い致します。' + '\n' +
+          '【受付1(終)】' ;
+      }else if (record.アンケート報告書.value == '否'){
+          Garoon_message = 
+          '【受付1(始)】' + '\n' + 
+          'ご利用店舗　:' + store_name + '\n' + 
+          'ご来店日　　:' + visits_date_call + '\n' + 
+          '来店日時　　:' + visits_time_call +'\n' + 
+          '利用人数　　:' + visits_number + '\n' + 
+          'お気づきの内容:'+'\n'+ opinion_detail + '\n' + '\n' +
+          '総合評価　　:' + evaluation_call + '\n' + 
+          '性別　　　　:' + sex_call + '\n' + 
+          '漢字氏名　　:' + name_call + '\n' + 
+          'ご連絡先　　:' + contact_address_call + '\n' + '\n' +
+          '※顛末（またはA報告）についてアプリへ記入後、保存ボタンをクリックお願い致します。' + '\n' +
+          '【受付1(終)】' ;
+      }
+
+      return Garoon_message;
     }
 
     // 電話対応の場合、2通目を送信する必要がないので、コメントアウト
@@ -2153,9 +2556,17 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     // }
 
     /*
-      メッセージの1通目(メール)
+      メッセージの1通目(メール_ネットアンケート)
     */
     function first_message_mail(record){
+
+          //店名
+        if(record.店名.value == undefined || record.店名.value == ''){
+          var store_name = '';
+        }else{
+          var store_name = record.店名.value;
+        }
+
         //ご来店日時を編集
         if(record.ご来店日時_メール_ネットアンケート.value == '' || record.ご来店日時_メール_ネットアンケート.value == undefined){
             var visits_date_mail_net = '' ;
@@ -2224,11 +2635,11 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 
         var Garoon_message = ''
 
-        //電話の場合、Garoonに送信するメッセージを作成
+        //Garoonに送信するメッセージを作成
         if( record.アンケート報告書.value == '要'){
             Garoon_message = 
-            '【受付1(始)】' + '\n' +
-            'ご利用店舗　:' + record.店名.value+ '\n' + 
+            '【受付1(始)】' + '\n' + 
+            'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_mail_net + '\n' + 
             '来店日時　　:' + visits_time_mail_net +'\n' + 
             '利用人数　　:' + use_count + '\n' +  
@@ -2236,13 +2647,13 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             '総合評価　　:' + evaluation_mail + '\n' + 
             '性別　　　　:' + sex_mail + '\n' + 
             '漢字氏名　　:' + name_mail + '\n' + 
-            'ご連絡先　　:' + contact_address_mail + '\n'+
-            'アンケート報告書：必要' + '\n'+
+            'ご連絡先　　:' + contact_address_mail + '\n' + '\n' +
+            '※アンケート報告書は、アプリへ記入し「ガルーン送信」を選択し保存をお願い致します。' + '\n' +
             '【受付1(終)】';
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
             '【受付1(始)】' + '\n' + 
-            'ご利用店舗　:' + record.店名.value+ '\n' + 
+            'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_mail_net + '\n' + 
             '来店日時　　:' + visits_time_mail_net +'\n' + 
             '利用人数　　:' + use_count + '\n' +  
@@ -2250,7 +2661,8 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             '総合評価　　:' + evaluation_mail + '\n' + 
             '性別　　　　:' + sex_mail + '\n' + 
             '漢字氏名　　:' + name_mail + '\n' + 
-            'ご連絡先　　:' + contact_address_mail + '\n' + 
+            'ご連絡先　　:' + contact_address_mail + '\n' + '\n' + 
+            '※顛末（またはA報告）についてアプリへ記入後、保存ボタンをクリックお願い致します。' + '\n' +
             '【受付1(終)】';
         }
 
@@ -2258,7 +2670,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     }
 
     /*
-      メッセージの2通目(メール)
+      メッセージの2通目(メール・ネットアンケート)
     */
     function second_message_mail(record){
         //記入者_メール
@@ -2274,23 +2686,23 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             var reply_content_email = record.ご返信内容_メール_ネットアンケート.value;
         }
         //ご返答日_電話
-        if(record.ご返答日時_メール_ネットアンケート.value == undefined || record.ご返答日時_メール_ネットアンケート.value == ''){
+        if(record.記入日_ご返答内容_メール_ネットアンケート.value == undefined || record.記入日_ご返答内容_メール_ネットアンケート.value == ''){
             var reply_date_email = '';
         }else{
-          const dateTime = new Date(record.ご返答日時_メール_ネットアンケート.value);
+          const dateTime = new Date(record.記入日_ご返答内容_メール_ネットアンケート.value);
           // 年月日の取得
           const year = dateTime.getFullYear();
           const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
           const day = String(dateTime.getDate()).padStart(2, '0'); // 日も2桁に整形
 
           // 時分の取得
-          const hours = String(dateTime.getHours()).padStart(2, '0');
-          const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+          // const hours = String(dateTime.getHours()).padStart(2, '0');
+          // const minutes = String(dateTime.getMinutes()).padStart(2, '0');
 
         // フォーマットされた日時の生成
-          var reply_date_email = `${year}年${month}月${day}日${hours}時${minutes}分`;
+          var reply_date_email = `${year}年${month}月${day}日`;
         }
-
+        
         var Garoon_message = '';
 
         //記入者
@@ -2308,6 +2720,18 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       メッセージの1通目(口コミ)
     */
       function first_message_review(record){
+        // //冒頭文名前
+        // if(record.冒頭文名前.value){
+        //   var opening_sentence_name = record.冒頭文名前.value + '　' + '様' + '\n' + '\n';
+        // }else{
+        //   var opening_sentence_name = '';
+        // }
+        //店名
+        if(record.店名.value == undefined || record.店名.value == ''){
+          var store_name = '';
+        }else{
+          var store_name = record.店名.value;
+        }
         //ご来店日時を編集
         if(record.ご来店日時_口コミ.value == '' || record.ご来店日時_口コミ.value == undefined){
             var visits_date_review = '' ;
@@ -2358,25 +2782,26 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         //電話の場合、Garoonに送信するメッセージを作成
         if( record.アンケート報告書.value == '要'){
             Garoon_message = 
-            '【受付1(始)】' + '\n' +
-            'ご利用店舗　:' + record.店名.value+ '\n' + 
+            '【受付1(始)】' + '\n' + 
+            'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_review + '\n' + 
             '来店日時　　:' + visits_time_review +'\n' + 
             'お気づきの内容:'+ '\n' + opinion_detail_review + '\n' + '\n' +
             '総合評価　　:' + evaluation_review + '\n' + 
-            '漢字氏名　　:' + name_review + '\n' + 
-            'アンケート報告書：必要' + '\n'+
+            '漢字氏名　　:' + name_review + '\n' + '\n' + 
+            '※アンケート報告書は、アプリへ記入し「ガルーン送信」を選択し保存をお願い致します。' + '\n' +
             '【受付1(終)】';
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
             '【受付1(始)】' + '\n' + 
-            'ご利用店舗　:' + record.店名.value+ '\n' + 
+            'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_review + '\n' + 
             '来店日時　　:' + visits_time_review +'\n' + 
             'お気づきの内容:'+ '\n' + opinion_detail_review + '\n' + '\n' +
             '総合評価　　:' + evaluation_review + '\n' + 
-            '漢字氏名　　:' + name_review + '\n' + 
-            '【受付1(終)】';
+            '漢字氏名　　:' + name_review + '\n' + '\n' + 
+            '※顛末（またはA報告）についてアプリへ記入後、保存ボタンをクリックお願い致します。' + '\n' +
+            '【受付1(終)】' ;
         }
 
         return Garoon_message;
@@ -2399,21 +2824,21 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             var reply_content_review = record.ご返信内容_口コミ.value;
         }
         //ご返答日_口コミ
-        if(record.ご返答日時_口コミ.value == undefined || record.ご返答日時_口コミ.value == ''){
+        if(record.記入日_ご返答内容_口コミ.value == undefined || record.記入日_ご返答内容_口コミ.value == ''){
             var reply_date_review  = '';
         }else{
-          const dateTime = new Date(record.ご返答日時_口コミ.value);
+          const dateTime = new Date(record.記入日_ご返答内容_口コミ.value);
           // 年月日の取得
           const year = dateTime.getFullYear();
           const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
           const day = String(dateTime.getDate()).padStart(2, '0'); // 日も2桁に整形
 
-          // 時分の取得
-          const hours = String(dateTime.getHours()).padStart(2, '0');
-          const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+          // // 時分の取得
+          // const hours = String(dateTime.getHours()).padStart(2, '0');
+          // const minutes = String(dateTime.getMinutes()).padStart(2, '0');
 
         // フォーマットされた日時の生成
-          var reply_date_review  = `${year}年${month}月${day}日${hours}時${minutes}分`;
+          var reply_date_review  = `${year}年${month}月${day}日`;
         }
 
         var Garoon_message = '';
@@ -2429,15 +2854,12 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         return Garoon_message;
     }
 
-
-
-
     /*
       メッセージの3通目
     */
     //お客様とのやり取り3回目のメッセージ
     function third_message(record){
-      
+
       //ご連絡希望日時
       if(record.ご連絡日時_2回目.value == undefined || record.ご連絡日時_2回目.value == '' ){
         var guest_contact_time_second_time = '';
@@ -2510,9 +2932,6 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 
       var Garoon_message = '';
 
-      /*
-        メッセージの4通目
-      */
       Garoon_message =
       '【回答2(始)】' + '\n' +
       '返答内容記入者:' + entry_person_second_time + '\n' +
@@ -2564,11 +2983,11 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     return Garoon_message;
   }
 
-
     /*
       メッセージの6通目
     */
     function six_message(record){
+      
       //記入者
       if(record.記入者_3回目.value == undefined || record.記入者_3回目.value == ''){
         var entry_person_third_time = '';
@@ -2655,66 +3074,134 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       'app.record.edit.change.Garoonメッセージ送信制御'
       ], event => {
       var record = event.record;
-      const options = { timeZone: 'Asia/Tokyo' };
+
+
+      //冒頭文名前
+      if(record.冒頭文名前.value){
+        var opening_sentence_name = record.冒頭文名前.value + '　' + '様' + '\n' + '\n';
+      }else{
+        var opening_sentence_name = '';
+      }
+
+      //返信方法まとめ
+      if(record.返信方法_まとめ.value == "電話"){
+        var reply_method = "お客様は電話での対応をご希望です。" + '\n' +'\n';
+      }else if(record.返信方法_まとめ.value == "メールでの返信"){
+        var reply_method = "お客様はメールでの返信をご希望です。上長承認またはSV確認の上、お客様への返信文をコメントお願い致します。"+ '\n' +'\n';
+      }else if(record.返信方法_まとめ.value == "返信不要"){
+        var reply_method = "お客様は返答をご希望されておりませんので、ご共有をお願いいたします。"+ '\n' +'\n';
+      }else {
+        var reply_method = '';
+      }
+      //フォーム記入者まとめ
+      if(record.フォーム記入者_まとめ.value && record.フォーム記入者_まとめ.value != "0"){
+        var form_entry_person = record.フォーム記入者_まとめ.value;
+      }else if(record.フォーム記入者_まとめ.value=="0"){
+        var form_entry_person = '';
+      }else{
+        var form_entry_person = '';
+      }
+
+      //返信方法(メール・ネットアンケート)
+      if(record.返信方法_メール_ネットアンケート.value == "メールでの返信"){
+        var reply_in_email = "以下の通り、メールを返信いたしました。" + '\n' + '\n';
+      }else{
+        var reply_in_email = '';
+      }
+
+      //受付2回目
+      if(record.受付方法.value == "メール"){
+        var reception_method = 'お客様よりメールを頂きました。';
+      }else if(record.受付方法.value == "ネットアンケート"){
+        var receptio
+        n_method = 'お客様よりネットアンケートを頂きました。';
+      }
+      //受付2回目
+      if(record.電話_メール_口コミサイト_2回目.value == "メール"){
+        var reception_method_email_second = "以下の通り、お客様よりメールを受信いたしました。" + '\n' + '\n';
+      }else{
+        var reception_method_email_second = '';
+      }
+      //回答2回目
+      if(record.お客様へのご連絡方法_2回目.value == "メールでの返信"){
+        var reply_in_email_two = "以下の通り、メールを返信いたしました。" + '\n' + '\n';
+      }else{
+        var reply_in_email_two = '';
+      }
+      //受付3回目
+      if(record.電話_メール_口コミサイト_3回目.value == "メール"){
+        var reception_method_email_third = "以下の通り、お客様よりメールを受信いたしました。" + '\n' + '\n';
+      }else{
+        var reception_method_email_third = '';
+      }
+      //回答3回目
+      if(record.お客様へのご連絡方法_3回目.value == "メールでの返信"){
+        var reply_in_email_third = "以下の通り、メールを返信いたしました。" + '\n' + '\n';
+      }else{
+        var reply_in_email_third = '';
+      }
 
       if(record.Garoonメッセージ送信制御.value == '送信する'){
           if(record.受付方法.value == '電話'){
               //電話の場合、Garoonに送信するメッセージを作成
               if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信'){
-                  record.Garoon送信メッセージ内容.value = first_message_call(record);
+                  record.Garoon送信メッセージ内容.value = opening_sentence_name + 'お疲れ様です。' + '\n' + '\n' + 'お客様よりホットライン（電話）を頂きました。' + '内容をご確認頂き、ご対応よろしくお願い致します。'+ '\n' + '\n' + reply_method + "コールセンター" + "　" + form_entry_person + '\n' + '\n' +  first_message_call(record);
               }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '未送信' ){
-                record.Garoon送信メッセージ内容.value = third_message(record);
+                record.Garoon送信メッセージ内容.value = reception_method_email_second + third_message(record);
               }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value){
-                record.Garoon送信メッセージ内容.value = four_message(record);
+                record.Garoon送信メッセージ内容.value = reply_in_email_two + four_message(record);
               }else if(record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '未送信'){
-                record.Garoon送信メッセージ内容.value = five_message(record);
+                record.Garoon送信メッセージ内容.value = reception_method_email_third + five_message(record);
               }else if(record.お客様とのご連絡回数.value == '3回目' && record.送信6回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_3回目.value){
-                record.Garoon送信メッセージ内容.value = six_message(record);
-              }else if((record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value == undefined) || (record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '送信済み')){
-                  record.Garoon送信メッセージ内容.value = '';
+                record.Garoon送信メッセージ内容.value = reply_in_email_third + six_message(record);
+              }else if(record.顛末済みフラグ.value == '未送信' && (record.総括部長コメント欄.value || record.顛末確認_部長.value == '〇')){
+                record.Garoon送信メッセージ内容.value = '報告内容が承認されました。アプリからご確認ください。';
+              }else if(record.報告済みフラグ.value == '未送信' && (record.AM報告欄.value || record.顛末.value[0].value.内容_顛末.value)){
+                record.Garoon送信メッセージ内容.value = '顛末報告が記入されました。アプリからご確認ください。';
               }else{
                   record.Garoon送信メッセージ内容.value = '';
               }
+              //消したコード： }else if((record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value == undefined) || (record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '送信済み')){record.Garoon送信メッセージ内容.value = '';}
           }else if(record.受付方法.value == 'メール' || record.受付方法.value == 'ネットアンケート'){
 
               if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信'){
-                  record.Garoon送信メッセージ内容.value = first_message_mail(record);
+                  record.Garoon送信メッセージ内容.value =  opening_sentence_name +'お疲れ様です。' + '\n' + '\n' + reception_method + '内容をご確認頂き、ご対応よろしくお願い致します。'+ '\n' + '\n' + reply_method + "コールセンター" + "　" + form_entry_person + '\n' + '\n' + first_message_mail(record);
               }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信' && record.ご返信内容_メール_ネットアンケート.value){
-                  record.Garoon送信メッセージ内容.value = second_message_mail(record);
+                  record.Garoon送信メッセージ内容.value = reply_in_email + second_message_mail(record);
               }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '未送信'){
-                record.Garoon送信メッセージ内容.value = third_message(record);
+                record.Garoon送信メッセージ内容.value = reception_method_email_second + third_message(record);
               }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value){
-                record.Garoon送信メッセージ内容.value = four_message(record);
+                record.Garoon送信メッセージ内容.value = reply_in_email_two + four_message(record);
               }else if(record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '未送信'){
-                record.Garoon送信メッセージ内容.value = five_message(record);
+                record.Garoon送信メッセージ内容.value = reception_method_email_third + five_message(record);
               }else if(record.お客様とのご連絡回数.value == '3回目' && record.送信6回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_3回目.value){
-                record.Garoon送信メッセージ内容.value = six_message(record);
-              }else if((record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信' && record.ご返信内容_メール_ネットアンケート.value == undefined) || (record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '送信済み')){
-                record.Garoon送信メッセージ内容.value = '';
-              }else if((record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value == undefined) || (record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '送信済み')){
-                  record.Garoon送信メッセージ内容.value = '';
+                record.Garoon送信メッセージ内容.value = reply_in_email_third + six_message(record);
+              }else if(record.顛末済みフラグ.value == '未送信' && (record.総括部長コメント欄.value || record.顛末確認_部長.value == '〇')){
+                record.Garoon送信メッセージ内容.value = '報告内容が承認されました。アプリからご確認ください。';
+              }else if(record.報告済みフラグ.value == '未送信' && (record.AM報告欄.value || record.顛末.value[0].value.内容_顛末.value)){
+                record.Garoon送信メッセージ内容.value = '顛末報告が記入されました。アプリからご確認ください。';
               }else{
                   record.Garoon送信メッセージ内容.value = ''
               }
           }else if(record.受付方法.value == '口コミサイト'){
             if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信'){
-              record.Garoon送信メッセージ内容.value = first_message_review(record);
+              record.Garoon送信メッセージ内容.value = opening_sentence_name + 'お疲れ様です。' + '\n' + '\n' + 'お客様よりGoogle口コミを頂きました。' + '内容をご確認頂き、ご対応よろしくお願い致します。'+ '\n' + '\n' + reply_method + "コールセンター" + "　" + form_entry_person + '\n' + '\n' + first_message_review(record);
             }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信' && record.ご返信内容_口コミ.value){
                 record.Garoon送信メッセージ内容.value = second_message_review(record);
             }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信3回目フラグ.value == '未送信'){
-              record.Garoon送信メッセージ内容.value = third_message(record);
+              record.Garoon送信メッセージ内容.value = reception_method_email_second + third_message(record);
             }else if(record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value){
-              record.Garoon送信メッセージ内容.value = four_message(record);
+              record.Garoon送信メッセージ内容.value = reply_in_email_two + four_message(record);
             }else if(record.お客様とのご連絡回数.value == '3回目' && record.送信5回目フラグ.value == '未送信'){
-              record.Garoon送信メッセージ内容.value = five_message(record);
+              record.Garoon送信メッセージ内容.value = reception_method_email_third + five_message(record);
             }else if(record.お客様とのご連絡回数.value == '3回目' && record.送信6回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_3回目.value){
-              record.Garoon送信メッセージ内容.value = six_message(record);
-            }else if((record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '未送信' && record.ご返信内容_メール_ネットアンケート.value == undefined) || (record.お客様とのご連絡回数.value == '1回目' && record.送信2回目フラグ.value == '送信済み')){
-              record.Garoon送信メッセージ内容.value = '';
-            }else if((record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '未送信' && record.お客様への返答内容_コールセンター記入_2回目.value == undefined) || (record.お客様とのご連絡回数.value == '2回目' && record.送信4回目フラグ.value == '送信済み')){
-                record.Garoon送信メッセージ内容.value = '';
+              record.Garoon送信メッセージ内容.value = reply_in_email_third + six_message(record);
+            }else if(record.顛末済みフラグ.value == '未送信' && (record.総括部長コメント欄.value || record.顛末確認_部長.value == '〇')){
+              record.Garoon送信メッセージ内容.value = '報告内容が承認されました。アプリからご確認ください。';
+            }else if(record.報告済みフラグ.value == '未送信' && (record.AM報告欄.value || record.顛末.value[0].value.内容_顛末.value)){
+              record.Garoon送信メッセージ内容.value = '顛末報告が記入されました。アプリからご確認ください。';
             }else{
-                record.Garoon送信メッセージ内容.value = ''
+              record.Garoon送信メッセージ内容.value = ''
             }
           }
       }
