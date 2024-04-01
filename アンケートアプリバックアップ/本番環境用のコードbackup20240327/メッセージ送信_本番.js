@@ -2485,7 +2485,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           '性別　　　　:' + sex_call + '\n' + 
           '漢字氏名　　:' + name_call + '\n' + 
           'ご連絡先　　:' + contact_address_call + '\n' + '\n' +
-          '※顛末（またはA報告）についてアプリへ記入後、保存ボタンをクリックお願い致します。' + '\n' +
+          '※アンケート報告書は、アプリへ記入し「ガルーン送信」を選択し保存をお願い致します。' + '\n' +
           '【受付1(終)】' ;
       }else if (record.アンケート報告書.value == '否'){
           Garoon_message = 
@@ -2607,18 +2607,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 
         //総合評価
         if(record.総合評価_メール_ネットアンケート.value == undefined || record.総合評価_メール_ネットアンケート.value == ''){
-          var evaluation_mail = '';
+            var evaluation_mail = '';
         }else{
-          var evaluation_mail = record.総合評価_メール_ネットアンケート.value;
+            var evaluation_mail = record.総合評価_メール_ネットアンケート.value;
         }
-
-        //理由
-        if(record.理由.value == undefined || record.理由.value == ''){
-          var cause_email = '';
-        }else{
-          var cause_email = record.理由.value;
-        }
-
 
         //性別
         if(record.性別_メール_ネットアンケート.value == undefined || record.性別_メール_ネットアンケート.value == ''){
@@ -2653,11 +2645,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             '利用人数　　:' + use_count + '\n' +  
             'お気づきの内容:'+ '\n' + opinion_detail + '\n' + '\n' +
             '総合評価　　:' + evaluation_mail + '\n' + 
-            '理由　　　　:' + '\n' + cause_email + '\n' + '\n' +
             '性別　　　　:' + sex_mail + '\n' + 
             '漢字氏名　　:' + name_mail + '\n' + 
             'ご連絡先　　:' + contact_address_mail + '\n' + '\n' +
-            '※顛末（またはA報告）についてアプリへ記入後、保存ボタンをクリックお願い致します。' + '\n' +
+            '※アンケート報告書は、アプリへ記入し「ガルーン送信」を選択し保存をお願い致します。' + '\n' +
             '【受付1(終)】';
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
@@ -2668,7 +2659,6 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             '利用人数　　:' + use_count + '\n' +  
             'お気づきの内容:'+ '\n' + opinion_detail + '\n' + '\n' +
             '総合評価　　:' + evaluation_mail + '\n' + 
-            '理由　　　　:' + '\n' + cause_email + '\n' + '\n' +
             '性別　　　　:' + sex_mail + '\n' + 
             '漢字氏名　　:' + name_mail + '\n' + 
             'ご連絡先　　:' + contact_address_mail + '\n' + '\n' + 
@@ -2799,7 +2789,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             'お気づきの内容:'+ '\n' + opinion_detail_review + '\n' + '\n' +
             '総合評価　　:' + evaluation_review + '\n' + 
             '漢字氏名　　:' + name_review + '\n' + '\n' + 
-            '※顛末（またはA報告）についてアプリへ記入後、保存ボタンをクリックお願い致します。' + '\n' +
+            '※アンケート報告書は、アプリへ記入し「ガルーン送信」を選択し保存をお願い致します。' + '\n' +
             '【受付1(終)】';
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
@@ -3123,7 +3113,8 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       if(record.受付方法.value == "メール"){
         var reception_method = 'お客様よりメールを頂きました。';
       }else if(record.受付方法.value == "ネットアンケート"){
-        var reception_method = 'お客様よりネットアンケートを頂きました。';
+        var receptio
+        n_method = 'お客様よりネットアンケートを頂きました。';
       }
       //受付2回目
       if(record.電話_メール_口コミサイト_2回目.value == "メール"){

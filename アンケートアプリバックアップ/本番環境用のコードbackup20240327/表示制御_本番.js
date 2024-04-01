@@ -4,7 +4,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //以下、共通処理(新規・詳細・編集・印刷画面)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-kintone.events.on(["app.record.create.show","app.record.detail.show","app.record.edit.show","app.record.print.show"], event => {
+kintone.events.on(["app.record.create.show","app.record.detail.show","app.record.edit.show"], event => {
     const record = event.record;
 
     var GetLoginUser = kintone.getLoginUser()
@@ -15,7 +15,7 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
         kintone.app.record.setFieldShown('Garoonメッセージ送信制御', false);
         kintone.app.record.setFieldShown('Garoon送信メッセージ内容', false);
         kintone.app.record.setFieldShown('Garoon送信履歴', false);
-    }47
+    }
 
     //アンケート報告書
     if(record.アンケート報告書.value == "要"){
