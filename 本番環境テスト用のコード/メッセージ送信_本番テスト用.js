@@ -118,7 +118,7 @@
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           async: false,
           data: msgAddRequest,
@@ -276,7 +276,7 @@
             // メッセージ検索の実行
             $.ajax({
                 type: 'post',
-                url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+                url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
                 cache: false,
                 data: msgSearchRequest,
             }).then(function(responseData) {
@@ -346,7 +346,7 @@
                             if (key == record.$id.value) {
                                 
                                 // record.Garoonリンク.value = "https://io8f1l5axfqn.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";
-                                let GaroonLink = "https://watami.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
+                                let GaroonLink = "https://watami.s.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
                                 
                                     // レコード更新のパラメータ設定
                                 let body = {
@@ -541,7 +541,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     const recordId = event.recordId;
     
     //お試し版URL【変更】
-    const kntAppURL = 'https://watami.cybozu.com/k/822/';
+    const kntAppURL = 'https://watami.s.cybozu.com/k/867/';
     //URLを作成
     let URL =  kntAppURL + 'show#record=' + record.$id.value;
     
@@ -562,7 +562,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           window.swal.close();
           //メッセージを送信する処理
           // お試し版URL【変更】URLとアプリID
-          const kntAppURL = 'https://watami.cybozu.com/k/822/';
+          const kntAppURL = 'https://watami.s.cybozu.com/k/822/';
           // URLを作成
           let URL = kntAppURL + 'show#record=' + record.$id.value;
           // ユーザー情報を格納する変数
@@ -1896,22 +1896,13 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             var comprehensive_evaluation = '';
           }
 
-          //受付方法
-          if(record.受付方法.value == '電話'){
-            var reception_method = 'ホットライン';
-          }else if(record.受付方法.value == '口コミサイト'){
-            var reception_method = 'Googleネガティブクチコミ';
-          }else{
-            var reception_method = record.受付方法.value;
-          }
-
           //Garoonメッセージのタイトル(20240422テストコード変更)
           if(record.店名.value){
-            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + reception_method + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
+            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + record.受付方法.value + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
           }else if(record.本部関連_商品関連の宛先を取得1.value){
-            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + reception_method + '(' + record.本部関連_商品関連の宛先を取得1.value + ')'+ comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
+            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + record.受付方法.value + '(' + record.本部関連_商品関連の宛先を取得1.value + ')'+ comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
           }else{
-            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + reception_method + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
+            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + record.受付方法.value + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
           }
 
           performCommonAction('申請', uniqueUserCodes, content, body)
@@ -1964,7 +1955,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           // メッセージ検索の実行
           await $.ajax({
             type: 'post',
-            url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+            url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
             cache: false,
             data: msgSearchRequest,
           }).then(function(responseData) {
@@ -2288,7 +2279,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       // メッセージ登録の実行
       await $.ajax({
         type: 'post',
-        url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+        url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
         cache: false,
         async: false,
         data: msgUpdateRequest
@@ -2316,8 +2307,8 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         '<Action>${ACTION}</Action>' + // この行を修正
         '<Security>' +
         '<UsernameToken>' +
-        '<Username>100078</Username>' +
-        '<Password>w100078</Password>' +
+        '<Username>watami01</Username>' +
+        '<Password>wtmsus22</Password>' +
         '</UsernameToken>' +
         '</Security>' +
         '<Timestamp>' +
@@ -2329,7 +2320,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         '<soap:Body>' +
         '<MessageRemoveThreads>' +
         '<parameters delete_all_inbox="true">' +
-        '<param xmlns="" folder_id="6403" thread_id="${DELETE_ID}"></param>' +
+        '<param xmlns="" folder_id="107564" thread_id="${DELETE_ID}"></param>' +
         '</parameters>' +
         '</MessageRemoveThreads>' +
         '</soap:Body>' +
@@ -2351,7 +2342,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {

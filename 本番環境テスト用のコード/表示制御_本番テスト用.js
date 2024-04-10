@@ -11,7 +11,7 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
     // console.warn("ログインユーザー情報",GetLoginUser);
 
     //【変更】ログインユーザーが1以外のユーザーにはフィールドを隠す処理(環境が変わった際は、メッセージの更新・削除を行うユーザーにしてください。)
-    if(GetLoginUser.id != 1){
+    if(GetLoginUser.id != 8561){
         kintone.app.record.setFieldShown('Garoonメッセージ送信制御', false);
         kintone.app.record.setFieldShown('Garoon送信メッセージ内容', false);
         kintone.app.record.setFieldShown('Garoon送信履歴', false);
@@ -66,13 +66,13 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
         const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
         if (tenmatsu_field) {
             tenmatsu_field.innerHTML = '顛末';
-            tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(217, 234, 211);';
+            tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(255, 242, 204);';
         }
         // スペースフィールド
         const manager_field = kintone.app.record.getSpaceElement('manager');
         if (manager_field) {
             manager_field.innerHTML = '部長';
-            manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(217, 234, 211);';
+            manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
         }
         // スペースフィールド
         const call_center_field = kintone.app.record.getSpaceElement('call_center');
@@ -681,7 +681,7 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         //ユーザー情報を取得
         var GetLoginUser = kintone.getLoginUser()
         //【変更】ログインユーザーが1以外のユーザーにはフィールドを隠す処理(環境が変わった際は、メッセージの更新・削除を行うユーザーにしてください。)
-        if(GetLoginUser.id == 1){
+        if(GetLoginUser.id == 8561){
             // スペースフィールド
             const element = kintone.app.record.getSpaceElement('send_message');
             element.innerHTML = '1通目の送信後は画面再更新後、Garoonリンクが作成されます。　' + '\n' + '2通目以降は送信後、ログイン画面に遷移します';

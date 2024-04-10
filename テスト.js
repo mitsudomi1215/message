@@ -7,8 +7,8 @@
     kintone.events.on("app.record.edit.show", event => {
         const record = event.record;
 
-console.warn("ミライザカ西日暮里駅前店",fetchGaroonUserByCode("T00203"));
-console.warn("から揚げの天才イオンモール新利府 北館店",fetchGaroonUserByCode("T01562"));
+console.warn("",fetchGaroonUserByCode(""));
+console.warn("",fetchGaroonUserByCode(""));
 // console.warn("",fetchGaroonUserByCode(""));
 // console.warn("",fetchGaroonUserByCode(""));
 // console.warn("",fetchGaroonUserByCode(""));

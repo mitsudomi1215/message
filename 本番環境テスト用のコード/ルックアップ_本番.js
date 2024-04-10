@@ -48,8 +48,9 @@
                     return event;
                 });
             }else{
-                return event;
+               return event; 
             }
+
     });
 
     //アンケート報告書の時間を自動的に入れる処理
