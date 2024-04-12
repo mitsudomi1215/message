@@ -118,7 +118,7 @@
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           async: false,
           data: msgAddRequest,
@@ -276,7 +276,7 @@
             // メッセージ検索の実行
             $.ajax({
                 type: 'post',
-                url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+                url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
                 cache: false,
                 data: msgSearchRequest,
             }).then(function(responseData) {
@@ -346,7 +346,7 @@
                             if (key == record.$id.value) {
                                 
                                 // record.Garoonリンク.value = "https://io8f1l5axfqn.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";
-                                let GaroonLink = "https://watami.s.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
+                                let GaroonLink = "https://watami.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
                                 
                                     // レコード更新のパラメータ設定
                                 let body = {
@@ -379,7 +379,7 @@
             } catch (error) {
             console.error("エラーが発生しました:", error);
             }
-        };
+      };
       GaroonCreateLink(record);
       //詳細画面で、リンクを作成する処理はここまで
     }
@@ -541,7 +541,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     const recordId = event.recordId;
     
     //お試し版URL【変更】
-    const kntAppURL = 'https://watami.s.cybozu.com/k/867/';
+    const kntAppURL = 'https://watami.cybozu.com/k/875/';
     //URLを作成
     let URL =  kntAppURL + 'show#record=' + record.$id.value;
     
@@ -562,7 +562,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           window.swal.close();
           //メッセージを送信する処理
           // お試し版URL【変更】URLとアプリID
-          const kntAppURL = 'https://watami.s.cybozu.com/k/822/';
+          const kntAppURL = 'https://watami.cybozu.com/k/875/';
           // URLを作成
           let URL = kntAppURL + 'show#record=' + record.$id.value;
           // ユーザー情報を格納する変数
@@ -1661,7 +1661,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           let uniqueUserCodes = [...new Set(userCodes)];
           
           //-----------------------------------------------------
-          //メッセージ送信時、区分の変更
+          //メッセージ送信時、区分
           //-----------------------------------------------------
 
           if(record.アンケート報告書.value == '要'){
@@ -1674,7 +1674,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             var enquete_result = ''
           }
           //-----------------------------------------------------
-          //送信フラグの変更
+          //送信フラグ
           //-----------------------------------------------------
           //【送信2回目フラグ】1回目が送信済みであれば、2回目フラグを送信済みにする
           if((record.送信1回目フラグ.value == '送信済み' && record.ご返信内容_メール_ネットアンケート.value) || (record.送信1回目フラグ.value == '送信済み' && record.ご返信内容_口コミ.value) || record.送信2回目フラグ.value == '送信済み' ){ 
@@ -1896,13 +1896,22 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             var comprehensive_evaluation = '';
           }
 
-          //Garoonメッセージのタイトル(20240422テストコード変更)
-          if(record.店名.value){
-            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + record.受付方法.value + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
-          }else if(record.本部関連_商品関連の宛先を取得1.value){
-            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + record.受付方法.value + '(' + record.本部関連_商品関連の宛先を取得1.value + ')'+ comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
+          //受付方法
+          if(record.受付方法.value == '電話'){
+            var reception_method = 'ホットライン';
+          }else if(record.受付方法.value == '口コミサイト'){
+            var reception_method = 'Googleネガティブクチコミ';
           }else{
-            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + record.受付方法.value + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
+            var reception_method = record.受付方法.value;
+          }
+
+          //Garoonメッセージのタイトル
+          if(record.店名.value){
+            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + reception_method + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
+          }else if(record.本部関連_商品関連の宛先を取得1.value){
+            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + reception_method + '(' + record.本部関連_商品関連の宛先を取得1.value + ')'+ comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
+          }else{
+            var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + reception_method + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
           }
 
           performCommonAction('申請', uniqueUserCodes, content, body)
@@ -1911,10 +1920,11 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
               GaroonMessageUpdateDelete(record);
               //送信履歴フィールドを更新
               send_content_update(record);
+              
               setTimeout(() => {
                 //リロード
                 window.location.reload();
-              }, 1200);  
+              }, 3000);  
           })
         }
       );
@@ -1955,7 +1965,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           // メッセージ検索の実行
           await $.ajax({
             type: 'post',
-            url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+            url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
             cache: false,
             data: msgSearchRequest,
           }).then(function(responseData) {
@@ -2191,10 +2201,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                     for (const id of subjectThreadIds[subject]) {
                       // id は配列内の各数字、ここで繰り返し処理を行う
                       //削除処理
-                        MessageDelete(id);
+                      MessageDelete(id);
                     }
                   }, 100);
-              }  
+              }
             });
           });
         } catch (error) {
@@ -2279,7 +2289,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       // メッセージ登録の実行
       await $.ajax({
         type: 'post',
-        url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+        url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
         cache: false,
         async: false,
         data: msgUpdateRequest
@@ -2342,10 +2352,11 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {
+          window.location.reload();
           // console.warn("削除に成功"); // レスポンスデータをコンソールに表示
         });
       } catch (error) {
@@ -2360,6 +2371,28 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       メッセージの1通目(電話)
     */
     function first_message_call(record){
+
+      //受信日時 (追加20240410)
+      if(record.受信日時_電話.value == '' || record.受信日時_電話.value == undefined){
+          var receiving_time_call = '' ;
+      }else {
+          var dateTime_call = new Date(record.受信日時_電話.value);
+          // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split(' ')[0];
+
+          // 年月日の取得
+          var year_call = dateTime_call.getFullYear();
+          var month_call = String(dateTime_call.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+          var day_call = String(dateTime_call.getDate()).padStart(2, '0'); // 日も2桁に整形
+
+          // 時分の取得
+          var hours_call = String(dateTime_call.getHours()).padStart(2, '0');
+          var minutes_call = String(dateTime_call.getMinutes()).padStart(2, '0');
+
+          var receiving_time_call = '';
+          // 受信日時
+          var receiving_time_call = `${year_call}年${month_call}月${day_call}日${hours_call}時${minutes_call}分`;
+      }
+      
 
       //店名
       if(record.店名.value == undefined || record.店名.value == ''){
@@ -2474,9 +2507,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       if(record.アンケート報告書.value == '要'){
           Garoon_message = 
           '【受付1(始)】' + '\n' + 
+          '受信日時　　:' + receiving_time_call + '\n' + //追加20240410 
           'ご利用店舗　:' + store_name + '\n' + 
           'ご来店日　　:' + visits_date_call + '\n' + 
-          '来店日時　　:' + visits_time_call +'\n' + 
+          '来店時間　　:' + visits_time_call +'\n' + 
           '利用人数　　:' + visits_number + '\n' + 
           'お気づきの内容:'+'\n'+ opinion_detail + '\n' + '\n' + 
           '総合評価　　:' + evaluation_call + '\n' + 
@@ -2488,9 +2522,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       }else if (record.アンケート報告書.value == '否'){
           Garoon_message = 
           '【受付1(始)】' + '\n' + 
+          '受信日時　　:' + receiving_time_call + '\n' +  //追加20240410 
           'ご利用店舗　:' + store_name + '\n' + 
           'ご来店日　　:' + visits_date_call + '\n' + 
-          '来店日時　　:' + visits_time_call +'\n' + 
+          '来店時間　　:' + visits_time_call +'\n' + 
           '利用人数　　:' + visits_number + '\n' + 
           'お気づきの内容:'+'\n'+ opinion_detail + '\n' + '\n' +
           '総合評価　　:' + evaluation_call + '\n' + 
@@ -2558,7 +2593,28 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     */
     function first_message_mail(record){
 
-          //店名
+        //受信日時 (追加20240410)
+        if(record.受信日時_メール_ネットアンケート.value == '' || record.受信日時_メール_ネットアンケート.value == undefined){
+          var receiving_time_mail = '' ;
+        }else {
+            var dateTime_mail = new Date(record.受信日時_メール_ネットアンケート.value);
+            // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split(' ')[0];
+
+            // 年月日の取得
+            var year_mail = dateTime_mail.getFullYear();
+            var month_mail = String(dateTime_mail.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+            var day_mail = String(dateTime_mail.getDate()).padStart(2, '0'); // 日も2桁に整形
+
+            // 時分の取得
+            var hours_mail = String(dateTime_mail.getHours()).padStart(2, '0');
+            var minutes_mail = String(dateTime_mail.getMinutes()).padStart(2, '0');
+
+            var receiving_time_mail = '';
+            // 受信日時
+            var receiving_time_mail = `${year_mail}年${month_mail}月${day_mail}日${hours_mail}時${minutes_mail}分`;
+        }
+
+        //店名
         if(record.店名.value == undefined || record.店名.value == ''){
           var store_name = '';
         }else{
@@ -2645,6 +2701,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         if( record.アンケート報告書.value == '要'){
             Garoon_message = 
             '【受付1(始)】' + '\n' + 
+            '受信日時　　:' + receiving_time_mail + '\n' + //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_mail_net + '\n' + 
             '来店日時　　:' + visits_time_mail_net +'\n' + 
@@ -2660,6 +2717,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
             '【受付1(始)】' + '\n' + 
+            '受信日時　　:' + receiving_time_mail + '\n' +  //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_mail_net + '\n' + 
             '来店日時　　:' + visits_time_mail_net +'\n' + 
@@ -2728,6 +2786,28 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       メッセージの1通目(口コミ)
     */
       function first_message_review(record){
+
+        //受信日時 (追加20240410)
+        if(record.受信日時_口コミ.value == '' || record.受信日時_口コミ.value == undefined){
+          var receiving_time_review = '' ;
+        }else {
+            var dateTime_review = new Date(record.受信日時_口コミ.value);
+            // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split(' ')[0];
+
+            // 年月日の取得
+            var year_review = dateTime_review.getFullYear();
+            var month_review = String(dateTime_review.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+            var day_review = String(dateTime_review.getDate()).padStart(2, '0'); // 日も2桁に整形
+
+            // 時分の取得
+            var hours_review = String(dateTime_review.getHours()).padStart(2, '0');
+            var minutes_review = String(dateTime_review.getMinutes()).padStart(2, '0');
+
+            var receiving_time_review = '';
+            // 受信日時
+            var receiving_time_review = `${year_review}年${month_review}月${day_review}日${hours_review}時${minutes_review}分`;
+        }
+
         // //冒頭文名前
         // if(record.冒頭文名前.value){
         //   var opening_sentence_name = record.冒頭文名前.value + '　' + '様' + '\n' + '\n';
@@ -2771,11 +2851,11 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             var opinion_detail_review = record.お気づきの内容_口コミ.value;
         }
 
-        //総合評価
-        if(record.総合評価_口コミ.value == undefined || record.総合評価_口コミ.value == ''){
+        //総合評価  追加20240410
+        if(record.星_口コミの場合_口コミ.value == undefined || record.星_口コミの場合_口コミ.value == ''){
             var evaluation_review  = '';
         }else{
-            var evaluation_review  = record.総合評価_口コミ.value;
+            var evaluation_review  = record.星_口コミの場合_口コミ.value;         
         }
 
         //漢字氏名
@@ -2791,6 +2871,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         if( record.アンケート報告書.value == '要'){
             Garoon_message = 
             '【受付1(始)】' + '\n' + 
+            '受付日時　　:' + receiving_time_review + '\n' + //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_review + '\n' + 
             '来店日時　　:' + visits_time_review +'\n' + 
@@ -2802,6 +2883,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
             '【受付1(始)】' + '\n' + 
+            '受付日時　　:' + receiving_time_review + '\n' + //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_review + '\n' + 
             '来店日時　　:' + visits_time_review +'\n' + 
@@ -2811,7 +2893,6 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             '※顛末（またはA報告）についてアプリへ記入後、保存ボタンをクリックお願い致します。' + '\n' +
             '【受付1(終)】' ;
         }
-
         return Garoon_message;
     }
 

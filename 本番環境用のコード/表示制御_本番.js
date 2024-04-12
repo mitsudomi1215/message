@@ -194,6 +194,23 @@ kintone.events.on(["app.record.create.submit","app.record.edit.submit"], event =
         record.未送信フラグ.value = '';
     }
 
+    //ご意見分類を入力必須にする
+    if(record.受付方法.value == '電話'){
+        if (record['ご意見分類']['value'] == undefined || record['ご意見分類']['value']== '') {
+        event.error = 'ご意見分類を入力してください';
+        }
+        
+    }else if(record.受付方法.value == 'メール' || record.受付方法.value == 'ネットアンケート'){
+        if (record['ご意見分類_メール_ネットアンケート']['value'] == undefined || record['ご意見分類_メール_ネットアンケート']['value'] == '') {
+        event.error = 'ご意見分類を入力してください';
+        }
+        
+    }else if(record.受付方法.value == '口コミサイト'){
+        if (record['ご意見分類_口コミ']['value'] == undefined || record['ご意見分類_口コミ']['value'] == '') {
+        event.error = 'ご意見分類を入力してください';
+        }
+    }
+
     return event;
 });
 

@@ -66,13 +66,13 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
         const tenmatsu_field = kintone.app.record.getSpaceElement('tenmatsu');
         if (tenmatsu_field) {
             tenmatsu_field.innerHTML = '顛末';
-            tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(255, 242, 204);';
+            tenmatsu_field.style.cssText = 'font-size: 26px; font-weight: bold; margin-left:15px; background-color: rgb(217, 234, 211);';
         }
         // スペースフィールド
         const manager_field = kintone.app.record.getSpaceElement('manager');
         if (manager_field) {
             manager_field.innerHTML = '部長';
-            manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(255, 242, 204);';
+            manager_field.style.cssText = 'font-size: 18px; font-weight: bold; width: 140px; margin-left:15px; background-color: rgb(217, 234, 211);';
         }
         // スペースフィールド
         const call_center_field = kintone.app.record.getSpaceElement('call_center');
@@ -96,6 +96,7 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 kintone.events.on(["app.record.create.show","app.record.edit.show"], event => {
     const record = event.record;
+
         //アンケート報告書のST開始時間、入力不可設定
         record._2.disabled = true;
         record._3.disabled = true;
@@ -166,7 +167,6 @@ kintone.events.on(["app.record.create.submit","app.record.edit.submit"], event =
     // //テストコード変更20240404
     // //未送信フラグ
     if(record.送信1回目フラグ.value == '未送信' && record.ご意見詳細.value){
-        console.warn("侵入");
         record.未送信フラグ.value = '未送信';
     }else if(record.送信1回目フラグ.value == '未送信' && record.お気づきの内容.value){
         record.未送信フラグ.value = '未送信';
@@ -193,6 +193,26 @@ kintone.events.on(["app.record.create.submit","app.record.edit.submit"], event =
     }else{
         record.未送信フラグ.value = '';
     }
+
+
+    //---------------------
+
+    if(record.受付方法.value == '電話'){
+        if (record['ご意見分類']['value'] == undefined || record['ご意見分類']['value']== '') {
+        event.error = 'ご意見分類を入力してください';
+        }
+        
+    }else if(record.受付方法.value == 'メール' || record.受付方法.value == 'ネットアンケート'){
+        if (record['ご意見分類_メール_ネットアンケート']['value'] == undefined || record['ご意見分類_メール_ネットアンケート']['value'] == '') {
+        event.error = 'ご意見分類を入力してください';
+        }
+        
+    }else if(record.受付方法.value == '口コミサイト'){
+        if (record['ご意見分類_口コミ']['value'] == undefined || record['ご意見分類_口コミ']['value'] == '') {
+        event.error = 'ご意見分類を入力してください';
+        }
+    }
+    //-------------------------
 
     return event;
 });

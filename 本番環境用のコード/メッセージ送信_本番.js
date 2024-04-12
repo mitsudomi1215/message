@@ -1923,7 +1923,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
               setTimeout(() => {
                 //リロード
                 window.location.reload();
-              }, 1200);  
+              }, 1500);  
           })
         }
       );
@@ -2355,6 +2355,8 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {
+          //削除に成功したら、リロード
+          window.location.reload();
           // console.warn("削除に成功"); // レスポンスデータをコンソールに表示
         });
       } catch (error) {
@@ -2370,6 +2372,26 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     */
     function first_message_call(record){
 
+      //受信日時 (追加20240410)
+      if(record.受信日時_電話.value == '' || record.受信日時_電話.value == undefined){
+        var receiving_time_call = '' ;
+      }else {
+          var dateTime_call = new Date(record.受信日時_電話.value);
+          // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split(' ')[0];
+
+          // 年月日の取得
+          var year_call = dateTime_call.getFullYear();
+          var month_call = String(dateTime_call.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+          var day_call = String(dateTime_call.getDate()).padStart(2, '0'); // 日も2桁に整形
+
+          // 時分の取得
+          var hours_call = String(dateTime_call.getHours()).padStart(2, '0');
+          var minutes_call = String(dateTime_call.getMinutes()).padStart(2, '0');
+
+          var receiving_time_call = '';
+          // 受信日時
+          var receiving_time_call = `${year_call}年${month_call}月${day_call}日${hours_call}時${minutes_call}分`;
+      }
       //店名
       if(record.店名.value == undefined || record.店名.value == ''){
         var store_name = '';
@@ -2483,9 +2505,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       if(record.アンケート報告書.value == '要'){
           Garoon_message = 
           '【受付1(始)】' + '\n' + 
+          '受信日時　　:' + receiving_time_call + '\n' + //追加20240410 
           'ご利用店舗　:' + store_name + '\n' + 
           'ご来店日　　:' + visits_date_call + '\n' + 
-          '来店日時　　:' + visits_time_call +'\n' + 
+          '来店時間　　:' + visits_time_call +'\n' + 
           '利用人数　　:' + visits_number + '\n' + 
           'お気づきの内容:'+'\n'+ opinion_detail + '\n' + '\n' + 
           '総合評価　　:' + evaluation_call + '\n' + 
@@ -2497,9 +2520,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       }else if (record.アンケート報告書.value == '否'){
           Garoon_message = 
           '【受付1(始)】' + '\n' + 
+          '受信日時　　:' + receiving_time_call + '\n' + //追加20240410 
           'ご利用店舗　:' + store_name + '\n' + 
           'ご来店日　　:' + visits_date_call + '\n' + 
-          '来店日時　　:' + visits_time_call +'\n' + 
+          '来店時間　　:' + visits_time_call +'\n' + 
           '利用人数　　:' + visits_number + '\n' + 
           'お気づきの内容:'+'\n'+ opinion_detail + '\n' + '\n' +
           '総合評価　　:' + evaluation_call + '\n' + 
@@ -2566,8 +2590,28 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       メッセージの1通目(メール_ネットアンケート)
     */
     function first_message_mail(record){
+        //受信日時 (追加20240410)
+        if(record.受信日時_メール_ネットアンケート.value == '' || record.受信日時_メール_ネットアンケート.value == undefined){
+          var receiving_time_mail = '' ;
+        }else {
+            var dateTime_mail = new Date(record.受信日時_メール_ネットアンケート.value);
+            // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split(' ')[0];
 
-          //店名
+            // 年月日の取得
+            var year_mail = dateTime_mail.getFullYear();
+            var month_mail = String(dateTime_mail.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+            var day_mail = String(dateTime_mail.getDate()).padStart(2, '0'); // 日も2桁に整形
+
+            // 時分の取得
+            var hours_mail = String(dateTime_mail.getHours()).padStart(2, '0');
+            var minutes_mail = String(dateTime_mail.getMinutes()).padStart(2, '0');
+
+            var receiving_time_mail = '';
+            // 受信日時
+            var receiving_time_mail = `${year_mail}年${month_mail}月${day_mail}日${hours_mail}時${minutes_mail}分`;
+        }
+
+        //店名
         if(record.店名.value == undefined || record.店名.value == ''){
           var store_name = '';
         }else{
@@ -2654,9 +2698,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         if( record.アンケート報告書.value == '要'){
             Garoon_message = 
             '【受付1(始)】' + '\n' + 
+            '受信日時　　:' + receiving_time_mail + '\n' + //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_mail_net + '\n' + 
-            '来店日時　　:' + visits_time_mail_net +'\n' + 
+            '来店時間　　:' + visits_time_mail_net +'\n' + 
             '利用人数　　:' + use_count + '\n' +  
             'お気づきの内容:'+ '\n' + opinion_detail + '\n' + '\n' +
             '総合評価　　:' + evaluation_mail + '\n' + 
@@ -2669,9 +2714,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
             '【受付1(始)】' + '\n' + 
+            '受信日時　　:' + receiving_time_mail + '\n' + //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_mail_net + '\n' + 
-            '来店日時　　:' + visits_time_mail_net +'\n' + 
+            '来店時間　　:' + visits_time_mail_net +'\n' + 
             '利用人数　　:' + use_count + '\n' +  
             'お気づきの内容:'+ '\n' + opinion_detail + '\n' + '\n' +
             '総合評価　　:' + evaluation_mail + '\n' + 
@@ -2737,6 +2783,28 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       メッセージの1通目(口コミ)
     */
       function first_message_review(record){
+
+        //受信日時 (追加20240410)
+        if(record.受信日時_口コミ.value == '' || record.受信日時_口コミ.value == undefined){
+          var receiving_time_review = '' ;
+        }else {
+            var dateTime_review = new Date(record.受信日時_口コミ.value);
+            // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split(' ')[0];
+
+            // 年月日の取得
+            var year_review = dateTime_review.getFullYear();
+            var month_review = String(dateTime_review.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため、1を加え、2桁に整形
+            var day_review = String(dateTime_review.getDate()).padStart(2, '0'); // 日も2桁に整形
+
+            // 時分の取得
+            var hours_review = String(dateTime_review.getHours()).padStart(2, '0');
+            var minutes_review = String(dateTime_review.getMinutes()).padStart(2, '0');
+
+            var receiving_time_review = '';
+            // 受信日時
+            var receiving_time_review = `${year_review}年${month_review}月${day_review}日${hours_review}時${minutes_review}分`;
+        }
+
         // //冒頭文名前
         // if(record.冒頭文名前.value){
         //   var opening_sentence_name = record.冒頭文名前.value + '　' + '様' + '\n' + '\n';
@@ -2780,11 +2848,11 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             var opinion_detail_review = record.お気づきの内容_口コミ.value;
         }
 
-        //総合評価
-        if(record.総合評価_口コミ.value == undefined || record.総合評価_口コミ.value == ''){
+        //総合評価  追加20240410
+        if(record.星_口コミの場合_口コミ.value == undefined || record.星_口コミの場合_口コミ.value == ''){
             var evaluation_review  = '';
         }else{
-            var evaluation_review  = record.総合評価_口コミ.value;
+            var evaluation_review  = record.星_口コミの場合_口コミ.value;         
         }
 
         //漢字氏名
@@ -2800,9 +2868,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         if( record.アンケート報告書.value == '要'){
             Garoon_message = 
             '【受付1(始)】' + '\n' + 
+            '受付日時　　:' + receiving_time_review + '\n' + //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_review + '\n' + 
-            '来店日時　　:' + visits_time_review +'\n' + 
+            '来店時間　　:' + visits_time_review +'\n' + 
             'お気づきの内容:'+ '\n' + opinion_detail_review + '\n' + '\n' +
             '総合評価　　:' + evaluation_review + '\n' + 
             '漢字氏名　　:' + name_review + '\n' + '\n' + 
@@ -2811,9 +2880,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
             '【受付1(始)】' + '\n' + 
+            '受付日時　　:' + receiving_time_review + '\n' + //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_review + '\n' + 
-            '来店日時　　:' + visits_time_review +'\n' + 
+            '来店時間　　:' + visits_time_review +'\n' + 
             'お気づきの内容:'+ '\n' + opinion_detail_review + '\n' + '\n' +
             '総合評価　　:' + evaluation_review + '\n' + 
             '漢字氏名　　:' + name_review + '\n' + '\n' + 

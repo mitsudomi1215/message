@@ -11,7 +11,7 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
     // console.warn("ログインユーザー情報",GetLoginUser);
 
     //【変更】ログインユーザーが1以外のユーザーにはフィールドを隠す処理(環境が変わった際は、メッセージの更新・削除を行うユーザーにしてください。)
-    if(GetLoginUser.id != 1){
+    if(GetLoginUser.id != 8561){
         kintone.app.record.setFieldShown('Garoonメッセージ送信制御', false);
         kintone.app.record.setFieldShown('Garoon送信メッセージ内容', false);
         kintone.app.record.setFieldShown('Garoon送信履歴', false);
@@ -166,7 +166,6 @@ kintone.events.on(["app.record.create.submit","app.record.edit.submit"], event =
     // //テストコード変更20240404
     // //未送信フラグ
     if(record.送信1回目フラグ.value == '未送信' && record.ご意見詳細.value){
-        console.warn("侵入");
         record.未送信フラグ.value = '未送信';
     }else if(record.送信1回目フラグ.value == '未送信' && record.お気づきの内容.value){
         record.未送信フラグ.value = '未送信';
@@ -192,6 +191,24 @@ kintone.events.on(["app.record.create.submit","app.record.edit.submit"], event =
         record.未送信フラグ.value = '未送信(担当者入力済み)';
     }else{
         record.未送信フラグ.value = '';
+    }
+
+
+    //ご意見分類を入力必須にする
+    if(record.受付方法.value == '電話'){
+        if (record['ご意見分類']['value'] == undefined || record['ご意見分類']['value']== '') {
+        event.error = 'ご意見分類を入力してください';
+        }
+        
+    }else if(record.受付方法.value == 'メール' || record.受付方法.value == 'ネットアンケート'){
+        if (record['ご意見分類_メール_ネットアンケート']['value'] == undefined || record['ご意見分類_メール_ネットアンケート']['value'] == '') {
+        event.error = 'ご意見分類を入力してください';
+        }
+        
+    }else if(record.受付方法.value == '口コミサイト'){
+        if (record['ご意見分類_口コミ']['value'] == undefined || record['ご意見分類_口コミ']['value'] == '') {
+        event.error = 'ご意見分類を入力してください';
+        }
     }
 
     return event;
@@ -681,7 +698,7 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         //ユーザー情報を取得
         var GetLoginUser = kintone.getLoginUser()
         //【変更】ログインユーザーが1以外のユーザーにはフィールドを隠す処理(環境が変わった際は、メッセージの更新・削除を行うユーザーにしてください。)
-        if(GetLoginUser.id == 1){
+        if(GetLoginUser.id == 8561){
             // スペースフィールド
             const element = kintone.app.record.getSpaceElement('send_message');
             element.innerHTML = '1通目の送信後は画面再更新後、Garoonリンクが作成されます。　' + '\n' + '2通目以降は送信後、ログイン画面に遷移します';

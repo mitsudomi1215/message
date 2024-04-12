@@ -118,7 +118,7 @@
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://2pbkeq40kh30.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           async: false,
           data: msgAddRequest,
@@ -276,7 +276,7 @@
             // メッセージ検索の実行
             $.ajax({
                 type: 'post',
-                url: 'https://2pbkeq40kh30.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+                url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
                 cache: false,
                 data: msgSearchRequest,
             }).then(function(responseData) {
@@ -346,7 +346,7 @@
                             if (key == record.$id.value) {
                                 
                                 // record.Garoonリンク.value = "https://io8f1l5axfqn.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";
-                                let GaroonLink = "https://2pbkeq40kh30.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
+                                let GaroonLink = "https://watami.s.cybozu.com/g/message/view.csp?mid=" + subjectGet + "&module_id=grn.message&br=1";//変更が必要
                                 
                                     // レコード更新のパラメータ設定
                                 let body = {
@@ -541,7 +541,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     const recordId = event.recordId;
     
     //お試し版URL【変更】
-    const kntAppURL = 'https://2pbkeq40kh30.cybozu.com/k/8/';
+    const kntAppURL = 'https://watami.s.cybozu.com/k/875/';
     //URLを作成
     let URL =  kntAppURL + 'show#record=' + record.$id.value;
     
@@ -562,7 +562,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           window.swal.close();
           //メッセージを送信する処理
           // お試し版URL【変更】URLとアプリID
-          const kntAppURL = 'https://2pbkeq40kh30.cybozu.com/k/8/';
+          const kntAppURL = 'https://watami.s.cybozu.com/k/875/';
           // URLを作成
           let URL = kntAppURL + 'show#record=' + record.$id.value;
           // ユーザー情報を格納する変数
@@ -1964,7 +1964,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           // メッセージ検索の実行
           await $.ajax({
             type: 'post',
-            url: 'https://2pbkeq40kh30.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+            url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
             cache: false,
             data: msgSearchRequest,
           }).then(function(responseData) {
@@ -2288,7 +2288,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       // メッセージ登録の実行
       await $.ajax({
         type: 'post',
-        url: 'https://2pbkeq40kh30.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+        url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
         cache: false,
         async: false,
         data: msgUpdateRequest
@@ -2316,8 +2316,8 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         '<Action>${ACTION}</Action>' + // この行を修正
         '<Security>' +
         '<UsernameToken>' +
-        '<Username>光富</Username>' +
-        '<Password>km081215</Password>' +
+        '<Username>watami01</Username>' +
+        '<Password>wtmsus22</Password>' +
         '</UsernameToken>' +
         '</Security>' +
         '<Timestamp>' +
@@ -2329,7 +2329,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         '<soap:Body>' +
         '<MessageRemoveThreads>' +
         '<parameters delete_all_inbox="true">' +
-        '<param xmlns="" folder_id="3" thread_id="${DELETE_ID}"></param>' +
+        '<param xmlns="" folder_id="107564" thread_id="${DELETE_ID}"></param>' +
         '</parameters>' +
         '</MessageRemoveThreads>' +
         '</soap:Body>' +
@@ -2351,7 +2351,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         // メッセージ登録の実行
         await $.ajax({
           type: 'post',
-          url: 'https://2pbkeq40kh30.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.s.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {
@@ -2369,6 +2369,8 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       メッセージの1通目(電話)
     */
     function first_message_call(record){
+
+      
 
       //店名
       if(record.店名.value == undefined || record.店名.value == ''){
