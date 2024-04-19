@@ -741,10 +741,9 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
     
         // 
         if((record.顛末済みフラグ.value == '未送信' && record.総括部長コメント欄.value) || (record.顛末済みフラグ.value == '未送信' && record.顛末確認_部長.value == '〇')){
-            record.顛末報告状況.value = "顛末承認済みのため、メッセージ送信が必要";
+            record.顛末報告状況.value = "〇"; //追加20240412
         }else if((record.報告済みフラグ.value == '未送信' && record.AM報告欄.value) || (record.報告済みフラグ.value == '未送信' && record.顛末.value[0].value.内容_顛末.value)){
-            record.顛末報告状況.value = "顛末記入済みのため、メッセージ送信が必要";
-    
+            record.顛末報告状況.value = "〇"; //追加20240412
         }else{
             record.顛末報告状況.value = '';
         }
@@ -758,6 +757,13 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
 
         }else{
             record.コールセンターメモ_まとめ.value = '';
+        }
+
+        //総括部長コメント欄_一覧用   追加20240412
+        if(record.総括部長コメント欄.value){
+            record.総括部長コメント欄_一覧用.value = "〇";
+        }else{
+            record.総括部長コメント欄_一覧用.value = '';
         }
     
         return event;

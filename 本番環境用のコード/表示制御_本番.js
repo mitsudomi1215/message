@@ -188,8 +188,10 @@ kintone.events.on(["app.record.create.submit","app.record.edit.submit"], event =
         record.未送信フラグ.value = '未送信';
     }else if(record.顛末済みフラグ.value == '未送信' && (record.総括部長コメント欄.value || record.顛末確認_部長.value == '〇')){
         record.未送信フラグ.value = '未送信';
-    }else if(record.ご返信内容_担当者_メール_ネットアンケート.value && (record.ご返信内容_メール_ネットアンケート.value == undefined || record.ご返信内容_メール_ネットアンケート.value == '')){
-        record.未送信フラグ.value = '未送信(担当者入力済み)';
+    }else if(record.ご返信内容_担当者_メール_ネットアンケート.value && (record.ご返信内容_メール_ネットアンケート.value == undefined || record.ご返信内容_メール_ネットアンケート.value == '') && record.上長承認_SV確認.value != '承認(確認)'){
+        record.未送信フラグ.value = '担当者入力済み(未承認)';
+    }else if(record.ご返信内容_担当者_メール_ネットアンケート.value && (record.ご返信内容_メール_ネットアンケート.value == undefined || record.ご返信内容_メール_ネットアンケート.value == '') && record.上長承認_SV確認.value == '承認(確認)'){
+        record.未送信フラグ.value = '未送信（承認済み）';
     }else{
         record.未送信フラグ.value = '';
     }
@@ -738,9 +740,9 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
     
         // 
         if((record.顛末済みフラグ.value == '未送信' && record.総括部長コメント欄.value) || (record.顛末済みフラグ.value == '未送信' && record.顛末確認_部長.value == '〇')){
-            record.顛末報告状況.value = "顛末承認済みのため、メッセージ送信が必要";
+            record.顛末報告状況.value = "〇";
         }else if((record.報告済みフラグ.value == '未送信' && record.AM報告欄.value) || (record.報告済みフラグ.value == '未送信' && record.顛末.value[0].value.内容_顛末.value)){
-            record.顛末報告状況.value = "顛末記入済みのため、メッセージ送信が必要";
+            record.顛末報告状況.value = "〇";
     
         }else{
             record.顛末報告状況.value = '';
@@ -755,6 +757,13 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
 
         }else{
             record.コールセンターメモ_まとめ.value = '';
+        }
+
+        //総括部長コメント欄_一覧用   追加20240412
+        if(record.総括部長コメント欄.value){
+            record.総括部長コメント欄_一覧用.value = "〇";
+        }else{
+            record.総括部長コメント欄_一覧用.value = '';
         }
     
         return event;

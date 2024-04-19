@@ -29,16 +29,19 @@
        * ${XXXX}の箇所は入力値等で置換して使用
        */
     const MSG_ADD_TEMPLATE =
-            '<parameters> '+
-            '<request_token>${REQUEST_TOKEN}</request_token>' +
-            '<create_thread> '+
-              '<thread id="dummy" version="dummy" subject="${TITTLE}" confirm="false"> '+
-                '${ADDRESSEE}' +
-                '<content body="${MAIN_TEXT}"></content> '+
-              ' <folder user_id="dammy"></folder> '+
-            ' </thread> '+
-          ' </create_thread> '+
-          '</parameters>';
+      '<parameters>' +
+        '<request_token>${REQUEST_TOKEN}</request_token>' +
+        '<create_thread>' +
+          '<thread id="dummy" version="dummy" subject="${TITTLE}" confirm="false">' +
+            '${ADDRESSEE}' +
+            '<content body="${MAIN_TEXT}">' +
+              '${FILE_TEMPLATES}' + // ここにファイルテンプレートを追加  追加20240419
+            '</content>' +
+            '<folder user_id="dammy"></folder>' +
+          '</thread>' +
+            '${FILE_CONTENTS}' + // ここにファイル内容を追加   追加20240419
+        '</create_thread>' +
+      '</parameters>';
 
     /**
      * メッセージ送信先パラメータテンプレート
@@ -81,58 +84,124 @@
       return defer.promise();
     };
 
-    //メッセージ実行の共通処理(ユーザーフィールド)
-    const performCommonAction = async (action, code, content , URL ) => {
+    // メッセージの実行共通処理
+    const performCommonAction = async (action, code, content, URL, record) => {
+      let base64data = null; // 初期化
+    
       try {
-
-        // //空の配列を作成
-        // let test = [];
-        // for(let iz =0;iz <code.length; iz++){
-        //   test.push( await fetchGaroonUserByCode(code[iz]));
-        // }
-
         // 複数人への送信内容をまとめる配列
-        const userParams = [];
-        for (let i = 0; i < code.length; i++) {
-          userParams.push(ADDRESSEE_TEMPLATE.replace('${USER_ID}', code[i]));
-        }
-        // let targetUser = await fetchGaroonUserByCode(code);
-        let requestToken = await getRequestToken();
-
+        const userParams = code.map(userId => ADDRESSEE_TEMPLATE.replace('${USER_ID}', userId));
+    
+        // トークン取得
+        const requestToken = await getRequestToken();
+    
         // 送信するメッセージパラメータを作成
         let msgAddParam = MSG_ADD_TEMPLATE;
         msgAddParam = msgAddParam.replace('${REQUEST_TOKEN}', escapeHtml(requestToken));
         msgAddParam = msgAddParam.replace('${TITTLE}', content);
-        // msgAddParam = msgAddParam.replace('${USER_ID}', targetUser.id); // targetUserのidを使用,targetUser.id
         msgAddParam = msgAddParam.replace('${ADDRESSEE}', userParams.join(''));
         const body = URL.replace(/\n/g, '&#10;');
-        msgAddParam = msgAddParam.replace('${MAIN_TEXT}', body); 
+        msgAddParam = msgAddParam.replace('${MAIN_TEXT}', body);
+
+/////ファイル添付処理/  追加20240419////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+          let file_data_summary = [];
+          if(record.ファイル添付1回目.value){
+            for(let i=0; i<record.ファイル添付1回目.value.length; i++){
+              file_data_summary.push(record.ファイル添付1回目.value[i]);
+            }
+          }
+
+          if(record.ファイル添付1回目_口コミ.value){
+            for(let i=0; i<record.ファイル添付1回目_口コミ.value.length; i++){
+              file_data_summary.push(record.ファイル添付1回目_口コミ.value[i]);
+            }
+          }
+
+          if(record.ファイル添付2回目.value){
+            for(let i=0; i<record.ファイル添付2回目.value.length; i++){
+              file_data_summary.push(record.ファイル添付2回目.value[i]);
+            }
+          }
+
+          if(record.ファイル添付3回目.value){
+            for(let i=0; i<record.ファイル添付3回目.value.length; i++){
+              file_data_summary.push(record.ファイル添付3回目.value[i]);
+            }
+          }
+
+          // ファイル添付のテンプレートを作成
+          let fileTemplates = '';
+          let fileContents = '';
+
+          if (file_data_summary) {
+            for (let i = 0; i < file_data_summary.length; i++) {
+              const { fileKey, name, contentType } = file_data_summary[i];
+
+              const headers = {
+                'X-Requested-With': 'XMLHttpRequest',
+              };
+
+              // ファイルデータを取得
+              const resp = await fetch(`/k/v1/file.json?fileKey=${fileKey}`, {
+                method: 'GET',
+                headers,
+              });
+
+              const blob = await resp.blob();
+
+              const base64data = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = () => {
+                  const base64 = reader.result.split(',')[1];
+                  resolve(base64);
+                };
+                reader.onerror = reject;
+              });
+
+              // テンプレートの置換を行う
+            const fileTemplate = `<file id="${i}" name="${name}" mime_type="${contentType}"></file>`;
+            const fileContent = `<file xmlns="" id="${i}"><content xmlns="">${base64data}</content></file>`;
+
+
+              fileTemplates += fileTemplate;
+              fileContents += fileContent;
+            }
+          }
+
+          // テンプレートにファイル情報とファイル内容を埋め込む
+          msgAddParam = msgAddParam.replace('${FILE_TEMPLATES}', fileTemplates);
+          msgAddParam = msgAddParam.replace('${FILE_CONTENTS}', fileContents);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-        let msgAddRequest = SOAP_TEMPLATE;
         // SOAPパラメータを完成させる
+        let msgAddRequest = SOAP_TEMPLATE;
         msgAddRequest = msgAddRequest.replace('${PARAMETERS}', msgAddParam);
-
-        // 実行処理を指定
         msgAddRequest = msgAddRequest.split('${ACTION}').join('MessageCreateThreads');
-
+    
         // メッセージ登録の実行
-        await $.ajax({
+        const responseData = await $.ajax({
           type: 'post',
-          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp', //変更
           cache: false,
-          async: false,
           data: msgAddRequest,
-        }).then(function(responseData) {
-          console.log(responseData); // レスポンスデータをコンソールに表示
-          //送信履歴をフィールドに代入
-          
+          dataType: 'xml',  // XML 形式のレスポンスを指定
+        })
+        .done((response) => {
+          // console.warn("サーバーレスポンス:", response);
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          console.error("(送信処理)HTTPエラーが発生しました:", textStatus, errorThrown);
         });
+    
       } catch (error) {
         console.error("エラーが発生しました:", error);
       }
     };
+    
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //kintoneユーザーコードからGaroonのユーザー情報を取得
       const fetchGaroonUserByCode = async (code) => {
         const response = await fetch("/g/api/v1/base/users?name=" + code, {
@@ -144,7 +213,6 @@
         });
         const body = await response.json();
         const targetUser =  body.users.filter((user) => user.code === code)[0];
-        // console.warn("ターゲットユーザー",targetUser);
       return targetUser;
     };
 
@@ -225,7 +293,7 @@
        * ${XXXX}の箇所は入力値等で置換して使用
        */
       const MSG_SEARCH_TEMPLATE =
-      '<parameters text="kintone" start="2010-07-01T00:00:00Z" end="2037-12-31T00:00:00Z" search_sub_folders="true" title_search="true" body_search="false" from_search="false" addressee_search="false" follow_search="false">' +
+      '<parameters text="【kintone】" start="2010-07-01T00:00:00Z" end="2037-12-31T00:00:00Z" search_sub_folders="true" title_search="true" body_search="false" from_search="false" addressee_search="false" follow_search="false">' +
       '<request_token>${REQUEST_TOKEN}</request_token>' +
       '<create_thread>' +
       '</create_thread>' + 
@@ -379,7 +447,7 @@
             } catch (error) {
             console.error("エラーが発生しました:", error);
             }
-      };
+        };
       GaroonCreateLink(record);
       //詳細画面で、リンクを作成する処理はここまで
     }
@@ -518,7 +586,7 @@
 //編集画面で保存ボタンを押したとき、メッセージを送信する処理
 //-------------------------------------------------------------------------------------------------
 kintone.events.on(['app.record.edit.submit.success'], async (event) => {
-  let record = event.record;
+  const record = event.record;
 
   // 文字を作成
   // 改行で文字列を分割し、配列に変換
@@ -534,14 +602,13 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 
   //Garoonメッセージ送信ボタンの横に最終更新日を表示
   const adjacentText = '最終送信日時:' + lastDateString;
-    
-
+  
   if (record.Garoonメッセージ送信制御.value == '送信する') {
     const appId = event.appId;
     const recordId = event.recordId;
     
     //お試し版URL【変更】
-    const kntAppURL = 'https://watami.cybozu.com/k/875/';
+    const kntAppURL = 'https://watami.cybozu.com/k/892/';
     //URLを作成
     let URL =  kntAppURL + 'show#record=' + record.$id.value;
     
@@ -560,9 +627,13 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         async () => {
           //モーダルを閉じる
           window.swal.close();
+
+          //読み込みモーダルを表示
+          showLoadingModal();
+
           //メッセージを送信する処理
           // お試し版URL【変更】URLとアプリID
-          const kntAppURL = 'https://watami.cybozu.com/k/875/';
+          const kntAppURL = 'https://watami.cybozu.com/k/892/';
           // URLを作成
           let URL = kntAppURL + 'show#record=' + record.$id.value;
           // ユーザー情報を格納する変数
@@ -580,7 +651,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           //   userCodes.push(call_center_garoon_user_id['id']);
           // }
           //店舗名
-          if(record.店舗名.value.length != 0 && record.ガルーン宛先に店舗を入れるor入れない.value != '入れない'){
+          if(record.Garoonのみ契約店舗のGaroonID.value  && record.ガルーン宛先に店舗を入れるor入れない.value == '入れる'){
+            userCodes.push(record.Garoonのみ契約店舗のGaroonID.value);
+          }else if(record.店舗名.value.length != 0 && record.ガルーン宛先に店舗を入れるor入れない.value == '入れる'){
             let store_name_field = record.店舗名.value;
             let store_name_field_garoon_user_id = await fetchGaroonUserByCode(store_name_field[0]['code']);
             userCodes.push(store_name_field_garoon_user_id['id']);
@@ -1661,20 +1734,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           let uniqueUserCodes = [...new Set(userCodes)];
           
           //-----------------------------------------------------
-          //メッセージ送信時、区分
-          //-----------------------------------------------------
-
-          if(record.アンケート報告書.value == '要'){
-            if(record.区分3.value == 'A報保存済'){
-              var enquete_result = 'A報保存済';
-            }else{
-              var enquete_result = 'A報請求済中';
-            }
-          }else{
-            var enquete_result = ''
-          }
-          //-----------------------------------------------------
-          //送信フラグ
+          //送信フラグの変更
           //-----------------------------------------------------
           //【送信2回目フラグ】1回目が送信済みであれば、2回目フラグを送信済みにする
           if((record.送信1回目フラグ.value == '送信済み' && record.ご返信内容_メール_ネットアンケート.value) || (record.送信1回目フラグ.value == '送信済み' && record.ご返信内容_口コミ.value) || record.送信2回目フラグ.value == '送信済み' ){ 
@@ -1731,7 +1791,35 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           // }else{
           //   var send_flag_enquete_report = '未送信'; 
           // }
+/////////////////////////////////////////////////////////////////////////////////追加20240419
+          //添付ファイルについて
+          let file_data = [];
+            if(record.ファイル添付1回目.value){
+              for(let i=0; i<record.ファイル添付1回目.value.length; i++){
+                file_data.push(record.ファイル添付1回目.value[i]['name']);
+              }
+            }
+      
+            if(record.ファイル添付1回目_口コミ.value){
+              for(let i=0; i<record.ファイル添付1回目_口コミ.value.length; i++){
+                file_data.push(record.ファイル添付1回目_口コミ.value[i]['name']);
+              }
+            }
+      
+            if(record.ファイル添付2回目.value){
+              for(let i=0; i<record.ファイル添付2回目.value.length; i++){
+                file_data.push(record.ファイル添付2回目.value[i]['name']);
+              }
+            }
+      
+            if(record.ファイル添付3回目.value){
+              for(let i=0; i<record.ファイル添付3回目.value.length; i++){
+                file_data.push(record.ファイル添付3回目.value[i]['name']);
+              }
+            }
 
+            let file_name = file_data.join(', ');
+//////////////////////////////////////////////////////////////////////////////////
           const params = {
             app: event.appId,		// アプリID
             id: event.recordId,	// レコードID
@@ -1760,14 +1848,14 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
               顛末済みフラグ: {
                 value: ending_flag
               },
-              区分3: {
-                value: enquete_result
-              },
               Garoonメッセージ送信制御 :{
                 value: '送信しない' 
               },
               未送信フラグ :{
                 value: ''
+              },
+              一度送信した添付ファイル名:{ //追加20240419
+                value: file_name
               }
             }
           };
@@ -1905,7 +1993,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             var reception_method = record.受付方法.value;
           }
 
-          //Garoonメッセージのタイトル
+          //Garoonメッセージのタイトル(20240422テストコード変更)
           if(record.店名.value){
             var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + reception_method + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
           }else if(record.本部関連_商品関連の宛先を取得1.value){
@@ -1914,23 +2002,102 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + reception_method + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
           }
 
-          performCommonAction('申請', uniqueUserCodes, content, body)
+          performCommonAction('申請', uniqueUserCodes, content, body ,record)
             .then(function () {
               //Garoonのメッセージが2通以上ある場合、1通目を更新して,2通目以降を削除
               GaroonMessageUpdateDelete(record);
               //送信履歴フィールドを更新
               send_content_update(record);
-              
+
               setTimeout(() => {
                 //リロード
-                window.location.reload();
-              }, 3000);  
+                // window.location.reload();
+              }, 2500);
+
+              // // 1秒後にモーダルを非表示にする
+              // setTimeout(function() {
+              //   closeLoadingModal();
+              // }, 1300);
+
           })
         }
       );
   }
   return event;
 });
+
+//--------------------------------------------------
+//メッセージ送信時のモーダル
+//--------------------------------------------------
+// モーダルを作成
+var modal = document.createElement('div');
+modal.style.display = 'none';
+modal.style.position = 'fixed';
+modal.style.zIndex = '1000';
+modal.style.left = '0';
+modal.style.top = '0';
+modal.style.width = '100%';
+modal.style.height = '100%';
+modal.style.overflow = 'auto';
+modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+
+// モーダルコンテンツを作成
+var modalContent = document.createElement('div');
+modalContent.style.backgroundColor = '#fefefe';
+modalContent.style.margin = '15% auto';
+modalContent.style.padding = '20px';
+modalContent.style.borderRadius = '10px';
+modalContent.style.width = '80%';
+modalContent.style.maxWidth = '400px';
+modalContent.style.textAlign = 'center';
+
+// メッセージを表示する要素を作成
+var message = document.createElement('p');
+message.textContent = 'メッセージを送信中です...';
+message.style.marginBottom = '20px';
+
+// スピナーを表示する要素を作成
+var spinner = document.createElement('div');
+spinner.className = 'spinner-border';
+spinner.style.width = '3rem';
+spinner.style.height = '3rem';
+spinner.setAttribute('role', 'status');
+
+// スピナーに対する補助テキストを追加
+var spinnerText = document.createElement('span');
+spinnerText.className = 'sr-only';
+spinnerText.textContent = 'Loading...';
+spinner.appendChild(spinnerText);
+
+// テキストを表示する要素を作成
+var loadingText = document.createElement('p');
+loadingText.textContent = 'メッセージ送信中です...';
+loadingText.style.marginTop = '10px';
+loadingText.style.fontFamily = 'Arial, sans-serif';
+loadingText.style.fontSize = '16px';
+loadingText.style.color = '#333';
+
+// モーダルに要素を追加
+modalContent.appendChild(message);
+modalContent.appendChild(spinner);
+modalContent.appendChild(loadingText);
+modal.appendChild(modalContent);
+
+// モーダルを表示する関数
+function showLoadingModal(messageContent) {
+  message.textContent = messageContent;
+  spinner.style.display = 'inline-block';
+  modal.style.display = 'block';
+}
+
+// モーダルを閉じる関数
+function closeLoadingModal() {
+  spinner.style.display = 'none';
+  modal.style.display = 'none';
+}
+
+// モーダル要素をbodyに追加
+document.body.appendChild(modal);
 
 //-------------------------------------------------------------------
 //Garoonのメッセージを検索➝更新➝削除する処理
@@ -1971,27 +2138,27 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           }).then(function(responseData) {
               // 検索結果をXMLからテキストに変換
             let responseText = new XMLSerializer().serializeToString(responseData);
-            // console.warn("検索結果です。" + responseText); // レスポンスデータをコンソールに表示
 
             // XML文字列をXMLドキュメントに変換
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(responseText, "text/xml");
 
             // thread要素のリストを取得
-            let threads = xmlDoc.querySelectorAll('thread');
+            var threads = xmlDoc.querySelectorAll('thread');
 
             // subjectごとのthreadのIDを保持するオブジェクト
-            let subjectThreadIds = {};
+            var subjectThreadIds = {};
 
             // 同じsubjectを持つthreadのIDを配列に追加
             threads.forEach(thread => {
               //タイトルを取得
-              let subjectGet = thread.getAttribute('subject');
+              var subjectGet = thread.getAttribute('subject');
+
               if (subjectGet !== null && subjectGet !== undefined) {
                 //タイトルの【kintone】から左側を全て削除し、
-                let subject = subjectGet.replace(/.*【kintone】/, ''); // 変数の宣言と同時に初期化
+                var subject = subjectGet.replace(/.*【kintone】/, ''); // 変数の宣言と同時に初期化
 
-                let threadId = thread.getAttribute('id');
+                var threadId = thread.getAttribute('id');
               
                 if (!subjectThreadIds[subject]) {
                   subjectThreadIds[subject] = [];
@@ -2010,18 +2177,14 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             Object.keys(subjectThreadIds).forEach(subject => {
               subjectThreadIds[subject].sort((a, b) => a - b);
             });
-            // console.warn("これは",subjectThreadIds);
             //配列にする
             let threadsArray = Array.from(threads);
             //空の配列を作成
             let newArray = [];
-              // console.warn("繰り返し処理の前の配列",threadsArray);
             //繰り返し
-            Object.keys(subjectThreadIds).forEach(subject => {
-              // console.warn("繰り返しのkey",subject);
+            Object.keys(subjectThreadIds).forEach(async(subject) => {
               //同じメッセージが2つ以上見つかった時
               if (subjectThreadIds[subject].length >= 2) {
-                // console.warn("処理入ってきた?");
                   //1通目のメッセージIDを取得
                   let firstID = subjectThreadIds[subject][0];
                   // console.warn("1通目のメッセージを取得",firstID);
@@ -2029,11 +2192,12 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   //宛先を保持
                   //1通目の情報を取得
                   let FirstTargetThread = threadsArray.find(thread => thread.getAttribute('id') == firstID);
+                // console.warn("1通目の情報を抜き取る",FirstTargetThread);
 
                   //1通目のDocumentオブジェクトを得る
                   const FirstXMLparser = new DOMParser();
                   const FirstXMLparserxmlDoc = FirstXMLparser.parseFromString(FirstTargetThread.outerHTML, "application/xml");
-                  // console.warn("テスト2",FirstXMLparserxmlDoc);
+                  console.warn("1通目の情報を抜き取る",FirstXMLparserxmlDoc);
 
                   //1通目のsubjectタグ情報を抜き取る
                   const threadElementGet= FirstXMLparserxmlDoc.getElementsByTagName('thread');
@@ -2049,11 +2213,13 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   const FinalXMLparser = new DOMParser();
                   const FinalXMLparserxmlDoc = FinalXMLparser.parseFromString(FinalTargetThread.outerHTML, "application/xml");
 
-                  // console.warn("テスト",FinalXMLparserxmlDoc);
+                  // console.warn("最後のメッセージのオブジェクト",FinalXMLparserxmlDoc);
                   
                   // 名前空間を指定してaddresseeタグのユーザーIDを抜き取る
                   const addresseeElements = FinalXMLparserxmlDoc.getElementsByTagName('th:addressee');
                   const addresseeUserIds = Array.from(addresseeElements).map(addressee => addressee.getAttribute('user_id'));
+
+                  // console.warn("最後のメッセージのユーザーID",addresseeUserIds);
 
                   const subjectElements = FinalXMLparserxmlDoc.getElementsByTagName('thread');
                   const subjectFinalMessageArray  = Array.from(subjectElements).map(thread => thread.getAttribute('subject'));
@@ -2105,15 +2271,18 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                   // newArrayを1つの文字列にまとめる
                   let resultString = '';
 
+                  // console.warn("newArrayの情報です",newArray);
+
                   for (let i = 0; i < newArray.length; i++) {
 
                     let replacedString = newArray[i];
 
                     // newArray[i]の中に【受付1(始)】があれば、置き換える
-                    if (newArray[i].includes("【受付1(始)】")) {
+                    if (newArray[i].includes("【受付1(始)】") && newArray[i].includes(record.店名.value)) {
                       if(record.受付方法.value == '電話' ){
+                        // console.warn("電話1回目置き換え");
                         var first_message_result = first_message_call(record);
-                      }else if(record.受付方法.value == 'メール'||record.受付方法.value == 'ネットアンケート'){
+                      }else if(record.受付方法.value == 'メール'|| record.受付方法.value == 'ネットアンケート'){
                         var first_message_result = first_message_mail(record);
                       }else {
                         var first_message_result = first_message_review(record);
@@ -2187,24 +2356,25 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
                       resultString += '\n';
                     }
                   }
+                  // console.warn("置き換えた後のデータ",resultString);
 
                   //メッセージ更新処理
-                  MessageUpdate(firstID,resultString,send_subject,addresseeUserIds);
+                  await MessageUpdate(firstID,resultString,send_subject,addresseeUserIds,record);
 
                   // //1通目以外のメッセージを削除
                   let index = subjectThreadIds[subject].indexOf(firstID);
                   if (index !== -1) {
                   subjectThreadIds[subject].splice(index, 1);
                   }
-                  setTimeout(function() {
+                  // setTimeout(function() {
                     // ここに実行したいコードを書く
                     for (const id of subjectThreadIds[subject]) {
                       // id は配列内の各数字、ここで繰り返し処理を行う
                       //削除処理
-                      MessageDelete(id);
+                        await MessageDelete(id);
                     }
-                  }, 100);
-              }
+                  // }, 100);
+              } 
             });
           });
         } catch (error) {
@@ -2246,9 +2416,12 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           '<modify_thread>'+
             '<thread id="${MESSAGE_ID}" version="dummy" subject="${SUBJECT}" confirm="false">'+
               '${ADDRESSEE}' +
-              '<content body="${MAIN_TEXT}"></content>'+
+              '<content body="${MAIN_TEXT}">' +
+                '${FILE_TEMPLATES}' + // ここにファイルテンプレートを追加     追加20240419
+              '</content>'+
               '<folder id="dummy"></folder>'+
             '</thread>'+
+            '${FILE_CONTENTS}' + // ここにファイル内容を追加    追加20240419
           ' </modify_thread>'+
           '</parameters>';
 
@@ -2260,7 +2433,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
   '<addressee user_id="${USER_ID}" name="dummy" deleted="false"></addressee>';
           
   //メッセージ実行の共通処理(ユーザーフィールド)
-  const MessageUpdate = async (message_id,main_text,subjectText,addresseeUserIds) => {
+  const MessageUpdate = async (message_id,main_text,subjectText,addresseeUserIds,record) => {
     try {
 
       let requestTokenaaa = await getRequestToken();
@@ -2278,6 +2451,89 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       msgUpdataParam = msgUpdataParam.replace('${SUBJECT}', subjectText); //タイトル
       const mainTextWithEscapedNewlines = main_text.replace(/\n/g, '&#10;');
       msgUpdataParam = msgUpdataParam.replace('${MAIN_TEXT}', mainTextWithEscapedNewlines);
+            /////ファイル添付処理   追加20240419/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            let file_data_summary = [];
+            if(record.ファイル添付1回目.value){
+              for(let i=0; i<record.ファイル添付1回目.value.length; i++){
+                if(!record.一度送信した添付ファイル名.value.includes(record.ファイル添付1回目.value[i]['name'])){
+                  file_data_summary.push(record.ファイル添付1回目.value[i]);
+                }
+
+              }
+            }
+      
+            if(record.ファイル添付1回目_口コミ.value){
+              for(let i=0; i<record.ファイル添付1回目_口コミ.value.length; i++){
+                if(!record.一度送信した添付ファイル名.value.includes(record.ファイル添付1回目_口コミ.value[i]['name'])){
+                  file_data_summary.push(record.ファイル添付1回目_口コミ.value[i]);
+                }
+
+              }
+            }
+      
+            if(record.ファイル添付2回目.value){
+              for(let i=0; i<record.ファイル添付2回目.value.length; i++){
+                if(!record.一度送信した添付ファイル名.value.includes(record.ファイル添付2回目.value[i]['name'])){
+                  file_data_summary.push(record.ファイル添付2回目.value[i]);
+                }
+              }
+            }
+      
+            if(record.ファイル添付3回目.value){
+              for(let i=0; i<record.ファイル添付3回目.value.length; i++){
+                if(!record.一度送信した添付ファイル名.value.includes(record.ファイル添付3回目.value[i]['name'])){
+                  file_data_summary.push(record.ファイル添付3回目.value[i]);
+                }
+              }
+            }
+      
+            // ファイル添付のテンプレートを作成
+            let fileTemplates = '';
+            let fileContents = '';
+      
+            // console.warn("添付ファイルの内容",file_data_summary);
+            if (file_data_summary) {
+              for (let i = 0; i < file_data_summary.length; i++) {
+                const { fileKey, name, contentType } = file_data_summary[i];
+      
+                const headers = {
+                  'X-Requested-With': 'XMLHttpRequest',
+                };
+      
+                // ファイルデータを取得
+                const resp = await fetch(`/k/v1/file.json?fileKey=${fileKey}`, {
+                  method: 'GET',
+                  headers,
+                });
+      
+                const blob = await resp.blob();
+      
+                const base64data = await new Promise((resolve, reject) => {
+                  const reader = new FileReader();
+                  reader.readAsDataURL(blob);
+                  reader.onloadend = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                  };
+                  reader.onerror = reject;
+                });
+
+                // テンプレートの置換を行う
+                const fileTemplate = `<file id="${i}" name="${name}" mime_type="${contentType}"></file>`;
+                const fileContent = `<file xmlns="" id="${i}"><content xmlns="">${base64data}</content></file>`;
+      
+      
+                fileTemplates += fileTemplate;
+                fileContents += fileContent;
+              }
+            }
+      
+            // テンプレートにファイル情報とファイル内容を埋め込む
+            msgUpdataParam = msgUpdataParam.replace('${FILE_TEMPLATES}', fileTemplates);
+            msgUpdataParam = msgUpdataParam.replace('${FILE_CONTENTS}', fileContents);
+      
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       msgUpdataParam = msgUpdataParam.replace('${ADDRESSEE}', userParams.join(''));//宛先を全員分追加
 
       let msgUpdateRequest = SOAP_UPDATE_TEMPLATE;
@@ -2287,18 +2543,21 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       msgUpdateRequest = msgUpdateRequest.split('${ACTION}').join('MessageModifyThreads');
 
       // メッセージ登録の実行
-      await $.ajax({
+      const responseData = await $.ajax({
         type: 'post',
         url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
         cache: false,
-        async: false,
-        data: msgUpdateRequest
-      }).then(function(responseData) {
-        // console.warn("更新に成功",responseData); // レスポンスデータをコンソールに表示
+        data: msgUpdateRequest,
+        dataType: 'xml',  // XML 形式のレスポンスを指定　　　//追20240419
+      }).done((response) => {
+        console.warn("更新処理に成功:", response);
+      })
+      .fail((jqXHR, textStatus, errorThrown) => {
+        console.error("(更新処理)HTTPエラーが発生しました:", textStatus, errorThrown);
       });
 
     } catch (error) {
-      // console.error("エラーが発生しました:", error);
+      console.error("エラーが発生しました:", error);
     }
   };
 
@@ -2339,10 +2598,8 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     //メッセージ実行の共通処理(ユーザーフィールド)
     const MessageDelete = async (delete_id) => {
       try {
-        // console.warn("メッセージ削除処理に入ってきた");
         //リクエストのテンプレート
         let msgDeleteRequest = SOAP_DELETE_TEMPLATE;
-        // console.warn("削除処理に入ってきた。");
         //削除するIDを置換
         msgDeleteRequest = msgDeleteRequest.replace('${DELETE_ID}', delete_id );
   
@@ -2356,11 +2613,12 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           cache: false,
           data: msgDeleteRequest,
         }).then(function(responseData) {
-          window.location.reload();
+          // //削除に成功したら、リロード
+          // window.location.reload();
           // console.warn("削除に成功"); // レスポンスデータをコンソールに表示
         });
       } catch (error) {
-        console.error("エラーが発生しました:", error);
+        console.error("削除処理に失敗しました。:", error);
       }
     };
 
@@ -2374,7 +2632,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
 
       //受信日時 (追加20240410)
       if(record.受信日時_電話.value == '' || record.受信日時_電話.value == undefined){
-          var receiving_time_call = '' ;
+        var receiving_time_call = '' ;
       }else {
           var dateTime_call = new Date(record.受信日時_電話.value);
           // const dateTime = visits_date_time_call.toISOString('ja-JP', options).split(' ')[0];
@@ -2392,8 +2650,6 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           // 受信日時
           var receiving_time_call = `${year_call}年${month_call}月${day_call}日${hours_call}時${minutes_call}分`;
       }
-      
-
       //店名
       if(record.店名.value == undefined || record.店名.value == ''){
         var store_name = '';
@@ -2522,7 +2778,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       }else if (record.アンケート報告書.value == '否'){
           Garoon_message = 
           '【受付1(始)】' + '\n' + 
-          '受信日時　　:' + receiving_time_call + '\n' +  //追加20240410 
+          '受信日時　　:' + receiving_time_call + '\n' + //追加20240410 
           'ご利用店舗　:' + store_name + '\n' + 
           'ご来店日　　:' + visits_date_call + '\n' + 
           '来店時間　　:' + visits_time_call +'\n' + 
@@ -2592,7 +2848,6 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
       メッセージの1通目(メール_ネットアンケート)
     */
     function first_message_mail(record){
-
         //受信日時 (追加20240410)
         if(record.受信日時_メール_ネットアンケート.value == '' || record.受信日時_メール_ネットアンケート.value == undefined){
           var receiving_time_mail = '' ;
@@ -2704,7 +2959,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             '受信日時　　:' + receiving_time_mail + '\n' + //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_mail_net + '\n' + 
-            '来店日時　　:' + visits_time_mail_net +'\n' + 
+            '来店時間　　:' + visits_time_mail_net +'\n' + 
             '利用人数　　:' + use_count + '\n' +  
             'お気づきの内容:'+ '\n' + opinion_detail + '\n' + '\n' +
             '総合評価　　:' + evaluation_mail + '\n' + 
@@ -2717,10 +2972,10 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
             '【受付1(始)】' + '\n' + 
-            '受信日時　　:' + receiving_time_mail + '\n' +  //追加20240410
+            '受信日時　　:' + receiving_time_mail + '\n' + //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_mail_net + '\n' + 
-            '来店日時　　:' + visits_time_mail_net +'\n' + 
+            '来店時間　　:' + visits_time_mail_net +'\n' + 
             '利用人数　　:' + use_count + '\n' +  
             'お気づきの内容:'+ '\n' + opinion_detail + '\n' + '\n' +
             '総合評価　　:' + evaluation_mail + '\n' + 
@@ -2874,7 +3129,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             '受付日時　　:' + receiving_time_review + '\n' + //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_review + '\n' + 
-            '来店日時　　:' + visits_time_review +'\n' + 
+            '来店時間　　:' + visits_time_review +'\n' + 
             'お気づきの内容:'+ '\n' + opinion_detail_review + '\n' + '\n' +
             '総合評価　　:' + evaluation_review + '\n' + 
             '漢字氏名　　:' + name_review + '\n' + '\n' + 
@@ -2886,13 +3141,14 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             '受付日時　　:' + receiving_time_review + '\n' + //追加20240410
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_review + '\n' + 
-            '来店日時　　:' + visits_time_review +'\n' + 
+            '来店時間　　:' + visits_time_review +'\n' + 
             'お気づきの内容:'+ '\n' + opinion_detail_review + '\n' + '\n' +
             '総合評価　　:' + evaluation_review + '\n' + 
             '漢字氏名　　:' + name_review + '\n' + '\n' + 
             '※顛末（またはA報告）についてアプリへ記入後、保存ボタンをクリックお願い致します。' + '\n' +
             '【受付1(終)】' ;
         }
+
         return Garoon_message;
     }
 

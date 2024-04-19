@@ -26,6 +26,7 @@
                         record.営業部連絡先.value = records[0].AM電話番号.value;
                     }
                     record.ガルーン宛先に店舗を入れるor入れない.value = records[0].ガルーン宛先に店舗を入れるor入れない.value;
+                    record.Garoonのみ契約店舗のGaroonID.value = records[0].Garoonのみ契約店舗のGaroonID.value;
                     record.冒頭文名前.value = records[0].冒頭文名前.value;
 
                     //権限追加ユーザー1~34まで代入していく
