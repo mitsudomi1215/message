@@ -11,7 +11,7 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
     // console.warn("ログインユーザー情報",GetLoginUser);
 
     //【変更】ログインユーザーが1以外のユーザーにはフィールドを隠す処理(環境が変わった際は、メッセージの更新・削除を行うユーザーにしてください。)
-    if(GetLoginUser.id != 5790){
+    if (GetLoginUser.id != 5790 && GetLoginUser.id != 8561) {
         kintone.app.record.setFieldShown('Garoonメッセージ送信制御', false);
         kintone.app.record.setFieldShown('Garoon送信メッセージ内容', false);
         kintone.app.record.setFieldShown('Garoon送信履歴', false);
@@ -87,7 +87,9 @@ kintone.events.on(["app.record.create.show","app.record.detail.show","app.record
     }
 
     //システム管理者用グループを非表示にする
-    kintone.app.record.setFieldShown('システム管理者用',false); 
+    if(GetLoginUser.id != 8663 && GetLoginUser.id != 8561){
+        kintone.app.record.setFieldShown('システム管理者用',false); 
+    }
 
     return event;
 });
@@ -700,7 +702,7 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         //ユーザー情報を取得
         var GetLoginUser = kintone.getLoginUser()
         //【変更】ログインユーザーが1以外のユーザーにはフィールドを隠す処理(環境が変わった際は、メッセージの更新・削除を行うユーザーにしてください。)
-        if(GetLoginUser.id == 5790){
+        if(GetLoginUser.id == 5790 || GetLoginUser.id == 8561){
             // スペースフィールド
             const element = kintone.app.record.getSpaceElement('send_message');
             element.innerHTML = '1通目の送信後は画面再更新後、Garoonリンクが作成されます。　' + '\n' + '2通目以降は送信後、ログイン画面に遷移します';
@@ -837,7 +839,9 @@ kintone.events.on(["app.record.detail.show","app.record.edit.show","app.record.p
         }
     
         //システム管理者用を非表示にする
-        kintone.app.record.setFieldShown('システム管理者用',false); 
+        if(GetLoginUser.id != 8663){
+            kintone.app.record.setFieldShown('システム管理者用',false); 
+        }
         return event;
     });
 

@@ -29,16 +29,19 @@
        * ${XXXX}の箇所は入力値等で置換して使用
        */
     const MSG_ADD_TEMPLATE =
-            '<parameters> '+
-            '<request_token>${REQUEST_TOKEN}</request_token>' +
-            '<create_thread> '+
-              '<thread id="dummy" version="dummy" subject="${TITTLE}" confirm="false"> '+
-                '${ADDRESSEE}' +
-                '<content body="${MAIN_TEXT}"></content> '+
-              ' <folder user_id="dammy"></folder> '+
-            ' </thread> '+
-          ' </create_thread> '+
-          '</parameters>';
+      '<parameters>' +
+        '<request_token>${REQUEST_TOKEN}</request_token>' +
+        '<create_thread>' +
+          '<thread id="dummy" version="dummy" subject="${TITTLE}" confirm="false">' +
+            '${ADDRESSEE}' +
+            '<content body="${MAIN_TEXT}">' +
+              '${FILE_TEMPLATES}' + // ここにファイルテンプレートを追加 
+            '</content>' +
+            '<folder user_id="dammy"></folder>' +
+          '</thread>' +
+            '${FILE_CONTENTS}' + // ここにファイル内容を追加
+        '</create_thread>' +
+      '</parameters>';
 
     /**
      * メッセージ送信先パラメータテンプレート
@@ -82,7 +85,7 @@
     };
 
     //メッセージ実行の共通処理(ユーザーフィールド)
-    const performCommonAction = async (action, code, content , URL ) => {
+    const performCommonAction = async (action, code, content , URL ,record) => {
       try {
 
         // //空の配列を作成
@@ -105,8 +108,78 @@
         msgAddParam = msgAddParam.replace('${TITTLE}', content);
         // msgAddParam = msgAddParam.replace('${USER_ID}', targetUser.id); // targetUserのidを使用,targetUser.id
         msgAddParam = msgAddParam.replace('${ADDRESSEE}', userParams.join(''));
-        const body = URL.replace(/\n/g, '&#10;');
-        msgAddParam = msgAddParam.replace('${MAIN_TEXT}', body); 
+        const escapedBody = escapeHtml(URL).replace(/\n/g, '&#10;');
+        msgAddParam = msgAddParam.replace('${MAIN_TEXT}', escapedBody);
+
+        //ファイル添付処理-追加20240419
+        let file_data_summary = [];
+        if(record.ファイル添付1回目.value){
+          for(let i=0; i<record.ファイル添付1回目.value.length; i++){
+            file_data_summary.push(record.ファイル添付1回目.value[i]);
+          }
+        }
+
+        if(record.ファイル添付1回目_口コミ.value){
+          for(let i=0; i<record.ファイル添付1回目_口コミ.value.length; i++){
+            file_data_summary.push(record.ファイル添付1回目_口コミ.value[i]);
+          }
+        }
+
+        if(record.ファイル添付2回目.value){
+          for(let i=0; i<record.ファイル添付2回目.value.length; i++){
+            file_data_summary.push(record.ファイル添付2回目.value[i]);
+          }
+        }
+
+        if(record.ファイル添付3回目.value){
+          for(let i=0; i<record.ファイル添付3回目.value.length; i++){
+            file_data_summary.push(record.ファイル添付3回目.value[i]);
+          }
+        }
+
+        // ファイル添付のテンプレートを作成
+        let fileTemplates = '';
+        let fileContents = '';
+
+        if (file_data_summary) {
+          for (let i = 0; i < file_data_summary.length; i++) {
+            const { fileKey, name, contentType } = file_data_summary[i];
+
+            const headers = {
+              'X-Requested-With': 'XMLHttpRequest',
+            };
+
+            // ファイルデータを取得
+            const resp = await fetch(`/k/v1/file.json?fileKey=${fileKey}`, {
+              method: 'GET',
+              headers,
+            });
+
+            const blob = await resp.blob();
+
+            const base64data = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(blob);
+              reader.onloadend = () => {
+                const base64 = reader.result.split(',')[1];
+                resolve(base64);
+              };
+              reader.onerror = reject;
+            });
+
+            // テンプレートの置換を行う
+          const fileTemplate = `<file id="${i}" name="${name}" mime_type="${contentType}"></file>`;
+          const fileContent = `<file xmlns="" id="${i}"><content xmlns="">${base64data}</content></file>`;
+
+
+            fileTemplates += fileTemplate;
+            fileContents += fileContent;
+          }
+        }
+
+        // テンプレートにファイル情報とファイル内容を埋め込む
+        msgAddParam = msgAddParam.replace('${FILE_TEMPLATES}', fileTemplates);
+        msgAddParam = msgAddParam.replace('${FILE_CONTENTS}', fileContents);
     
         let msgAddRequest = SOAP_TEMPLATE;
         // SOAPパラメータを完成させる
@@ -116,17 +189,21 @@
         msgAddRequest = msgAddRequest.split('${ACTION}').join('MessageCreateThreads');
 
         // メッセージ登録の実行
-        await $.ajax({
+        // メッセージ登録の実行
+        const responseData = await $.ajax({
           type: 'post',
-          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+          url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp', //変更
           cache: false,
-          async: false,
           data: msgAddRequest,
-        }).then(function(responseData) {
-          console.log(responseData); // レスポンスデータをコンソールに表示
-          //送信履歴をフィールドに代入
-          
+          dataType: 'xml',  // XML 形式のレスポンスを指定
+        })
+        .done((response) => {
+          // console.warn("サーバーレスポンス:", response);
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          console.error("(送信処理)HTTPエラーが発生しました:", textStatus, errorThrown);
         });
+
       } catch (error) {
         console.error("エラーが発生しました:", error);
       }
@@ -198,7 +275,7 @@
     //詳細画面でGaroonのリンクを作成する処理
     //----------------------------------------------------
     if(record.Garoonリンク.value == ""){
-      console.warn("リンク作成処理");
+      // console.warn("リンク作成処理");
       /**
        * 共通SOAPコンテンツ
        * ${XXXX}の箇所は実施処理等に合わせて置換して使用
@@ -386,135 +463,6 @@
     }
   });
 
-//----------------------------------------------------------
-//新規画面で保存ボタンを押したとき、メッセージを送信する処理
-//----------------------------------------------------------
-// kintone.events.on(['app.record.create.submit.success'], async (event) => {
-//   event.url = null;
-//   let record = event.record;
-
-//   // 文字を作成
-//   // 改行で文字列を分割し、配列に変換
-//   if(record.Garoon送信履歴.value != ''){
-//     const dateArray =  record.Garoon送信履歴.value.split('\n');
-//   }else{
-//     const dateArray =  record.Garoon送信履歴.value;
-//   }
-//   const dateArray =  record.Garoon送信履歴.value.split('\n');
-
-//   // 一番下の行を取得
-//   const lastDateString = dateArray[dateArray.length - 1];
-
-//   //Garoonメッセージ送信ボタンの横に最終更新日を表示
-//   const adjacentText = '最終送信日時:' + lastDateString;
-    
-
-//   if (record.Garoonメッセージ送信制御.value == '送信する') {
-//     //お試し版URL【変更】
-//     const kntAppURL = 'https://watami.s.cybozu.com/k/822/';
-//     //URLを作成
-//     let URL =  kntAppURL + 'show#record=' + record.$id.value;
-    
-//     // メッセージの送信内容をまとめる
-//     const messageContent = `〇送信内容\n${record.Garoon送信メッセージ内容.value}\n\n${adjacentText}`;
-//     // メッセージの送信内容をまとめる
-//       const swalResult = await window.swal({
-//         title: 'メッセージを送信しますか？',
-//         text: messageContent,
-//         type: 'warning',
-//         showCancelButton: true,
-//         confirmButtonColor: '#DD6B55',
-//         confirmButtonText: '送信する',
-//         cancelButtonText: '送信しない',
-//         closeOnConfirm: false},
-//         () => {
-//           // //モーダルを閉じる
-//           // window.swal.close();
-//           //メッセージを送信する処理
-//           // お試し版URL【変更】URLとアプリID
-//           const kntAppURL = 'https://watami.s.cybozu.com/k/822/';
-//           // URLを作成
-//           let URL = kntAppURL + 'show#record=' + record.$id.value;
-//           // ユーザー情報を格納する変数
-//           let userCodes = [];
-//           // FCのユーザー情報を編集する変数
-//           let userCodes_fc = [];
-//           // 宛先まとめる処理-----------------------------------
-//           // ユーザー選択のコードを変数に代入
-//           if (record.コールセンター上長.value.length != 0) {
-//             let top_userfield = record.コールセンター上長.value;
-//             userCodes.push(top_userfield[0]['code']);
-//           }
-//           if (record.AM.value.length != 0) {
-//             let userfield = record.AM.value;
-//             userCodes.push(userfield[0]['code']);
-//           }
-//           if (record.部長.value.length != 0) {
-//             let userfield1 = record.部長.value;
-//             userCodes.push(userfield1[0]['code']);
-//           }
-//           if (record.本部長.value.length != 0) {
-//             let userfield2 = record.本部長.value;
-//             userCodes.push(userfield2[0]['code']);
-//           }
-
-//           if(record.アンケート報告書.value == '要'){
-                // if(record.区分2.value == 'A報保存済'){
-                //   var enquete_result = 'A報保存済';
-                // }else{
-                //   var enquete_result = 'A報請求済中';
-                // }
-//           }else{
-//             var enquete_result = ''
-//           }
-
-//           const params = {
-//             app: event.appId,		// アプリID
-//             id: event.recordId,	// レコードID
-//             record: {		        // レコード情報
-//               送信1回目フラグ: { 
-//                 value: '送信済み'
-//               },
-//               区分2: {
-//                 value: enquete_result
-//               },
-//               Garoonメッセージ送信制御 :{
-//                 value: '送信しない' 
-//               }
-//             }
-//           };
-//           kintone.api(kintone.api.url('/k/v1/record.json', true), 'PUT', params).then((resp) => {
-//             // PUT成功
-//             return event;
-//           })
-
-//           var body = [];
-//           if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '要'){
-//             body = URL + '\n' + record.Garoon送信メッセージ内容.value;
-//           }else if (record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '未送信' && record.アンケート報告書.value == '否'){
-//             body = URL + '\n' + record.Garoon送信メッセージ内容.value;
-//           }else if(record.お客様とのご連絡回数.value == '1回目' && record.送信1回目フラグ.value == '送信済み'){
-//             body = record.Garoon送信メッセージ内容.value;
-//           }
-
-//           // IDの場合は右のように指定、record.$id.value
-//           const content = record.店名.value + "【kintone】" + record.$id.value;
-//           performCommonAction('申請', userCodes, content, body)
-//             .then(function () {
-//               GaroonMessageUpdateDelete();
-//               //送信メッセージ内容
-//               send_content_update(record);
-        
-//                 // setTimeout(() => {
-//                 //   window.location.reload();
-//                 // }, 1000);
-//            })
-//         }
-//       );
-//   }
-//   return event;
-// });
-
 //-------------------------------------------------------------------------------------------------
 //編集画面で保存ボタンを押したとき、メッセージを送信する処理
 //-------------------------------------------------------------------------------------------------
@@ -538,8 +486,6 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
     
 
   if (record.Garoonメッセージ送信制御.value == '送信する') {
-    const appId = event.appId;
-    const recordId = event.recordId;
     
     //お試し版URL【変更】
     const kntAppURL = 'https://watami.cybozu.com/k/822/';
@@ -1668,7 +1614,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           let uniqueUserCodes = [...new Set(userCodes)];
           
           //-----------------------------------------------------
-          //送信フラグの変更
+          //送信フラグ
           //-----------------------------------------------------
           //【送信2回目フラグ】1回目が送信済みであれば、2回目フラグを送信済みにする
           if((record.送信1回目フラグ.value == '送信済み' && record.ご返信内容_メール_ネットアンケート.value) || (record.送信1回目フラグ.value == '送信済み' && record.ご返信内容_口コミ.value) || record.送信2回目フラグ.value == '送信済み' ){ 
@@ -1726,6 +1672,31 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
           //   var send_flag_enquete_report = '未送信'; 
           // }
 
+          //送信する添付ファイルの名前を保存
+          let file_data = [];
+            if(record.ファイル添付1回目.value){
+              for(let i=0; i<record.ファイル添付1回目.value.length; i++){
+                file_data.push(record.ファイル添付1回目.value[i]['name']);
+              }
+            }
+            if(record.ファイル添付1回目_口コミ.value){
+              for(let i=0; i<record.ファイル添付1回目_口コミ.value.length; i++){
+                file_data.push(record.ファイル添付1回目_口コミ.value[i]['name']);
+              }
+            }
+            if(record.ファイル添付2回目.value){
+              for(let i=0; i<record.ファイル添付2回目.value.length; i++){
+                file_data.push(record.ファイル添付2回目.value[i]['name']);
+              }
+            }
+            if(record.ファイル添付3回目.value){
+              for(let i=0; i<record.ファイル添付3回目.value.length; i++){
+                file_data.push(record.ファイル添付3回目.value[i]['name']);
+              }
+            }
+            let file_name = file_data.join(', ');
+
+
           const params = {
             app: event.appId,		// アプリID
             id: event.recordId,	// レコードID
@@ -1759,6 +1730,9 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
               },
               未送信フラグ :{
                 value: ''
+              },
+              一度送信した添付ファイル名:{
+                value: file_name
               }
             }
           };
@@ -1896,7 +1870,7 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             var reception_method = record.受付方法.value;
           }
 
-          //Garoonメッセージのタイトル(20240422テストコード変更)
+          //Garoonメッセージのタイトル
           if(record.店名.value){
             var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + reception_method + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
           }else if(record.本部関連_商品関連の宛先を取得1.value){
@@ -1905,106 +1879,107 @@ kintone.events.on(['app.record.edit.submit.success'], async (event) => {
             var content = formattedDate + ":"+ "　" + industry + ')' + store_name+ "　" + reception_method + comprehensive_evaluation + "【kintone】" + record.$id.value;//業態 + 店名省略バージョン
           }
 
-          performCommonAction('申請', uniqueUserCodes, content, body)
-            .then(function () {
+          performCommonAction('申請', uniqueUserCodes, content, body, record)
+          .then(function () {
               //Garoonのメッセージが2通以上ある場合、1通目を更新して,2通目以降を削除
-              GaroonMessageUpdateDelete(record);
+              return GaroonMessageUpdateDelete(record); // Promiseを返すように修正
+          })
+          .then(function () {
               //送信履歴フィールドを更新
               send_content_update(record);
 
               setTimeout(() => {
-                //リロード
-                window.location.reload();
-              }, 2500);
+                  //リロード
+                  window.location.reload();
+              }, 3000);
 
               // // 1秒後にモーダルを非表示にする
               // setTimeout(function() {
               //   closeLoadingModal();
               // }, 1300);
-
-          })
+          });
         }
       );
   }
   return event;
 });
 
-//--------------------------------------------------
-//メッセージ送信時のモーダル
-//--------------------------------------------------
-// モーダルを作成
-var modal = document.createElement('div');
-modal.style.display = 'none';
-modal.style.position = 'fixed';
-modal.style.zIndex = '1000';
-modal.style.left = '0';
-modal.style.top = '0';
-modal.style.width = '100%';
-modal.style.height = '100%';
-modal.style.overflow = 'auto';
-modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    //--------------------------------------------------
+    //メッセージ送信時のモーダル
+    //--------------------------------------------------
+    // モーダルを作成
+    var modal = document.createElement('div');
+    modal.style.display = 'none';
+    modal.style.position = 'fixed';
+    modal.style.zIndex = '1000';
+    modal.style.left = '0';
+    modal.style.top = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.overflow = 'auto';
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
 
-// モーダルコンテンツを作成
-var modalContent = document.createElement('div');
-modalContent.style.backgroundColor = '#fefefe';
-modalContent.style.margin = '15% auto';
-modalContent.style.padding = '20px';
-modalContent.style.borderRadius = '10px';
-modalContent.style.width = '80%';
-modalContent.style.maxWidth = '400px';
-modalContent.style.textAlign = 'center';
+    // モーダルコンテンツを作成
+    var modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = '#fefefe';
+    modalContent.style.margin = '15% auto';
+    modalContent.style.padding = '20px';
+    modalContent.style.borderRadius = '10px';
+    modalContent.style.width = '80%';
+    modalContent.style.maxWidth = '400px';
+    modalContent.style.textAlign = 'center';
 
-// メッセージを表示する要素を作成
-var message = document.createElement('p');
-message.textContent = 'メッセージを送信中です...';
-message.style.marginBottom = '20px';
+    // メッセージを表示する要素を作成
+    var message = document.createElement('p');
+    message.textContent = 'メッセージを送信中です...';
+    message.style.marginBottom = '20px';
 
-// スピナーを表示する要素を作成
-var spinner = document.createElement('div');
-spinner.className = 'spinner-border';
-spinner.style.width = '3rem';
-spinner.style.height = '3rem';
-spinner.setAttribute('role', 'status');
+    // スピナーを表示する要素を作成
+    var spinner = document.createElement('div');
+    spinner.className = 'spinner-border';
+    spinner.style.width = '3rem';
+    spinner.style.height = '3rem';
+    spinner.setAttribute('role', 'status');
 
-// スピナーに対する補助テキストを追加
-var spinnerText = document.createElement('span');
-spinnerText.className = 'sr-only';
-spinnerText.textContent = 'Loading...';
-spinner.appendChild(spinnerText);
+    // スピナーに対する補助テキストを追加
+    var spinnerText = document.createElement('span');
+    spinnerText.className = 'sr-only';
+    spinnerText.textContent = 'Loading...';
+    spinner.appendChild(spinnerText);
 
-// テキストを表示する要素を作成
-var loadingText = document.createElement('p');
-loadingText.textContent = 'メッセージ送信中です...';
-loadingText.style.marginTop = '10px';
-loadingText.style.fontFamily = 'Arial, sans-serif';
-loadingText.style.fontSize = '16px';
-loadingText.style.color = '#333';
+    // テキストを表示する要素を作成
+    var loadingText = document.createElement('p');
+    loadingText.textContent = 'メッセージ送信中です...';
+    loadingText.style.marginTop = '10px';
+    loadingText.style.fontFamily = 'Arial, sans-serif';
+    loadingText.style.fontSize = '16px';
+    loadingText.style.color = '#333';
 
-// モーダルに要素を追加
-modalContent.appendChild(message);
-modalContent.appendChild(spinner);
-modalContent.appendChild(loadingText);
-modal.appendChild(modalContent);
+    // モーダルに要素を追加
+    modalContent.appendChild(message);
+    modalContent.appendChild(spinner);
+    modalContent.appendChild(loadingText);
+    modal.appendChild(modalContent);
 
-// モーダルを表示する関数
-function showLoadingModal(messageContent) {
-  message.textContent = messageContent;
-  spinner.style.display = 'inline-block';
-  modal.style.display = 'block';
-}
+    // モーダルを表示する関数
+    function showLoadingModal(messageContent) {
+      message.textContent = messageContent;
+      spinner.style.display = 'inline-block';
+      modal.style.display = 'block';
+    }
 
-// モーダルを閉じる関数
-function closeLoadingModal() {
-  spinner.style.display = 'none';
-  modal.style.display = 'none';
-}
+    // モーダルを閉じる関数
+    function closeLoadingModal() {
+      spinner.style.display = 'none';
+      modal.style.display = 'none';
+    }
 
-// モーダル要素をbodyに追加
-document.body.appendChild(modal);
+    // モーダル要素をbodyに追加
+    document.body.appendChild(modal);
 
-//-------------------------------------------------------------------
-//Garoonのメッセージを検索➝更新➝削除する処理
-//-------------------------------------------------------------------
+  //-------------------------------------------------------------------
+  //Garoonのメッセージを検索➝更新➝削除する処理
+  //-------------------------------------------------------------------
   /**
   * メッセージ登録パラメータテンプレート
   * ${XXXX}の箇所は入力値等で置換して使用
@@ -2057,7 +2032,7 @@ document.body.appendChild(modal);
             threads.forEach(thread => {
               //タイトルを取得
               var subjectGet = thread.getAttribute('subject');
-              console.warn("これ何",subjectGet);
+
               if (subjectGet !== null && subjectGet !== undefined) {
                 //タイトルの【kintone】から左側を全て削除し、
                 var subject = subjectGet.replace(/.*【kintone】/, ''); // 変数の宣言と同時に初期化
@@ -2086,13 +2061,19 @@ document.body.appendChild(modal);
             let threadsArray = Array.from(threads);
             //空の配列を作成
             let newArray = [];
-              // console.warn("繰り返し処理の前の配列",threadsArray);
+              
+            // kintoneのレコードID   追加20240423
+            let recordId = kintone.app.record.getId(); // kintoneのレコードID
+            // console.warn("レコードのID",recordId);
             //繰り返し
-            Object.keys(subjectThreadIds).forEach(subject => {
-              // console.warn("繰り返しのkey",subject);
+            Object.keys(subjectThreadIds).forEach(async(subject) => {
+              // if (subject == recordId.toString()) {
+              //   console.warn("subjectとレコードのIDは同じです。");
+              // } else {
+              //   console.warn("subjectとレコードのIDは異なります。");
+              // }
               //同じメッセージが2つ以上見つかった時
-              if (subjectThreadIds[subject].length >= 2) {
-                // console.warn("処理入ってきた?");
+              if (subjectThreadIds[subject].length >= 2 && subject == recordId.toString()) {
                   //1通目のメッセージIDを取得
                   let firstID = subjectThreadIds[subject][0];
                   // console.warn("1通目のメッセージを取得",firstID);
@@ -2109,7 +2090,7 @@ document.body.appendChild(modal);
                   //1通目のsubjectタグ情報を抜き取る
                   const threadElementGet= FirstXMLparserxmlDoc.getElementsByTagName('thread');
                   var subjectGet = Array.from(threadElementGet).map(thread => thread.getAttribute('subject'));
-
+                  // console.warn("if文内のsubjectを取得",subject);
                   //最新メッセージのID
                   let finalArray = subjectThreadIds[subject][subjectThreadIds[subject].length - 1];
 
@@ -2258,23 +2239,30 @@ document.body.appendChild(modal);
                       resultString += '\n';
                     }
                   }
-
+                  //ユーザー情報取得
+                  var GetLoginUser = kintone.getLoginUser();
                   //メッセージ更新処理
-                  MessageUpdate(firstID,resultString,send_subject,addresseeUserIds);
+                  await MessageUpdate(firstID,resultString,send_subject,addresseeUserIds,record);
 
                   // //1通目以外のメッセージを削除
                   let index = subjectThreadIds[subject].indexOf(firstID);
                   if (index !== -1) {
                   subjectThreadIds[subject].splice(index, 1);
                   }
-                  setTimeout(function() {
+                  // setTimeout(function() {
                     // ここに実行したいコードを書く
                     for (const id of subjectThreadIds[subject]) {
                       // id は配列内の各数字、ここで繰り返し処理を行う
                       //削除処理
-                        MessageDelete(id);
+                        if(GetLoginUser.id == 8561){
+                          //管理者用
+                          await MessageDelete_admin(id);
+                        }else{
+                          //コールセンター用
+                          await MessageDelete(id);
+                        }
                     }
-                  }, 100);
+                  // }, 100);
               }  
             });
           });
@@ -2317,23 +2305,27 @@ document.body.appendChild(modal);
           '<modify_thread>'+
             '<thread id="${MESSAGE_ID}" version="dummy" subject="${SUBJECT}" confirm="false">'+
               '${ADDRESSEE}' +
-              '<content body="${MAIN_TEXT}"></content>'+
+              '<content body="${MAIN_TEXT}">' +
+                '${FILE_TEMPLATES}' + // ここにファイルテンプレートを追加     
+              '</content>'+
               '<folder id="dummy"></folder>'+
             '</thread>'+
+            '${FILE_CONTENTS}' + // ここにファイル内容を追加    
           ' </modify_thread>'+
           '</parameters>';
 
    /**
    * メッセージ送信先パラメータテンプレート
    * ${XXXX}の箇所は入力値等で置換して使用
-  //  */
+   */
   const ADDRESSEE_TEMPLATE_UPDATE =
   '<addressee user_id="${USER_ID}" name="dummy" deleted="false"></addressee>';
           
   //メッセージ実行の共通処理(ユーザーフィールド)
-  const MessageUpdate = async (message_id,main_text,subjectText,addresseeUserIds) => {
+  const MessageUpdate = async(message_id,main_text,subjectText,addresseeUserIds ,record) => {
+    console.warn("main_textがおかしい可能性",main_text);
     try {
-
+    
       let requestTokenaaa = await getRequestToken();
 
       // 複数人への宛先をまとめる配列
@@ -2347,8 +2339,96 @@ document.body.appendChild(modal);
       msgUpdataParam = msgUpdataParam.replace('${REQUEST_TOKEN}', escapeHtml(requestTokenaaa));//トークン
       msgUpdataParam = msgUpdataParam.replace('${MESSAGE_ID}',message_id); //対象のメッセージ
       msgUpdataParam = msgUpdataParam.replace('${SUBJECT}', subjectText); //タイトル
-      const mainTextWithEscapedNewlines = main_text.replace(/\n/g, '&#10;');
-      msgUpdataParam = msgUpdataParam.replace('${MAIN_TEXT}', mainTextWithEscapedNewlines);
+      const escapedMainText = escapeHtml(main_text).replace(/\n/g, '&#10;');
+      msgUpdataParam = msgUpdataParam.replace('${MAIN_TEXT}', escapedMainText);
+      /////ファイル添付処理   
+
+      let file_data_summary = [];
+      if(record.ファイル添付1回目.value){
+        for(let i=0; i<record.ファイル添付1回目.value.length; i++){
+          if(!record.一度送信した添付ファイル名.value.includes(record.ファイル添付1回目.value[i]['name'])){
+            file_data_summary.push(record.ファイル添付1回目.value[i]);
+          }
+        }
+      }
+      if(record.ファイル添付1回目_口コミ.value){
+        for(let i=0; i<record.ファイル添付1回目_口コミ.value.length; i++){
+          if(!record.一度送信した添付ファイル名.value.includes(record.ファイル添付1回目_口コミ.value[i]['name'])){
+            file_data_summary.push(record.ファイル添付1回目_口コミ.value[i]);
+          }
+        }
+      }
+      if(record.ファイル添付2回目.value){
+        for(let i=0; i<record.ファイル添付2回目.value.length; i++){
+          if(!record.一度送信した添付ファイル名.value.includes(record.ファイル添付2回目.value[i]['name'])){
+            file_data_summary.push(record.ファイル添付2回目.value[i]);
+          }
+        }
+      }
+      if(record.ファイル添付3回目.value){
+        for(let i=0; i<record.ファイル添付3回目.value.length; i++){
+          if(!record.一度送信した添付ファイル名.value.includes(record.ファイル添付3回目.value[i]['name'])){
+            file_data_summary.push(record.ファイル添付3回目.value[i]);
+          }
+        }
+      }
+
+      // ファイル添付のテンプレートを作成
+      let fileTemplates = '';
+      let fileContents = '';
+
+      if (file_data_summary) {
+        // console.warn("ファイル読み込みの処理に入っている");
+        for (let i = 0; i < file_data_summary.length; i++) {
+          const { fileKey, name, contentType } = file_data_summary[i];
+
+          const headers = {
+            'X-Requested-With': 'XMLHttpRequest',
+          };
+
+          // ファイルデータを取得
+          const resp = await fetch(`/k/v1/file.json?fileKey=${fileKey}`, {
+            method: 'GET',
+            headers,
+          });
+
+          if (!resp.ok) {
+            console.error('ファイルデータの取得に失敗しました:', resp.statusText);
+            continue;
+          }
+
+          const blob = await resp.blob();
+
+          const base64data = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = () => {
+              const base64 = reader.result.split(',')[1];
+              resolve(base64);
+            };
+            reader.onerror = (error) => {
+              console.error('Blobデータの読み込みに失敗しました:', error);
+              reject(error);
+            };
+          });
+
+          // テンプレートの置換を行う
+          const fileTemplate = `<file id="${i}" name="${name}" mime_type="${contentType}"></file>`;
+          const fileContent = `<file xmlns="" id="${i}"><content xmlns="">${base64data}</content></file>`;
+
+
+          fileTemplates += fileTemplate;
+          fileContents += fileContent;
+        }
+      }
+      
+
+
+      // console.warn("ファイルxxxxx",fileTemplates);
+      // console.warn("ファイルppppp",fileContents);
+      // テンプレートにファイル情報とファイル内容を埋め込む
+      msgUpdataParam = msgUpdataParam.replace('${FILE_TEMPLATES}', fileTemplates);
+      msgUpdataParam = msgUpdataParam.replace('${FILE_CONTENTS}', fileContents);
       msgUpdataParam = msgUpdataParam.replace('${ADDRESSEE}', userParams.join(''));//宛先を全員分追加
 
       let msgUpdateRequest = SOAP_UPDATE_TEMPLATE;
@@ -2357,24 +2437,37 @@ document.body.appendChild(modal);
       // 実行処理を指定
       msgUpdateRequest = msgUpdateRequest.split('${ACTION}').join('MessageModifyThreads');
 
-      // メッセージ登録の実行
-      await $.ajax({
-        type: 'post',
-        url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
-        cache: false,
-        async: false,
-        data: msgUpdateRequest
-      }).then(function(responseData) {
-        // console.warn("更新に成功",responseData); // レスポンスデータをコンソールに表示
-      });
+     // メッセージ登録の実行
+     const responseData = await $.ajax({
+      type: 'post',
+      url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//変更が必要
+      cache: false,
+      data: msgUpdateRequest,
+      dataType: 'xml',  // XML 形式のレスポンスを指定　　　
+    }).done((response) => {
+      // console.warn("更新処理に成功:", response);
+    })
+    .fail((jqXHR, textStatus, errorThrown) => {
+      console.error("(更新処理)HTTPエラーが発生しました:", textStatus, errorThrown);
+      console.error("jqXHR:", jqXHR);
+      console.error("Response Text:", jqXHR.responseText);
+
+      // XML形式の場合、エラーメッセージを解析する
+      if (jqXHR.getResponseHeader('Content-Type').includes('xml')) {
+        let parser = new DOMParser();
+        let xmlDoc = parser.parseFromString(jqXHR.responseText, "text/xml");
+        let errorMessage = xmlDoc.getElementsByTagName("soap:Text")[0].textContent;
+        console.error("SOAPエラーメッセージ:", errorMessage);
+      }
+    });
 
     } catch (error) {
-      // console.error("エラーが発生しました:", error);
+      console.error("エラーが発生しました:", error);
     }
   };
 
   //-----------------------------------------------------------------------------
-  //メッセージ削除処理
+  //メッセージ削除処理(コールセンター用)
   //-----------------------------------------------------------------------------
    /**web認証方式
    * 共通SOAPコンテンツ
@@ -2429,12 +2522,77 @@ document.body.appendChild(modal);
         }).then(function(responseData) {
           // //削除に成功したら、リロード
           // window.location.reload();
-          console.warn("削除に成功"); // レスポンスデータをコンソールに表示
+          // console.warn("削除に成功"); // レスポンスデータをコンソールに表示
         });
       } catch (error) {
         console.error("エラーが発生しました:", error);
       }
     };
+
+
+   //-----------------------------------------------------------------------------
+  //メッセージ削除処理(管理者テスト用)
+  //-----------------------------------------------------------------------------
+   /**web認証方式
+   * 共通SOAPコンテンツ
+   * ${XXXX}の箇所は実施処理等に合わせて置換して使用
+   */
+  //変更が必要(folder_idとUser情報)
+  const SOAP_DELETE_TEMPLATE_ADMIN =
+  '<?xml version="1.0" encoding="UTF-8"?>' +
+  '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">' +
+  '<soap:Header>' +
+  '<Action>${ACTION}</Action>' + // この行を修正
+  '<Security>' +
+  '<UsernameToken>' +
+  '<Username>watami01</Username>' +
+  '<Password>wtmsus22</Password>' +
+  '</UsernameToken>' +
+  '</Security>' +
+  '<Timestamp>' +
+  '<Created>2023-08-12T14:45:00Z</Created>' +
+  '<Expires>2037-08-12T14:45:00Z</Expires>' +
+  '</Timestamp>' +
+  '<Locale>jp</Locale>' +
+  '</soap:Header>' +
+  '<soap:Body>' +
+  '<MessageRemoveThreads>' +
+  '<parameters delete_all_inbox="true">' +
+  '<param xmlns="" folder_id="107564" thread_id="${DELETE_ID}"></param>' +
+  '</parameters>' +
+  '</MessageRemoveThreads>' +
+  '</soap:Body>' +
+  '</soap:Envelope>';
+
+
+  //メッセージ実行の共通処理(ユーザーフィールド)
+  const MessageDelete_admin = async (delete_id) => {
+    try {
+      // console.warn("メッセージ削除処理に入ってきた");
+      //リクエストのテンプレート
+      let msgDeleteRequest = SOAP_DELETE_TEMPLATE_ADMIN;
+      // console.warn("削除処理に入ってきた。");
+      //削除するIDを置換
+      msgDeleteRequest = msgDeleteRequest.replace('${DELETE_ID}', delete_id );
+
+      // 実行処理を指定
+      msgDeleteRequest = msgDeleteRequest.split('${ACTION}').join('MessageRemoveThreads');
+
+      // メッセージ登録の実行
+      await $.ajax({
+        type: 'post',
+        url: 'https://watami.cybozu.com/g/cbpapi/message/api.csp',//お試し版URL【変更】
+        cache: false,
+        data: msgDeleteRequest,
+      }).then(function(responseData) {
+        // //削除に成功したら、リロード
+        // window.location.reload();
+        // console.warn("削除に成功"); // レスポンスデータをコンソールに表示
+      });
+    } catch (error) {
+      console.error("エラーが発生しました:", error);
+    }
+  };
 
 //------------------------------------------------------------------------------
 //メッセージのユーザー定義関数
@@ -2444,7 +2602,7 @@ document.body.appendChild(modal);
     */
     function first_message_call(record){
 
-      //受信日時 (追加20240410)
+      //受信日時
       if(record.受信日時_電話.value == '' || record.受信日時_電話.value == undefined){
         var receiving_time_call = '' ;
       }else {
@@ -2577,7 +2735,7 @@ document.body.appendChild(modal);
       if(record.アンケート報告書.value == '要'){
           Garoon_message = 
           '【受付1(始)】' + '\n' + 
-          '受信日時　　:' + receiving_time_call + '\n' + //追加20240410 
+          '受信日時　　:' + receiving_time_call + '\n' + 
           'ご利用店舗　:' + store_name + '\n' + 
           'ご来店日　　:' + visits_date_call + '\n' + 
           '来店時間　　:' + visits_time_call +'\n' + 
@@ -2592,7 +2750,7 @@ document.body.appendChild(modal);
       }else if (record.アンケート報告書.value == '否'){
           Garoon_message = 
           '【受付1(始)】' + '\n' + 
-          '受信日時　　:' + receiving_time_call + '\n' + //追加20240410 
+          '受信日時　　:' + receiving_time_call + '\n' +
           'ご利用店舗　:' + store_name + '\n' + 
           'ご来店日　　:' + visits_date_call + '\n' + 
           '来店時間　　:' + visits_time_call +'\n' + 
@@ -2662,7 +2820,7 @@ document.body.appendChild(modal);
       メッセージの1通目(メール_ネットアンケート)
     */
     function first_message_mail(record){
-        //受信日時 (追加20240410)
+        //受信日時
         if(record.受信日時_メール_ネットアンケート.value == '' || record.受信日時_メール_ネットアンケート.value == undefined){
           var receiving_time_mail = '' ;
         }else {
@@ -2770,7 +2928,7 @@ document.body.appendChild(modal);
         if( record.アンケート報告書.value == '要'){
             Garoon_message = 
             '【受付1(始)】' + '\n' + 
-            '受信日時　　:' + receiving_time_mail + '\n' + //追加20240410
+            '受信日時　　:' + receiving_time_mail + '\n' +
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_mail_net + '\n' + 
             '来店時間　　:' + visits_time_mail_net +'\n' + 
@@ -2786,7 +2944,7 @@ document.body.appendChild(modal);
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
             '【受付1(始)】' + '\n' + 
-            '受信日時　　:' + receiving_time_mail + '\n' + //追加20240410
+            '受信日時　　:' + receiving_time_mail + '\n' +
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_mail_net + '\n' + 
             '来店時間　　:' + visits_time_mail_net +'\n' + 
@@ -2856,7 +3014,7 @@ document.body.appendChild(modal);
     */
       function first_message_review(record){
 
-        //受信日時 (追加20240410)
+        //受信日時
         if(record.受信日時_口コミ.value == '' || record.受信日時_口コミ.value == undefined){
           var receiving_time_review = '' ;
         }else {
@@ -2940,7 +3098,7 @@ document.body.appendChild(modal);
         if( record.アンケート報告書.value == '要'){
             Garoon_message = 
             '【受付1(始)】' + '\n' + 
-            '受付日時　　:' + receiving_time_review + '\n' + //追加20240410
+            '受付日時　　:' + receiving_time_review + '\n' +
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_review + '\n' + 
             '来店時間　　:' + visits_time_review +'\n' + 
@@ -2952,7 +3110,7 @@ document.body.appendChild(modal);
         }else if (record.アンケート報告書.value == '否'){
             Garoon_message =
             '【受付1(始)】' + '\n' + 
-            '受付日時　　:' + receiving_time_review + '\n' + //追加20240410
+            '受付日時　　:' + receiving_time_review + '\n' +
             'ご利用店舗　:' + store_name + '\n' + 
             'ご来店日　　:' + visits_date_review + '\n' + 
             '来店時間　　:' + visits_time_review +'\n' + 
